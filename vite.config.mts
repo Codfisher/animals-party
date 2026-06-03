@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import ui from '@nuxt/ui/vite';
@@ -9,9 +10,13 @@ export default defineConfig(() => {
     plugins: [
       vue(),
 
-      ui(),
+      // colorMode: false 關閉 Nuxt UI 的 useDark() 插件，強制鎖定亮色模式
+      ui({ colorMode: false }),
 
       loadVersion(),
     ],
+    test: {
+      environment: 'happy-dom',
+    },
   }
 })

@@ -11,8 +11,6 @@ import {
   Engine, HemisphericLight, MeshBuilder, Scene, Vector3,
 } from '@babylonjs/core';
 import '@babylonjs/loaders';
-import '@babylonjs/core/Debug/debugLayer';
-import '@babylonjs/inspector';
 
 import { defaults } from 'lodash-es';
 
@@ -82,17 +80,6 @@ const { canvas, camera } = useBabylonScene({
   async init({ scene, camera }) {
     createSea(scene);
     await createIslands(scene);
-
-    window.addEventListener('keydown', (ev) => {
-      // 按下 Shift+I 可以切換視窗
-      if (ev.shiftKey && ev.keyCode === 73) {
-        if (scene.debugLayer.isVisible()) {
-          scene.debugLayer.hide();
-        } else {
-          scene.debugLayer.show();
-        }
-      }
-    });
 
     /** 發出完成事件，表示畫面初始化完成 */
     emit('completed');
