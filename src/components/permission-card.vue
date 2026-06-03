@@ -156,5 +156,8 @@ watch(permissions, (data) => {
   emit('update', result);
 }, {
   deep: true,
+  /** 掛載時即回報當前權限：非 iOS 裝置體感預設為 granted 且永不變動，
+   *  若不立即送出，host 將永遠收不到權限而誤判玩家未授權 */
+  immediate: true,
 });
 </script>

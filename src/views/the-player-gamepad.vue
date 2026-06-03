@@ -5,16 +5,26 @@
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue';
 import { RouteName } from '../router/router';
 
 import { useRouter } from 'vue-router';
 import { useGameConsoleStore } from '../stores/game-console.store';
+import { useMainStore } from '../stores/main.store';
 import { useClientPlayer } from '../composables/use-client-player';
 import { GameName } from '../types';
 
 const gameConsoleStore = useGameConsoleStore();
+const mainStore = useMainStore();
 const router = useRouter();
 const player = useClientPlayer();
+
+/** 與主機連線中斷時（曾連上後斷線），跳回首頁 */
+watch(() => mainStore.clientConnected, (connected, previous) => {
+  if (previous && !connected) {
+    router.push({ name: RouteName.HOME });
+  }
+});
 
 /** 遊戲與搖桿頁面對應資料 */
 const gamepadMap: Record<GameName, {
