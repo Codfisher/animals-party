@@ -36,16 +36,15 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { GameSceneMode } from '../types';
+import { GameSceneMode } from '../../types';
 import { nanoid } from 'nanoid';
-import { RouteName } from '../router/router';
 
-import GameConsoleSceneContainer from '../components/game-console-scene-container.vue';
-import GameScene from '../games/the-first-penguin/game-scene.vue';
-import TutorialCard from '../games/the-first-penguin/tutorial-card.vue';
-import CountdownOverlay from '../components/countdown-overlay.vue';
+import GameConsoleSceneContainer from '../../components/game-console-scene-container.vue';
+import GameScene from '../../games/the-first-penguin/game-scene.vue';
+import TutorialCard from '../../games/the-first-penguin/tutorial-card.vue';
+import CountdownOverlay from '../../components/countdown-overlay.vue';
 
-import { useLoading } from '../composables/use-loading';
+import { useLoading } from '../../composables/use-loading';
 import { useRouter } from 'vue-router';
 
 const loading = useLoading();
@@ -60,7 +59,7 @@ function handleInit() {
 async function handleBackToLobby() {
   await loading.show();
   router.push({
-    name: RouteName.GAME_CONSOLE_LOBBY
+    name: '/game-console/lobby'
   });
 }
 

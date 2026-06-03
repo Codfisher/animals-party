@@ -73,13 +73,12 @@ watch(roomId, async (id) => {
   background: rgba(#2a3832, 0.06)
 
 .room-id-badge
-  padding: 0.55rem 1rem
+  padding: 0.25rem 0.5rem
   border-radius: 1rem
-  background: white
-  box-shadow: 0 4px 14px rgba(#1d3e57, 0.18)
+  background: #2a3832
 
 .room-id-text
-  color: #2a3832
+  color: white
   font-size: 1.7rem
   font-weight: 700
   font-family: 'Chakra Petch', sans-serif

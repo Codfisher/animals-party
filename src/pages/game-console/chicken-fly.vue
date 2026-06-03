@@ -58,17 +58,16 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { RouteName } from '../router/router';
-import { GameSceneMode } from '../types';
+import { GameSceneMode } from '../../types';
 
-import GameScene from '../games/chicken-fly/game-scene.vue';
-import TutorialCard from '../games/chicken-fly/tutorial-card.vue';
-import PlayerListAvatar from '../components/player-list-avatar.vue';
-import CountdownOverlay from '../components/countdown-overlay.vue';
+import GameScene from '../../games/chicken-fly/game-scene.vue';
+import TutorialCard from '../../games/chicken-fly/tutorial-card.vue';
+import PlayerListAvatar from '../../components/player-list-avatar.vue';
+import CountdownOverlay from '../../components/countdown-overlay.vue';
 
-import { useLoading } from '../composables/use-loading';
+import { useLoading } from '../../composables/use-loading';
 import { useRouter } from 'vue-router';
-import { useClientGameConsole } from '../composables/use-client-game-console';
+import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { whenever } from '@vueuse/core';
 
 const gameConsole = useClientGameConsole();
@@ -84,7 +83,7 @@ function handleInit() {
 async function handleBackToLobby() {
   await loading.show();
   router.push({
-    name: RouteName.GAME_CONSOLE_LOBBY
+    name: '/game-console/lobby'
   });
 }
 

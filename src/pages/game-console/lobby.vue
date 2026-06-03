@@ -12,12 +12,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import GameMenu from '../components/game-menu.vue';
-import PlayerList from '../components/player-list.vue';
+import GameMenu from '../../components/game-menu.vue';
+import PlayerList from '../../components/player-list.vue';
 
-import { useLoading } from '../composables/use-loading';
-import { useClientGameConsole } from '../composables/use-client-game-console';
-import { KeyName } from '../types';
+import { useLoading } from '../../composables/use-loading';
+import { useClientGameConsole } from '../../composables/use-client-game-console';
+import { KeyName } from '../../types';
 
 const loading = useLoading();
 const toast = useToast();

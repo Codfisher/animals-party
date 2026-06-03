@@ -42,7 +42,6 @@ import { curry } from 'lodash-es';
 import { GamepadData, GameSceneMode, KeyName, SignalData } from '../../types';
 import { createAnimation, getSquareMatrixPositions } from '../../common/utils';
 import { getPlayerColorRgb } from '../../common/color';
-import { RouteName } from '../../router/router';
 
 import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { useRouter } from 'vue-router';

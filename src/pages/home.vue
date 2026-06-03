@@ -64,7 +64,6 @@
 </template>
 
 <script setup lang="ts">
-import { RouteName } from '../router/router';
 import to from 'await-to-js';
 import { onMounted } from 'vue';
 
@@ -102,7 +101,7 @@ async function startParty() {
   console.log(`roomId : `, room.id);
 
   router.push({
-    name: RouteName.GAME_CONSOLE
+    name: '/game-console'
   });
 }
 async function joinGame() {
@@ -114,7 +113,7 @@ async function joinGame() {
   await loading.show();
 
   router.push({
-    name: RouteName.PLAYER_GAMEPAD
+    name: '/player-gamepad'
   });
 }
 
