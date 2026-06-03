@@ -150,9 +150,8 @@ const games: GameInfo[] = [
     condition: {
       minPlayers: 2,
       maxPlayers: 8,
-      requiredPermissions: [
-        'vibrate'
-      ],
+      // 震動非必要：iOS 不支援震動，改以視覺脈衝回饋判斷老鼠大小
+      requiredPermissions: [],
     }
   },
 ];

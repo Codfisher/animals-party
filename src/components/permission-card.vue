@@ -29,20 +29,20 @@
         block
         color="neutral"
         variant="ghost"
-        class="justify-start items-center gap-3 p-2 text-left"
+        class="justify-start items-center gap-2 p-1.5 text-left"
         @click="permission.onClick"
       >
         <UAvatar
-          size="sm"
+          size="xs"
           class="bg-neutral-400! text-white"
           :icon="permission.icon"
         />
 
         <div class="flex-1">
-          <div class=" text-base font-medium">
+          <div class=" text-sm font-medium">
             {{ permission.label }}
           </div>
-          <div class=" text-xs opacity-80">
+          <div class=" text-xs opacity-80 leading-tight">
             {{ permission.caption }}
           </div>
         </div>
@@ -67,9 +67,10 @@
 </template>
 
 <script setup lang="ts">
-import { usePermission, refDefault, UsePermissionReturnWithControls, useVibrate } from '@vueuse/core';
-import { computed, ref, watch } from 'vue';
+import { useVibrate } from '@vueuse/core';
+import { computed, watch } from 'vue';
 import { PlayerPermission, PlayerPermissionState } from '../types';
+import { useMotionPermission } from '../composables/use-motion-permission';
 
 import BasePolygon from './base-polygon.vue';
 
@@ -77,9 +78,7 @@ const emit = defineEmits<{
   (e: 'update', data: PlayerPermission): void;
 }>();
 
-const gyroscopePermission = usePermission('gyroscope', { controls: true });
-/** 如果 state 為 undefined 就為 not-support */
-const gyroscopeState = refDefault(gyroscopePermission.state, 'not-support');
+const motionPermission = useMotionPermission();
 
 const { vibrate, isSupported } = useVibrate();
 const vibrateState = computed<`${PlayerPermissionState}`>(
@@ -132,9 +131,9 @@ const permissions = computed<{
     icon: 'material-symbols:screen-rotation-alt',
     label: '陀螺儀',
     caption: '可以偵測手機旋轉角度，通常用於體感遊戲',
-    state: gyroscopeState.value,
-    stateInfo: getStateInfo(gyroscopeState.value),
-    onClick: gyroscopePermission.query,
+    state: motionPermission.state.value,
+    stateInfo: getStateInfo(motionPermission.state.value),
+    onClick: motionPermission.request,
   },
   {
     key: 'vibrate',

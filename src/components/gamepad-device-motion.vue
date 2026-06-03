@@ -1,6 +1,7 @@
 <template>
   <div class="container w-auto">
     <div
+      v-if="motionGranted"
       ref="pad"
       class="pad rounded-full flex justify-center items-center"
       :style="padStyle"
@@ -13,6 +14,24 @@
         :style="thumbStyle"
       />
     </div>
+
+    <!-- 尚未授權體感前，先請使用者點擊啟用（iOS 需使用者手勢觸發系統提示） -->
+    <UButton
+      v-else
+      color="neutral"
+      variant="solid"
+      class="enable rounded-full flex-col items-center justify-center gap-1 text-white text-center leading-tight"
+      :style="{ width: props.size, height: props.size }"
+      @click="enableMotion"
+    >
+      <UIcon
+        name="material-symbols:screen-rotation-alt"
+        class="text-[2rem]"
+      />
+      <span class="text-sm px-2">
+        {{ motionDenied ? '體感被拒絕，請至瀏覽器設定開啟' : '點我啟用體感' }}
+      </span>
+    </UButton>
   </div>
 </template>
 
@@ -22,11 +41,21 @@ import { clamp, throttle } from 'lodash-es';
 import { mapRange } from '../common/utils';
 
 import { useDeviceMotion, useElementSize } from '@vueuse/core';
+import { useMotionPermission } from '../composables/use-motion-permission';
 
 export interface Angle {
   x: number;
   y: number;
   z: number
+}
+
+/** 體感權限把關：未授權前顯示啟用按鈕，授權後才顯示控制盤 */
+const { state: motionState, request: requestMotion } = useMotionPermission();
+const motionGranted = computed(() => motionState.value === 'granted');
+const motionDenied = computed(() => motionState.value === 'denied');
+
+async function enableMotion() {
+  await requestMotion();
 }
 
 interface Props {
