@@ -93,7 +93,7 @@
 import { computed, onMounted, ref } from 'vue';
 import gsap from 'gsap';
 import { GameName, permissionInfoMap, Player, PlayerPermission } from '../types';
-import { RouteName } from '../router/router';
+import type { RouteNamedMap } from 'vue-router/auto-routes';
 import { debounce, throttle } from 'lodash-es';
 
 import BaseBtn from './base-btn.vue';
@@ -108,7 +108,7 @@ import { useLoading } from '../composables/use-loading';
 
 interface GameInfo {
   name: `${GameName}`;
-  routeName: `${RouteName}`;
+  routeName: keyof RouteNamedMap;
   /** 遊戲開始條件，如果任一項不符合會發出錯誤 */
   condition: {
     minPlayers: number;
@@ -125,7 +125,7 @@ const emit = defineEmits<{
 const games: GameInfo[] = [
   {
     name: 'the-first-penguin',
-    routeName: 'game-console-the-first-penguin',
+    routeName: '/game-console/the-first-penguin',
     condition: {
       minPlayers: 2,
       /** 企鵝太多浮冰會塞不下 XD */
@@ -135,7 +135,7 @@ const games: GameInfo[] = [
   },
   {
     name: 'chicken-fly',
-    routeName: 'game-console-chicken-fly',
+    routeName: '/game-console/chicken-fly',
     condition: {
       minPlayers: 2,
       maxPlayers: 30,
@@ -146,7 +146,7 @@ const games: GameInfo[] = [
   },
   {
     name: 'fox-and-mouse',
-    routeName: 'game-console-fox-and-mouse',
+    routeName: '/game-console/fox-and-mouse',
     condition: {
       minPlayers: 2,
       maxPlayers: 8,
@@ -269,7 +269,7 @@ const endParty = debounce(async () => {
   gameConsole.endParty();
 
   router.push({
-    name: RouteName.HOME
+    name: '/home'
   });
 }, 3000, {
   leading: true,

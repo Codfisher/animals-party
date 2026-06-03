@@ -67,18 +67,17 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { RouteName } from '../router/router';
-import { GameSceneMode } from '../types';
+import { GameSceneMode } from '../../types';
 import { nanoid } from 'nanoid';
 
-import GameScene from '../games/fox-and-mouse/game-scene.vue';
-import TutorialCard from '../games/fox-and-mouse/tutorial-card.vue';
-import PlayerListAvatar from '../components/player-list-avatar.vue';
-import CountdownOverlay from '../components/countdown-overlay.vue';
+import GameScene from '../../games/fox-and-mouse/game-scene.vue';
+import TutorialCard from '../../games/fox-and-mouse/tutorial-card.vue';
+import PlayerListAvatar from '../../components/player-list-avatar.vue';
+import CountdownOverlay from '../../components/countdown-overlay.vue';
 
-import { useLoading } from '../composables/use-loading';
+import { useLoading } from '../../composables/use-loading';
 import { useRouter } from 'vue-router';
-import { useClientGameConsole } from '../composables/use-client-game-console';
+import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { promiseTimeout, whenever } from '@vueuse/core';
 
 const gameConsole = useClientGameConsole();
@@ -94,7 +93,7 @@ function handleInit() {
 async function handleBackToLobby() {
   await loading.show();
   router.push({
-    name: RouteName.GAME_CONSOLE_LOBBY
+    name: '/game-console/lobby'
   });
 }
 

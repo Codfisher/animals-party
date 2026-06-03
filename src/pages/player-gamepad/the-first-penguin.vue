@@ -25,15 +25,15 @@
 </template>
 
 <script setup lang="ts">
-import { KeyName } from '../types';
+import { KeyName } from '../../types';
 
-import GamepadBtn from '../components/gamepad-btn.vue';
-import GamepadAnalogStick from '../components/gamepad-analog-stick.vue';
-import PlayerGamepadContainer from '../components/player-gamepad-container.vue';
+import GamepadBtn from '../../components/gamepad-btn.vue';
+import GamepadAnalogStick from '../../components/gamepad-analog-stick.vue';
+import PlayerGamepadContainer from '../../components/player-gamepad-container.vue';
 
 
-import { useLoading } from '../composables/use-loading';
-import { useClientPlayer } from '../composables/use-client-player';
+import { useLoading } from '../../composables/use-loading';
+import { useClientPlayer } from '../../composables/use-client-player';
 
 const loading = useLoading();
 const { emitGamepadData } = useClientPlayer();

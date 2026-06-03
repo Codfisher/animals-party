@@ -1,4 +1,4 @@
-import { RouteName } from "../router/router";
+import type { RouteNamedMap } from 'vue-router/auto-routes';
 
 /** 遊戲名稱 */
 export enum GameName {
@@ -11,7 +11,7 @@ export interface GameInfo {
   name: `${GameName}`;
   title: string;
   description: string;
-  routeName: `${RouteName}`;
+  routeName: keyof RouteNamedMap;
 }
 
 /** 遊戲狀態 */

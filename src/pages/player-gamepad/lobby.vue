@@ -32,17 +32,17 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import { isEqual } from 'lodash-es';
-import { KeyName, PlayerPermission } from '../types';
+import { KeyName, PlayerPermission } from '../../types';
 
-import PlayerGamepadContainer from '../components/player-gamepad-container.vue';
-import GamepadBtn from '../components/gamepad-btn.vue';
-import GamepadDPad from '../components/gamepad-d-pad.vue';
-import PermissionCard from '../components/permission-card.vue';
+import PlayerGamepadContainer from '../../components/player-gamepad-container.vue';
+import GamepadBtn from '../../components/gamepad-btn.vue';
+import GamepadDPad from '../../components/gamepad-d-pad.vue';
+import PermissionCard from '../../components/permission-card.vue';
 
-import { useLoading } from '../composables/use-loading';
-import { useClientPlayer } from '../composables/use-client-player';
-import { useMainStore } from '../stores/main.store';
-import { useGameConsoleStore } from '../stores/game-console.store';
+import { useLoading } from '../../composables/use-loading';
+import { useClientPlayer } from '../../composables/use-client-player';
+import { useMainStore } from '../../stores/main.store';
+import { useGameConsoleStore } from '../../stores/game-console.store';
 
 const loading = useLoading();
 const mainStore = useMainStore();

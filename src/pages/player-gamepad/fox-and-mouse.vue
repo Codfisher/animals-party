@@ -38,15 +38,15 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref, watch } from 'vue';
-import { KeyName } from '../types';
+import { KeyName } from '../../types';
 
-import GamepadBtn from '../components/gamepad-btn.vue';
-import GamepadAnalogStick from '../components/gamepad-analog-stick.vue';
-import PlayerGamepadContainer from '../components/player-gamepad-container.vue';
+import GamepadBtn from '../../components/gamepad-btn.vue';
+import GamepadAnalogStick from '../../components/gamepad-analog-stick.vue';
+import PlayerGamepadContainer from '../../components/player-gamepad-container.vue';
 
-import { useLoading } from '../composables/use-loading';
-import { useClientPlayer } from '../composables/use-client-player';
-import { useMainStore } from '../stores/main.store';
+import { useLoading } from '../../composables/use-loading';
+import { useClientPlayer } from '../../composables/use-client-player';
+import { useMainStore } from '../../stores/main.store';
 import { useVibrate } from '@vueuse/core';
 
 const loading = useLoading();

@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { GameConsoleState } from '../types';
-import { RouteName } from '../router/router';
 import { useGameConsoleStore } from '../stores/game-console.store';
 
 const pushMock = vi.fn();
@@ -25,7 +24,7 @@ vi.mock('../composables/use-client-player', () => ({
 }));
 
 // 須在 mock 宣告後再引入受測元件
-import ThePlayerGamepad from './the-player-gamepad.vue';
+import ThePlayerGamepad from './player-gamepad.vue';
 
 function mountGamepad() {
   return mount(ThePlayerGamepad, {
@@ -48,7 +47,7 @@ describe('the-player-gamepad 跳轉', () => {
     stateUpdateCallback?.({ status: 'playing', gameName: 'chicken-fly' });
 
     expect(pushMock).toHaveBeenLastCalledWith({
-      name: RouteName.PLAYER_GAMEPAD_CHICKEN_FLY,
+      name: '/player-gamepad/chicken-fly',
     });
   });
 
@@ -63,7 +62,7 @@ describe('the-player-gamepad 跳轉', () => {
     }).not.toThrow();
 
     expect(pushMock).toHaveBeenLastCalledWith({
-      name: RouteName.PLAYER_GAMEPAD_FOX_AND_MOUSE,
+      name: '/player-gamepad/fox-and-mouse',
     });
   });
 
@@ -86,7 +85,7 @@ describe('the-player-gamepad 跳轉', () => {
     stateUpdateCallback?.({ status: 'lobby' });
 
     expect(pushMock).toHaveBeenLastCalledWith({
-      name: RouteName.PLAYER_GAMEPAD_LOBBY,
+      name: '/player-gamepad/lobby',
     });
   });
 
@@ -95,6 +94,6 @@ describe('the-player-gamepad 跳轉', () => {
 
     stateUpdateCallback?.({ status: 'home' });
 
-    expect(pushMock).toHaveBeenLastCalledWith({ name: RouteName.HOME });
+    expect(pushMock).toHaveBeenLastCalledWith({ name: '/home' });
   });
 });

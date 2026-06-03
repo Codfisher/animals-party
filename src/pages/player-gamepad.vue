@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { watch } from 'vue';
-import { RouteName } from '../router/router';
+import type { RouteNamedMap } from 'vue-router/auto-routes';
 
 import { useRouter } from 'vue-router';
 import { useGameConsoleStore } from '../stores/game-console.store';
@@ -22,28 +22,28 @@ const player = useClientPlayer();
 /** 與主機連線中斷時（曾連上後斷線），跳回首頁 */
 watch(() => mainStore.clientConnected, (connected, previous) => {
   if (previous && !connected) {
-    router.push({ name: RouteName.HOME });
+    router.push({ name: '/home' });
   }
 });
 
 /** 遊戲與搖桿頁面對應資料 */
 const gamepadMap: Record<GameName, {
-  routeName: RouteName,
+  routeName: keyof RouteNamedMap,
 }> = {
   'the-first-penguin': {
-    routeName: RouteName.PLAYER_GAMEPAD_THE_FIRST_PENGUIN,
+    routeName: '/player-gamepad/the-first-penguin',
   },
   'chicken-fly': {
-    routeName: RouteName.PLAYER_GAMEPAD_CHICKEN_FLY,
+    routeName: '/player-gamepad/chicken-fly',
   },
   'fox-and-mouse': {
-    routeName: RouteName.PLAYER_GAMEPAD_FOX_AND_MOUSE,
+    routeName: '/player-gamepad/fox-and-mouse',
   },
 }
 function init() {
   if (!gameConsoleStore.roomId) {
     router.push({
-      name: RouteName.HOME
+      name: '/home'
     });
     return;
   }
@@ -56,12 +56,12 @@ function init() {
 
     if (status === 'home') {
       router.push({
-        name: RouteName.HOME
+        name: '/home'
       });
     }
     if (status === 'lobby') {
       router.push({
-        name: RouteName.PLAYER_GAMEPAD_LOBBY
+        name: '/player-gamepad/lobby'
       });
     }
 
