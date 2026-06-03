@@ -95,7 +95,7 @@ type PeerMessage =
 | player 送 gamepad-data | server 轉發給 console | 觸發 host `onGamepadData` hook |
 | player 送 profile | server 存 + 廣播 `profile-update` | 更新 game-console store → 廣播 `profile-update` → 觸發 host `onProfileUpdate` |
 | player 送 request-state | server 回該 player 當前 state | `sendTo(clientId, { event:'game-console:state-update', data: 當前 state })` |
-| host setStatus/setGameName | console emit → server 廣播 | `broadcast('game-console:state-update', ...)` |
+| host setStatus/setGameState | console emit → server 廣播 | `broadcast('game-console:state-update', ...)` |
 | host emitConsoleData | console emit → server 廣播 | `broadcast('game-console:console-data', ...)` |
 
 - 玩家清單真實來源：host 的 `connectionMap`，每次增減重算 `Player[]` 廣播並同步進 `game-console.store.players`。

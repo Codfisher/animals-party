@@ -251,8 +251,7 @@ const startGame = debounce(async () => {
     return;
   }
 
-  gameConsole.setGameName(game.name);
-  gameConsole.setStatus('playing');
+  gameConsole.setGameState({ gameName: game.name, status: 'playing' });
 
   await loading.show();
 

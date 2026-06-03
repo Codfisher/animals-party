@@ -1,4 +1,4 @@
-import { GameConsoleData, GameConsoleStatus, GameName, GamepadData, Player, Room } from "../types";
+import { GameConsoleData, GameConsoleState, GameConsoleStatus, GamepadData, Player, Room } from "../types";
 import { computed, onBeforeUnmount } from "vue";
 
 import { createEventHook } from "@vueuse/core";
@@ -31,18 +31,15 @@ export function useClientGameConsole() {
       status
     });
   }
-  function setGameName(gameName: `${GameName}`) {
-    gameConsoleStore.updateState({
-      gameName
-    });
+  /** 一次原子更新 status 與 gameName，避免拆兩筆 partial 造成的時序競態 */
+  function setGameState(state: Pick<GameConsoleState, 'status' | 'gameName'>) {
+    gameConsoleStore.updateState(state);
 
     if (!mainStore.host?.connected) {
       return Promise.reject('host 尚未連線');
     }
 
-    mainStore.host.emit('game-console:state-update', {
-      gameName
-    });
+    mainStore.host.emit('game-console:state-update', state);
   }
 
   function getPlayerCodeName(id: string) {
@@ -85,8 +82,8 @@ export function useClientGameConsole() {
 
     /** 設定遊戲狀態，會自動同步至房間內所有玩家 */
     setStatus,
-    /** 設定遊戲名稱，會自動同步至房間內所有玩家 */
-    setGameName,
+    /** 一次同步 status 與 gameName 至房間內所有玩家（原子更新） */
+    setGameState,
     getPlayerCodeName,
 
     /** 搖桿控制訊號事件 */
