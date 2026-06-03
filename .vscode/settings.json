@@ -1,0 +1,17 @@
+{
+  "html.format.wrapAttributes": "force-expand-multiline",
+  "cSpell.words": [
+    "esbuild",
+    "hitbox",
+    "imagetools",
+    "intlify",
+    "leaderboard",
+    "pinia",
+    "skybox",
+    "tailwindcss",
+    "Unocss",
+    "vueuse",
+    "xstate"
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
