@@ -57,7 +57,7 @@
         <UIcon
           :name="permission.stateInfo.icon"
           :class="permission.stateInfo.color"
-          size="md"
+          size="2rem"
         />
       </UButton>
 
@@ -147,7 +147,7 @@ const permissions = computed<{
     key: 'vibrate',
     icon: 'material-symbols:vibration',
     label: '震動回饋',
-    caption: '控制震動馬達，提供震動回饋',
+    caption: '控制震動馬達，提供震動回饋（iOS 不支援）',
     state: vibrateState.value,
     stateInfo: getStateInfo(vibrateState.value),
     /** 點一下震動 */
