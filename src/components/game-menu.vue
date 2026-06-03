@@ -8,6 +8,7 @@
     />
 
     <div class=" w-1/2 h-full flex flex-col items-center justify-center gap-12 pr-24 pb-10 z-0">
+      <room-qr-code class="menu-item" />
       <room-id-chip class="menu-item" />
 
       <base-btn
@@ -99,6 +100,7 @@ import { debounce, throttle } from 'lodash-es';
 import BaseBtn from './base-btn.vue';
 import BasePolygon from './base-polygon.vue';
 import RoomIdChip from './room-id-chip.vue';
+import RoomQrCode from './room-qr-code.vue';
 import GameMenuBackground from './game-menu-background.vue';
 
 import { useGamepadNavigator } from '../composables/use-gamepad-navigator';
