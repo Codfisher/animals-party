@@ -51,8 +51,10 @@ export function createConfettiFall(scene: Scene) {
   const material = new StandardMaterial('lobby-confetti-material', scene);
   material.backFaceCulling = false;
   material.specularColor = Color3.Black();
-  /** 略帶自發光，讓顏色在背光面仍鮮明 */
-  material.emissiveColor = new Color3(0.15, 0.15, 0.15);
+  /** 關閉光照並以全白自發光打底，讓每片彩帶的顏色（頂點色）均勻呈現，
+   *  不受光源角度影響而出現陰影暗部 */
+  material.disableLighting = true;
+  material.emissiveColor = Color3.White();
   material.transparencyMode = Material.MATERIAL_ALPHABLEND;
   mesh.material = material;
 
