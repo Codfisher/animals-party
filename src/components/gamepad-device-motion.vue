@@ -2,7 +2,6 @@
   <div class="container w-auto">
     <div
       ref="pad"
-      v-ripple
       class="pad rounded-full flex justify-center items-center"
       :style="padStyle"
       @click="resetAngle"
@@ -36,7 +35,8 @@ interface Props {
   maxAngle?: number;
 }
 const props = withDefaults(defineProps<Props>(), {
-  size: '30rem',
+  /** 上限 42vw，避免與其他控制項重疊 */
+  size: 'min(12rem, 42vw)',
   maxAngle: 45,
 });
 

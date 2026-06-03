@@ -7,6 +7,7 @@
 - 每次新增、修改功能後，都要確認對應文件是否有更新，若無則立即更新
 - 請優先使用 Nxt UI 的元件，沒有適合的元件才考慮自行實作
 - 按鈕優先使用 UButton，並以 class／style 覆寫樣式；但需要複雜自訂互動或動畫的按鈕（如 base-btn 的 hover／active／描邊動畫），可維持自行實作
+- 圖示一律使用 UIcon，名稱用 Iconify 冒號格式（非 `i-` 前綴），且優先使用 material-symbols 圖示集，例如 `material-symbols:done`
 - 優先使用 Tailwind CSS
 - 實作必須優先使用現有套件，例如：VueUse、remeda 等等，嚴格禁止重複造輪子
 - 禁止自行開啟 dev server 除非有特別需求

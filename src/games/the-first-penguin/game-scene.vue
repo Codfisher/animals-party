@@ -12,7 +12,7 @@
       <template #content>
         <div class="card gap-14">
           <div class="flex items-center text-3xl text-gray-600">
-            <UIcon name="i-material-symbols-emoji-events" />
+            <UIcon name="material-symbols:emoji-events" />
             遊戲結束
           </div>
           <div class="text-3xl text-sky-700">
@@ -20,7 +20,7 @@
           </div>
 
           <div class="text-xl text-gray-400">
-            按下 <UIcon name="i-material-symbols-done" /> 回到大廳
+            按下 <UIcon name="material-symbols:done" /> 回到大廳
           </div>
         </div>
       </template>

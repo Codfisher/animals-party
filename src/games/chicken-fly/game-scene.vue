@@ -12,7 +12,7 @@
       <template #content>
         <player-leaderboard :id-list="getRankedIdList(playerChickens)">
           <div class="text-xl text-gray-400 p-5 text-center">
-            按下 <UIcon name="i-material-symbols-done" /> 回到大廳
+            按下 <UIcon name="material-symbols:done" /> 回到大廳
           </div>
         </player-leaderboard>
       </template>

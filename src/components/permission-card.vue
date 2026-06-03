@@ -1,48 +1,48 @@
 <template>
   <div class="bg-white rounded-2xl overflow-hidden">
     <div class="relative bg-teal-500 text-white overflow-hidden p-4">
-      <div class=" text-4xl  font-bold">
+      <div class=" text-xl font-bold">
         Web API 授權清單
       </div>
-      <div class="text-2xl flex flex-col gap-2 mt-4">
+      <div class="text-xs flex flex-col gap-1 mt-2">
         <div>
-          當狀態為 <UIcon name="i-material-symbols-info" /> 時，點擊對應項目進行授權
+          當狀態為 <UIcon name="material-symbols:info" class="inline-block align-text-bottom" /> 時，點擊對應項目進行授權
         </div>
         <div>
-          若狀態為 <UIcon name="i-material-symbols-cancel" /> 時，請在瀏覽器設定中允許對應 API 權限
+          若狀態為 <UIcon name="material-symbols:cancel" class="inline-block align-text-bottom" /> 時，請在瀏覽器設定中允許對應 API 權限
         </div>
       </div>
 
       <base-polygon
         opacity="0.1"
-        size="20rem"
-        class=" absolute -top-[13rem] -right-[3rem]"
+        size="10rem"
+        class=" absolute -top-24 -right-8"
         rotate="60deg"
         shape="pentagon"
       />
     </div>
 
-    <div class="relative overflow-hidden p-4 flex flex-col gap-2">
+    <div class="relative overflow-hidden p-3 flex flex-col gap-1">
       <UButton
         v-for="permission in permissions"
         :key="permission.key"
         block
         color="neutral"
         variant="ghost"
-        class="justify-start items-center gap-4 p-3 text-left"
+        class="justify-start items-center gap-3 p-2 text-left"
         @click="permission.onClick"
       >
         <UAvatar
-          size="lg"
+          size="sm"
           class="bg-neutral-400! text-white"
           :icon="permission.icon"
         />
 
         <div class="flex-1">
-          <div class=" text-3xl">
+          <div class=" text-base font-medium">
             {{ permission.label }}
           </div>
-          <div class=" text-2xl">
+          <div class=" text-xs opacity-80">
             {{ permission.caption }}
           </div>
         </div>
@@ -55,8 +55,8 @@
 
       <base-polygon
         opacity="0.1"
-        size="22rem"
-        class=" absolute -bottom-[13rem] -left-[3rem]"
+        size="11rem"
+        class=" absolute -bottom-24 -left-8"
         rotate="60deg"
         color="#AAA"
         shape="round"
@@ -94,22 +94,22 @@ const stateInfoMap: Record<PlayerPermissionState, {
   description: string;
 }> = {
   'granted': {
-    icon: 'i-material-symbols-check-circle',
+    icon: 'material-symbols:check-circle',
     color: 'text-green-500',
     description: '已同意',
   },
   'denied': {
-    icon: 'i-material-symbols-cancel',
+    icon: 'material-symbols:cancel',
     color: 'text-orange-600',
     description: '授權被拒絕',
   },
   'prompt': {
-    icon: 'i-material-symbols-info',
+    icon: 'material-symbols:info',
     color: 'text-cyan-500',
     description: '等待授權',
   },
   'not-support': {
-    icon: 'i-material-symbols-help',
+    icon: 'material-symbols:help',
     color: 'text-neutral-400',
     description: '不支援此 API',
   },
@@ -129,7 +129,7 @@ const permissions = computed<{
 }[]>(() => ([
   {
     key: 'gyroscope',
-    icon: 'i-material-symbols-screen-rotation-alt',
+    icon: 'material-symbols:screen-rotation-alt',
     label: '陀螺儀',
     caption: '可以偵測手機旋轉角度，通常用於體感遊戲',
     state: gyroscopeState.value,
@@ -138,7 +138,7 @@ const permissions = computed<{
   },
   {
     key: 'vibrate',
-    icon: 'i-material-symbols-vibration',
+    icon: 'material-symbols:vibration',
     label: '震動回饋',
     caption: '控制震動馬達，提供震動回饋',
     state: vibrateState.value,

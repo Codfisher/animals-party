@@ -117,7 +117,7 @@ type PeerMessage =
 ### player 端（掃描加入）— 改寫 dialog-join-game.vue
 
 - 主：開相機，用 `qr-scanner`（輕量、走 web worker、自動選後鏡頭）即時掃描；掃到 → 取 id → `player.joinRoom(id)`。
-- 退路：對話框保留輸入框（「或貼上房號」）+ 加入鈕，沿用現有 `joinRoom` 邏輯。
+- 退路：對話框保留輸入框（「或輸入房號」）+ 加入鈕，沿用現有 `joinRoom` 邏輯。
 - 容錯：相機權限被拒 / 無相機 → 隱藏相機畫面、提示改用貼上，不卡死流程。
 - 元件卸載 `scanner.stop()` + `destroy()` 釋放相機。
 - 加入成功 → `onDialogOK()`（Quasar `useDialogPluginComponent` 內建方法，沿用其名）。

@@ -6,15 +6,15 @@
     />
     <gamepad-btn
       class="absolute bottom-10 right-10 opacity-90"
-      size="6rem"
-      icon="i-material-symbols-done"
+      size="2rem"
+      icon="material-symbols:done"
       @trigger="(status) => handleBtnTrigger('confirm', status)"
     />
 
     <gamepad-btn
       class="absolute top-10 right-10 opacity-90"
-      size="4rem"
-      icon="i-material-symbols-api"
+      size="2rem"
+      icon="material-symbols:api"
       @click="openPermissionCard()"
     />
 

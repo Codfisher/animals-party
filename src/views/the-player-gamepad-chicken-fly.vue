@@ -2,8 +2,8 @@
   <player-gamepad-container>
     <gamepad-btn
       class="absolute top-1/2 right-1/2 translate-x-1/2 opacity-90"
-      size="3rem"
-      icon="done"
+      size="1.6rem"
+      icon="material-symbols:done"
       @trigger="(status) => handleBtnTrigger('confirm', status)"
     />
 
