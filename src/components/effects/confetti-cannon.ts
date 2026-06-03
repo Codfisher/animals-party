@@ -16,8 +16,6 @@ const MAX_EMIT_POWER = 15;
 
 /** 單側加農砲單次爆發噴出的粒子數（一次性定量噴發，不受幀率影響） */
 const BURST_COUNT = 80;
-/** 爆發後系統自動停止的時間（秒），時間到標記停止以利收尾 */
-const BURST_DURATION = 0.2;
 
 /** 風與重力（gravity 為常數加速度，x 為固定風向、y 為重力） */
 const WIND_GRAVITY = new Vector3(0, -6, 0);
@@ -94,8 +92,6 @@ function createCannon(
   /** 一次性定量爆發：以 manualEmitCount 精確控制噴發數量，不受幀率影響；
    *  起始設 0 保持靜止，待觸發時再設為 BURST_COUNT */
   system.manualEmitCount = 0;
-  /** 爆發後到時自動標記停止，利於收尾 */
-  system.targetStopDuration = BURST_DURATION;
 
   /** 沿側邊垂直線噴發 */
   system.emitter = new Vector3(side * EDGE_X, 0, 0);
