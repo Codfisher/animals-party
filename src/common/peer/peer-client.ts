@@ -12,6 +12,11 @@ import { toPeerId } from './room-id';
 /** 加入房間的等待超時（毫秒） */
 const JOIN_TIMEOUT = 3000;
 
+interface PeerClientOptions {
+  /** 連線 open／關閉時回報，供外部以 reactive 方式追蹤連線狀態 */
+  onConnectionChange?: (connected: boolean) => void;
+}
+
 /** 玩家端：連到 host peer，收發訊息
  *
  * 取代原本 socket.io-client 的 player 連線。
@@ -21,7 +26,7 @@ export class PeerClient {
   private connection?: DataConnection;
   private bus = mitt<ClientListenEventMap>();
 
-  constructor(private clientId: string) {}
+  constructor(private clientId: string, private options: PeerClientOptions = {}) {}
 
   get connected() {
     return this.connection?.open ?? false;
@@ -39,6 +44,10 @@ export class PeerClient {
       const start = () => {
         const connection = this.peer.connect(toPeerId(roomCode), { reliable: true, metadata });
         this.connection = connection;
+
+        // 連線真正 open／關閉時回報，供外部追蹤
+        connection.on('open', () => this.options.onConnectionChange?.(true));
+        connection.on('close', () => this.options.onConnectionChange?.(false));
 
         const timer = setTimeout(() => {
           if (settled) return;

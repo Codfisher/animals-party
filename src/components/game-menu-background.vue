@@ -19,6 +19,7 @@ import { createAnimation } from '../common/utils';
 import { createPenguinIsland } from './game-menu/the-first-penguin';
 import { createChickenFlyIsland } from './game-menu/chicken-fly';
 import { createFoxAndMouseIsland } from './game-menu/fox-and-mouse';
+import { createDecorations } from './game-menu/decorations';
 
 import { useBabylonScene } from '../composables/use-babylon-scene';
 
@@ -79,6 +80,7 @@ const { canvas, camera } = useBabylonScene({
   },
   async init({ scene, camera }) {
     createSea(scene);
+    createDecorations(scene);
     await createIslands(scene);
 
     /** 發出完成事件，表示畫面初始化完成 */

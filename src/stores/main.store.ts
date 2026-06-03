@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { markRaw, shallowRef } from 'vue';
+import { markRaw, ref, shallowRef } from 'vue';
 import { nanoid } from 'nanoid';
 import { ClientType, Room } from '../types';
 import { PeerHost } from '../common/peer/peer-host';
@@ -16,6 +16,8 @@ export const useMainStore = defineStore('main', () => {
   const host = shallowRef<PeerHost>();
   /** 玩家端連線（player 角色） */
   const client = shallowRef<PeerClient>();
+  /** 玩家端連線是否已 open（reactive，供等待連線就緒後再送資料） */
+  const clientConnected = ref(false);
 
   /** 建立房間，成為 host */
   function createHost(): Promise<Room> {
@@ -31,8 +33,13 @@ export const useMainStore = defineStore('main', () => {
   /** 以玩家身分加入指定 host */
   function joinHost(hostId: string): Promise<Room> {
     client.value?.disconnect();
+    clientConnected.value = false;
 
-    const peerClient = markRaw(new PeerClient(clientId));
+    const peerClient = markRaw(new PeerClient(clientId, {
+      onConnectionChange: (connected) => {
+        clientConnected.value = connected;
+      },
+    }));
     client.value = peerClient;
     type.value = 'player';
 
@@ -44,6 +51,7 @@ export const useMainStore = defineStore('main', () => {
     client.value?.disconnect();
     host.value = undefined;
     client.value = undefined;
+    clientConnected.value = false;
   }
 
   return {
@@ -51,6 +59,7 @@ export const useMainStore = defineStore('main', () => {
     type,
     host,
     client,
+    clientConnected,
 
     createHost,
     joinHost,

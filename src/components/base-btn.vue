@@ -46,7 +46,7 @@ const props = withDefaults(defineProps<Props>(), {
   labelHoverColor: undefined,
   strokeColor: '#888',
   strokeHoverColor: undefined,
-  strokeSize: '2'
+  strokeSize: '3'
 });
 
 const emit = defineEmits<{

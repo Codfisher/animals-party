@@ -90,7 +90,7 @@
 
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import gsap from 'gsap';
 import { GameName, permissionInfoMap, Player, PlayerPermission } from '../types';
 import { RouteName } from '../router/router';

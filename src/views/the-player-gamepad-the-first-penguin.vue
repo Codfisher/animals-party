@@ -10,8 +10,8 @@
       size="2.6rem"
       @trigger="(status) => handleBtnTrigger('a', status)"
     >
-      <div class="text-4xl mb-3">
-        A
+      <div class="flex items-center justify-center size-[1.5em] leading-none">
+        <span class="text-4xl">A</span>
       </div>
     </gamepad-btn>
 

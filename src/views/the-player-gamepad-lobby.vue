@@ -18,7 +18,10 @@
       @click="openPermissionCard()"
     />
 
-    <UModal v-model:open="permissionCardVisible">
+    <UModal
+      v-model:open="permissionCardVisible"
+      class="bg-transparent shadow-none ring-0"
+    >
       <template #content>
         <permission-card @update="handlePermission" />
       </template>
@@ -27,7 +30,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { isEqual } from 'lodash-es';
 import { KeyName, PlayerPermission } from '../types';
 
 import PlayerGamepadContainer from '../components/player-gamepad-container.vue';
@@ -37,8 +41,12 @@ import PermissionCard from '../components/permission-card.vue';
 
 import { useLoading } from '../composables/use-loading';
 import { useClientPlayer } from '../composables/use-client-player';
+import { useMainStore } from '../stores/main.store';
+import { useGameConsoleStore } from '../stores/game-console.store';
 
 const loading = useLoading();
+const mainStore = useMainStore();
+const gameConsoleStore = useGameConsoleStore();
 const {
   emitGamepadData, emitProfile
 } = useClientPlayer();
@@ -55,9 +63,43 @@ function openPermissionCard() {
   permissionCardVisible.value = true;
 }
 
+/** 最新權限狀態。權限卡掛載時即回報，但此時連線可能尚未 open。 */
+const latestPermission = ref<PlayerPermission>();
+
 function handlePermission(permission: PlayerPermission) {
-  emitProfile({ permission });
+  latestPermission.value = permission;
 }
+
+/** 嘗試送出 profile：權限已知，且 host 端尚未有相同權限時才送。
+ *  以 host 廣播的玩家清單作為「是否已送達」依據，避免廣播回流造成無限重送。 */
+function trySendProfile() {
+  const permission = latestPermission.value;
+  if (!permission) return;
+
+  /** host 已記錄我目前的權限，視為已送達，不再重送 */
+  const me = gameConsoleStore.players.find(
+    (player) => player.clientId === mainStore.clientId
+  );
+  if (me?.permission && isEqual(me.permission, permission)) return;
+
+  emitProfile({ permission }).catch(() => undefined);
+}
+
+/** 多重來源驅動送出，確保 profile 可靠送達 host：
+ *  - clientConnected：連線真正 open 時
+ *  - latestPermission：取得或變更權限時
+ *  - players：收到 host 廣播的玩家清單（代表連線確實可用）時
+ *  收到玩家清單即可證明連線通暢，是最可靠的補送時機；
+ *  搭配 trySendProfile 內的去重判斷，host 一旦收到就會停止重送。 */
+watch(
+  () => [
+    mainStore.clientConnected,
+    latestPermission.value,
+    gameConsoleStore.players,
+  ] as const,
+  () => trySendProfile(),
+  { immediate: true },
+);
 
 onMounted(() => {
   loading.hide();

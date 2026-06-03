@@ -10,8 +10,8 @@
       size="2.6rem"
       @trigger="(status) => handleBtnTrigger('a', status)"
     >
-      <div class="text-4xl mb-3">
-        A
+      <div class="flex items-center justify-center size-[1.5em] leading-none">
+        <span class="text-4xl">A</span>
       </div>
     </gamepad-btn>
 
@@ -32,9 +32,6 @@
         class="size-32 rounded-full bg-white shadow-2xl transition-opacity duration-75"
         :class="pulseOn ? 'opacity-95' : 'opacity-10'"
       />
-      <div class="text-base opacity-80">
-        閃爍越久，老鼠越大
-      </div>
     </div>
   </player-gamepad-container>
 </template>

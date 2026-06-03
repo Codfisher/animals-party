@@ -8,11 +8,13 @@
     <UModal
       v-model:open="isGameOver"
       :dismissible="false"
+      class="bg-transparent shadow-none ring-0"
     >
       <template #content>
         <player-leaderboard :id-list="getRankedIdList(playerChickens)">
-          <div class="text-xl text-gray-400 p-5 text-center">
-            按下 <UIcon name="material-symbols:done" /> 回到大廳
+          <div class="text-xl text-gray-400 p-5 flex items-center justify-center gap-1.5">
+            按下
+            <UIcon name="material-symbols:done" /> 回到大廳
           </div>
         </player-leaderboard>
       </template>
