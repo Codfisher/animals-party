@@ -4,7 +4,10 @@
       class=" flex flex-col flex-center text-white pb-6"
       :style="titleStyle"
     >
-      <div class="flex flex-col flex-center jelly-bounce">
+      <div
+        class="flex flex-col flex-center jelly-bounce"
+        :style="enTitleStyle"
+      >
         <div class="text-7xl sm:text-8xl lg:text-9xl font-game">
           ANIMALS
         </div>
@@ -12,6 +15,7 @@
           PARTY
         </div>
       </div>
+
       <div class=" text-3xl sm:text-4xl lg:text-6xl font-black mt-3 flex gap-2 joy-bounce">
         <span class="text-red-400">動</span>
         <span class="text-lime-400">物</span>
@@ -35,8 +39,14 @@ const { width: windowWidth } = useWindowSize();
 /** 小螢幕用較細的描邊 */
 const strokeWidth = computed(() => windowWidth.value <= 600 ? 6 : 10);
 
-const titleStyle = computed(() => ({
+
+const enTitleStyle = computed(() => ({
   // 描邊畫在填色之後，呈現外框效果
+  paintOrder: 'stroke fill',
+  WebkitTextStroke: `${strokeWidth.value * 1.5}px #2e1c00`,
+}));
+
+const titleStyle = computed(() => ({
   paintOrder: 'stroke fill',
   WebkitTextStroke: `${strokeWidth.value}px #2e1c00`,
 }));
