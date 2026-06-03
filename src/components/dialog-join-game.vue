@@ -50,7 +50,7 @@
             v-model="targetRoomId"
             color="secondary"
             size="xl"
-            placeholder="直接掃描或手動輸入房號"
+            placeholder="直接掃描或手動輸入房號 (｢･ω･)｢"
             :ui="{ base: 'rounded-full text-center' }"
             @keyup.enter="handleSubmit"
           />
@@ -183,7 +183,7 @@ async function joinRoom(hostId: string) {
 
   toast.add({
     color: 'success',
-    title: `成功加入 ${room.id} 房間！✧⁑｡٩(ˊᗜˋ*)و✧⁕｡`
+    title: `成功加入派對！✧⁑｡٩(ˊᗜˋ*)و✧⁕｡`
   });
   emit('close', true);
 }
