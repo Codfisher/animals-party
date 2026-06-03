@@ -3,6 +3,7 @@ import {
   ArcRotateCamera,
   Engine, HemisphericLight, Scene, Vector3,
 } from '@babylonjs/core';
+import { useEventListener } from '@vueuse/core';
 import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 
 interface UseBabylonSceneParams {
@@ -57,6 +58,14 @@ export function useBabylonScene(params?: UseBabylonSceneParams) {
     createEngine, createScene, createCamera, init
   } = defaults(params, defaultParams);
 
+  /** 於 setup 同步階段註冊，useEventListener 才能在元件卸載時自動清除 */
+  useEventListener(window, 'resize', handleResize);
+
+  /** 僅開發環境註冊 Inspector 切換，prod build 會整段被 tree-shake */
+  if (import.meta.env.DEV) {
+    useEventListener(window, 'keydown', handleDebugLayerToggle);
+  }
+
   onMounted(async () => {
     if (!canvas.value) {
       console.error('無法取得 canvas DOM');
@@ -65,13 +74,6 @@ export function useBabylonScene(params?: UseBabylonSceneParams) {
     engine.value = createEngine(canvas.value);
     scene.value = createScene(engine.value);
     camera.value = createCamera(scene.value);
-
-    window.addEventListener('resize', handleResize);
-
-    /** 僅開發環境註冊 Inspector 切換，prod build 會整段被 tree-shake */
-    if (import.meta.env.DEV) {
-      window.addEventListener('keydown', handleDebugLayerToggle);
-    }
 
     /** 反覆渲染場景，這樣畫面才會持續變化 */
     engine.value.runRenderLoop(() => {
@@ -88,11 +90,6 @@ export function useBabylonScene(params?: UseBabylonSceneParams) {
 
   onBeforeUnmount(() => {
     engine.value?.dispose();
-    window.removeEventListener('resize', handleResize);
-
-    if (import.meta.env.DEV) {
-      window.removeEventListener('keydown', handleDebugLayerToggle);
-    }
   });
 
   function handleResize() {
