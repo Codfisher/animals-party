@@ -32,6 +32,26 @@ export default defineConfig(() => {
         },
       }),
     ],
+    // 提前預打包重型／延遲載入的依賴，避免 dev server 執行中才發現並觸發重新打包與 reload
+    optimizeDeps: {
+      include: [
+        '@babylonjs/core',
+        '@babylonjs/gui',
+        '@babylonjs/loaders',
+        '@babylonjs/materials',
+        '@babylonjs/serializers',
+        'cannon-es',
+        'gsap',
+        'peerjs',
+        'qrcode',
+        'qr-scanner',
+        'lodash-es',
+        'colord',
+        'mitt',
+        'nanoid',
+        'xstate',
+      ],
+    },
     test: {
       environment: 'happy-dom',
     },
