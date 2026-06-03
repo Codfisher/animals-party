@@ -35,8 +35,6 @@ import {
   PhysicsImpostor,
   Engine,
 } from '@babylonjs/core';
-import '@babylonjs/core/Debug/debugLayer';
-import '@babylonjs/inspector';
 import { Fox } from './fox';
 import { Mouse } from './mouse';
 import { cloneDeep, compact, curry, range, throttle } from 'lodash-es';
@@ -97,17 +95,6 @@ const { canvas } = useBabylonScene({
     const foxes = await createFoxes(scene);
     players.push(...foxes);
     initGamepadEvent(foxes);
-
-    window.addEventListener('keydown', (ev) => {
-      // 按下 Shift+I 可以切換視窗
-      if (ev.shiftKey && ev.keyCode === 73) {
-        if (scene.debugLayer.isVisible()) {
-          scene.debugLayer.hide();
-        } else {
-          scene.debugLayer.show();
-        }
-      }
-    });
 
     scene.registerBeforeRender(() => {
       if (isGameOver.value) return;

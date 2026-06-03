@@ -68,6 +68,11 @@ export function useBabylonScene(params?: UseBabylonSceneParams) {
 
     window.addEventListener('resize', handleResize);
 
+    /** 僅開發環境註冊 Inspector 切換，prod build 會整段被 tree-shake */
+    if (import.meta.env.DEV) {
+      window.addEventListener('keydown', handleDebugLayerToggle);
+    }
+
     /** 反覆渲染場景，這樣畫面才會持續變化 */
     engine.value.runRenderLoop(() => {
       scene.value?.render();
@@ -84,10 +89,33 @@ export function useBabylonScene(params?: UseBabylonSceneParams) {
   onBeforeUnmount(() => {
     engine.value?.dispose();
     window.removeEventListener('resize', handleResize);
+
+    if (import.meta.env.DEV) {
+      window.removeEventListener('keydown', handleDebugLayerToggle);
+    }
   });
 
   function handleResize() {
     engine.value?.resize();
+  }
+
+  /** 按下 Shift+I 切換 Babylon Inspector，依賴僅在開發環境動態載入 */
+  function handleDebugLayerToggle(ev: KeyboardEvent) {
+    if (!ev.shiftKey || ev.code !== 'KeyI') return;
+
+    const currentScene = scene.value;
+    if (!currentScene) return;
+
+    void (async () => {
+      await import('@babylonjs/core/Debug/debugLayer');
+      await import('@babylonjs/inspector');
+
+      if (currentScene.debugLayer.isVisible()) {
+        currentScene.debugLayer.hide();
+      } else {
+        currentScene.debugLayer.show();
+      }
+    })();
   }
 
   return {

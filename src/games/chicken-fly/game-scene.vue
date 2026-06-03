@@ -35,8 +35,6 @@ import {
   StandardMaterial, Tools, Vector3,
 } from '@babylonjs/core';
 import { SkyMaterial } from '@babylonjs/materials';
-import '@babylonjs/core/Debug/debugLayer';
-import '@babylonjs/inspector';
 import { cloneDeep, curry, flow, range } from 'lodash-es';
 import { ref, watch } from 'vue';
 import { getPlayerColorRgb } from '../../common/color';
@@ -148,17 +146,6 @@ const { canvas } = useBabylonScene({
     playerChickens.push(...chickens);
 
     const badChickens = await createBadChickens(scene);
-
-    window.addEventListener('keydown', (ev) => {
-      // 按下 Shift+I 可以切換視窗
-      if (ev.shiftKey && ev.keyCode === 73) {
-        if (scene.debugLayer.isVisible()) {
-          scene.debugLayer.hide();
-        } else {
-          scene.debugLayer.show();
-        }
-      }
-    });
 
     scene.registerBeforeRender(() => {
       detectCollideEvents(chickens, badChickens);
