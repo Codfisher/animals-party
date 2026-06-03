@@ -49,11 +49,12 @@
     </div>
 
     <div class="section justify-center flex-1">
-      <p>
+      <p class=" flex items-center gap-1.5 flex-nowrap">
         練習完成後，按下
         <UIcon
           name="material-symbols:done"
-          class="text-white p-2 bg-[#000]/60 rounded-full"
+          class="text-white bg-black/60 rounded-full"
+          size="2.25rem"
         />
         準備完成
       </p>

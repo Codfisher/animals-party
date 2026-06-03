@@ -1,6 +1,6 @@
 <template>
   <div class="qr-card flex flex-col items-center gap-5">
-    <div class="qr-frame">
+    <div class="qr-frame relative">
       <img
         v-if="dataUrl"
         :src="dataUrl"
@@ -11,29 +11,15 @@
         v-else
         class="qr-image qr-placeholder"
       />
-    </div>
 
-    <div
-      v-if="roomId"
-      class="room-id relative flex items-center gap-5"
-    >
-      <base-polygon
-        size="1rem"
-        shape="pentagon"
-        fill="solid"
-        color="#3676a3"
-        opacity="0.9"
-        class="polygon"
-      />
-      {{ roomId }}
-      <base-polygon
-        size="1rem"
-        shape="pentagon"
-        fill="solid"
-        color="#3676a3"
-        opacity="0.9"
-        class="polygon"
-      />
+      <div
+        v-if="roomId"
+        class="room-id absolute inset-0 flex items-center justify-center"
+      >
+        <div class="room-id-badge">
+          <span class="room-id-text">{{ roomId }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -43,8 +29,6 @@ import QRCode from 'qrcode';
 import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useGameConsoleStore } from '../stores/game-console.store';
-
-import BasePolygon from './base-polygon.vue';
 
 const gameConsoleStore = useGameConsoleStore();
 const { roomId } = storeToRefs(gameConsoleStore);
@@ -58,8 +42,8 @@ watch(roomId, async (id) => {
   }
 
   dataUrl.value = await QRCode.toDataURL(id, {
-    // 房號僅 6 碼，用最低錯誤更正等級即可，模組更少、圖樣更簡潔
-    errorCorrectionLevel: 'L',
+    // 房號疊在 QR 中央會遮住模組，需最高容錯等級維持可掃描
+    errorCorrectionLevel: 'H',
     margin: 2,
     width: 320,
     color: {
@@ -89,20 +73,19 @@ watch(roomId, async (id) => {
   background: rgba(#2a3832, 0.06)
 
 .room-id
+  pointer-events: none
+
+.room-id-badge
+  padding: 0.55rem 1rem
+  border-radius: 1rem
+  background: white
+  box-shadow: 0 4px 14px rgba(#1d3e57, 0.18)
+
+.room-id-text
   color: #2a3832
-  font-size: 1.8rem
+  font-size: 1.7rem
   font-weight: 700
   font-family: 'Chakra Petch', sans-serif
   letter-spacing: 3px
-
-.polygon
-  animation: polygon 3s infinite linear
-  margin-top: -4px
-
-@keyframes polygon
-  0%
-    transform: rotate(0deg)
-    transform-origin: 50% 60%
-  100%
-    transform: rotate(360deg)
+  line-height: 1
 </style>

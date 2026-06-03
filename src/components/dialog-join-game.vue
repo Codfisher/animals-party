@@ -1,5 +1,8 @@
 <template>
-  <UModal @update:open="(value: boolean) => !value && emit('close', false)">
+  <UModal
+    class="bg-transparent shadow-none ring-0"
+    @update:open="(value: boolean) => !value && emit('close', false)"
+  >
     <template #content>
       <div class="card flex flex-col p-8 gap-8 md:p-20 md:gap-16 overflow-hidden">
         <base-polygon

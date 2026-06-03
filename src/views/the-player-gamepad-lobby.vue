@@ -18,7 +18,10 @@
       @click="openPermissionCard()"
     />
 
-    <UModal v-model:open="permissionCardVisible">
+    <UModal
+      v-model:open="permissionCardVisible"
+      class="bg-transparent shadow-none ring-0"
+    >
       <template #content>
         <permission-card @update="handlePermission" />
       </template>

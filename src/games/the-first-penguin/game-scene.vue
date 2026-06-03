@@ -8,6 +8,7 @@
     <UModal
       :open="isGameOver && props.mode === 'normal'"
       :dismissible="false"
+      class="bg-transparent shadow-none ring-0"
     >
       <template #content>
         <div class="card gap-14">
@@ -19,8 +20,9 @@
             玩家 {{ winnerCodeName }} 獲勝！
           </div>
 
-          <div class="text-xl text-gray-400">
-            按下 <UIcon name="material-symbols:done" /> 回到大廳
+          <div class="text-xl text-gray-400 p-5 flex items-center justify-center gap-1.5">
+            按下
+            <UIcon name="material-symbols:done" /> 回到大廳
           </div>
         </div>
       </template>
