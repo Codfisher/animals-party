@@ -20,7 +20,7 @@
           class="balloon"
         >
           <UIcon
-            class="text-[4rem] text-neutral-800"
+            class="relative text-[4rem] text-neutral-800 z-10"
             :name="getIconName(messageInfo.text)"
           />
         </div>
@@ -147,6 +147,7 @@ defineExpose({
     position: absolute
     left: 30%
     bottom: 0
+    z-index: 0
     transform: translateX(-30%) rotate(30deg)
     background: white
     box-shadow: 5px 5px 10px rgba(#000, 0.01)

@@ -2,12 +2,19 @@
   <UApp>
     <router-view />
     <loading-overlay />
+    <effects-overlay />
+
+    <div class="absolute bottom-2 right-2 text-xs text-white opacity-20">
+      v{{ version }}
+    </div>
   </UApp>
 </template>
 
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
 import LoadingOverlay from './components/loading-overlay.vue';
+import EffectsOverlay from './components/effects-overlay.vue';
+import { version } from './../package.json';
 
 useHead({
   title: `Animals Party`,

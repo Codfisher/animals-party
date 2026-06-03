@@ -126,7 +126,7 @@ defineExpose<ControllableElement>({
 <style scoped lang="sass">
 .btn
   backdrop-filter: blur(6px)
-  background: rgba(white, 0.2)
+  background: rgba(white, 0.3)
   box-shadow: 2.8px 2.8px 2.2px rgba(0, 0, 0, 0.006), 6.7px 6.7px 5.3px rgba(0, 0, 0, 0.008), 12.5px 12.5px 10px rgba(0, 0, 0, 0.01), 22.3px 22.3px 17.9px rgba(0, 0, 0, 0.012), 41.8px 41.8px 33.4px rgba(0, 0, 0, 0.014), 100px 100px 80px rgba(0, 0, 0, 0.02)
   user-select: none
   overflow: hidden

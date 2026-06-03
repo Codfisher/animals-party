@@ -50,7 +50,7 @@
             v-model="targetRoomId"
             color="secondary"
             size="xl"
-            placeholder="手動輸入房號"
+            placeholder="直接掃描或手動輸入房號 (｢･ω･)｢"
             :ui="{ base: 'rounded-full text-center' }"
             @keyup.enter="handleSubmit"
           />
@@ -139,7 +139,7 @@ function handleSubmit() {
   if (!hostId) {
     toast.add({
       color: 'error',
-      title: '請輸入房號'
+      title: '請輸入房號 ლ(╹ε╹ლ)'
     });
     return;
   }
@@ -157,7 +157,7 @@ async function joinRoom(hostId: string) {
   /** 產生 loading toast，duration 0 表示不自動關閉 */
   const loadingToast = toast.add({
     color: 'info',
-    title: '加入房間中',
+    title: '加入房間中 =͟͟͞͞( •̀д•́)',
     duration: 0,
   });
 
@@ -170,7 +170,7 @@ async function joinRoom(hostId: string) {
     joining = false;
     toast.add({
       color: 'error',
-      title: `加入房間失敗 : ${err?.message ?? err}`
+      title: `加入房間失敗 (╥ω╥\`): ${err?.message ?? err}`
     });
     console.error(`加入房間失敗 : `, err);
 
@@ -183,7 +183,7 @@ async function joinRoom(hostId: string) {
 
   toast.add({
     color: 'success',
-    title: `加入 ${room.id} 房間成功`
+    title: `成功加入派對！✧⁑｡٩(ˊᗜˋ*)و✧⁕｡`
   });
   emit('close', true);
 }

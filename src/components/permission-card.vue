@@ -6,10 +6,18 @@
       </div>
       <div class="text-xs flex flex-col gap-1 mt-2">
         <div>
-          當狀態為 <UIcon name="material-symbols:info" class="inline-block align-text-bottom" /> 時，點擊對應項目進行授權
+          當狀態為
+          <UIcon
+            name="material-symbols:info"
+            class="inline-block align-text-bottom"
+          /> 時，點擊對應項目進行授權
         </div>
         <div>
-          若狀態為 <UIcon name="material-symbols:cancel" class="inline-block align-text-bottom" /> 時，請在瀏覽器設定中允許對應 API 權限
+          若狀態為
+          <UIcon
+            name="material-symbols:cancel"
+            class="inline-block align-text-bottom"
+          /> 時，請在瀏覽器設定中允許對應 API 權限
         </div>
       </div>
 
@@ -33,8 +41,7 @@
         @click="permission.onClick"
       >
         <UAvatar
-          size="xs"
-          class="bg-neutral-400! text-white"
+          size="3xl"
           :icon="permission.icon"
         />
 
@@ -50,6 +57,7 @@
         <UIcon
           :name="permission.stateInfo.icon"
           :class="permission.stateInfo.color"
+          size="2rem"
         />
       </UButton>
 
@@ -139,7 +147,7 @@ const permissions = computed<{
     key: 'vibrate',
     icon: 'material-symbols:vibration',
     label: '震動回饋',
-    caption: '控制震動馬達，提供震動回饋',
+    caption: '控制震動馬達，提供震動回饋（iOS 不支援）',
     state: vibrateState.value,
     stateInfo: getStateInfo(vibrateState.value),
     /** 點一下震動 */

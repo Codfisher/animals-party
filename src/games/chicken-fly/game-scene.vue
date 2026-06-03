@@ -50,6 +50,7 @@ import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 
 import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { useBabylonScene } from '../../composables/use-babylon-scene';
+import { useEffects } from '../../composables/use-effects';
 import { useInterval, whenever } from '@vueuse/core';
 
 interface Props {
@@ -88,6 +89,13 @@ watch(() => props.mode, (mode) => {
 const gameConsole = useClientGameConsole();
 
 const isGameOver = ref(false);
+
+const effects = useEffects();
+/** 遊戲結束時兩側噴發慶祝彩帶 */
+watch(isGameOver, (value) => {
+  if (value) effects.fireConfetti();
+});
+
 /** 遊戲場景邊界 */
 const sceneBoundary = {
   x: 5,

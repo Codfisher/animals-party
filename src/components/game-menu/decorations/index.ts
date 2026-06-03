@@ -8,6 +8,8 @@ import { createFloatingProp, createFloatingPropMaterial } from './floating-prop'
 import { createKite } from './kite';
 import { createBoat } from './boat';
 import { createBubbleEmitter, createBubbleMaterial } from './bubble';
+import { createSparkles } from './sparkles';
+import { createConfettiFall } from './confetti-fall';
 
 export interface Decorations {
   /** 所有裝飾的根節點 */
@@ -17,7 +19,7 @@ export interface Decorations {
 /** 雲朵在 X 軸的漂移範圍（±limit），超出後折返另一側 */
 const CLOUD_DRIFT_LIMIT = 68;
 
-/** 在大廳場景中加入雲朵、漂浮物、飛鳥與氣泡等氛圍裝飾 */
+/** 在大廳場景中加入雲朵、漂浮物、風箏、小船、氣泡與漂浮光點等氛圍裝飾 */
 export function createDecorations(scene: Scene): Decorations {
   const rootNode = new TransformNode('decorations');
 
@@ -26,6 +28,8 @@ export function createDecorations(scene: Scene): Decorations {
   createKites();
   createBoats();
   createBubbles();
+  createSparkles(scene);
+  createConfettiFall(scene);
 
   /** 高空緩慢漂移的雲朵 */
   function createClouds() {

@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { isEqual } from 'lodash-es';
 import { KeyName, PlayerPermission } from '../../types';
 
@@ -41,6 +41,7 @@ import PermissionCard from '../../components/permission-card.vue';
 
 import { useLoading } from '../../composables/use-loading';
 import { useClientPlayer } from '../../composables/use-client-player';
+import { useMotionPermission } from '../../composables/use-motion-permission';
 import { useMainStore } from '../../stores/main.store';
 import { useGameConsoleStore } from '../../stores/game-console.store';
 
@@ -58,10 +59,17 @@ function handleBtnTrigger(keyName: `${KeyName}`, status: boolean) {
   }]);
 }
 
-const permissionCardVisible = ref(true);
+const permissionCardVisible = ref(false);
 function openPermissionCard() {
   permissionCardVisible.value = true;
 }
+
+/** 是否缺少權限：體感支援但尚未授權（prompt）或被拒（denied）。
+ *  granted／not-support 不算缺少；震動權限無需顯式授權，故不納入判斷。 */
+const motionPermission = useMotionPermission();
+const permissionMissing = computed(
+  () => ['prompt', 'denied'].includes(motionPermission.state.value),
+);
 
 /** 最新權限狀態。權限卡掛載時即回報，但此時連線可能尚未 open。 */
 const latestPermission = ref<PlayerPermission>();
@@ -103,5 +111,10 @@ watch(
 
 onMounted(() => {
   loading.hide();
+
+  /** 僅在缺少權限時自動開啟授權清單，避免每次進頁面都跳出 */
+  if (permissionMissing.value) {
+    openPermissionCard();
+  }
 });
 </script>

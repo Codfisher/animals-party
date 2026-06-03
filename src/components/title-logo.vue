@@ -37,7 +37,7 @@ import { computed } from 'vue';
 const { width: windowWidth } = useWindowSize();
 
 /** 小螢幕用較細的描邊 */
-const strokeWidth = computed(() => windowWidth.value <= 600 ? 6 : 10);
+const strokeWidth = computed(() => windowWidth.value <= 600 ? 10 : 14);
 
 
 const enTitleStyle = computed(() => ({

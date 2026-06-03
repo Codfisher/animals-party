@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import * as CANNON from 'cannon-es';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import {
   MeshBuilder,
   Scene, BackgroundMaterial,
@@ -48,6 +48,7 @@ import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 import { useBabylonScene } from '../../composables/use-babylon-scene';
 import { promiseTimeout } from '@vueuse/core';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
+import { useEffects } from '../../composables/use-effects';
 
 interface Props {
   mode?: `${GameSceneMode}`;
@@ -65,6 +66,12 @@ const emit = defineEmits<{
 const gameConsole = useClientGameConsole();
 
 const isGameOver = ref(false);
+
+const effects = useEffects();
+/** 遊戲結束時兩側噴發慶祝彩帶 */
+watch(isGameOver, (value) => {
+  if (value) effects.fireConfetti();
+});
 /** 遊戲場景邊界 */
 const sceneBoundary = {
   x: 16,
