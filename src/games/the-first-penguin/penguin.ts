@@ -36,6 +36,8 @@ export class Penguin {
   };
 
   state: State = 'walk';
+  /** 落水時間，0 表示存活。用於結算排名 */
+  diedAt = 0;
   private animation: AnimationMap = {
     idle: undefined,
     walk: undefined,

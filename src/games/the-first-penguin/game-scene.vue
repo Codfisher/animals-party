@@ -11,20 +11,12 @@
       class="bg-transparent shadow-none ring-0"
     >
       <template #content>
-        <div class="card gap-14">
-          <div class="flex items-center text-3xl text-gray-600">
-            <UIcon name="material-symbols:emoji-events" />
-            遊戲結束
-          </div>
-          <div class="text-3xl text-sky-700">
-            玩家 {{ winnerCodeName }} 獲勝！
-          </div>
-
+        <player-leaderboard :id-list="getRankedIdList(penguins)">
           <div class="text-xl text-gray-400 p-5 flex items-center justify-center gap-1.5">
             按下
             <UIcon name="material-symbols:done" /> 回到大廳
           </div>
-        </div>
+        </player-leaderboard>
       </template>
     </UModal>
   </div>
@@ -42,6 +34,8 @@ import { curry } from 'lodash-es';
 import { GamepadData, GameSceneMode, KeyName, SignalData } from '../../types';
 import { createAnimation, getSquareMatrixPositions } from '../../common/utils';
 import { getPlayerColorRgb } from '../../common/color';
+
+import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 
 import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { useRouter } from 'vue-router';
@@ -212,22 +206,35 @@ function handleCollideEvent(aPenguin: Penguin, bPenguin: Penguin) {
  */
 function detectOutOfBounds(penguins: Penguin[]) {
   penguins.forEach((penguin) => {
-    if (!penguin.mesh) return;
+    if (!penguin.mesh || penguin.diedAt > 0) return;
 
     if (penguin.mesh.position.y < -3) {
+      /** 紀錄落水時間以供結算排名 */
+      penguin.diedAt = new Date().getTime();
       penguin.mesh.dispose();
     }
   });
 }
 
 const isGameOver = ref(false);
-const winnerCodeName = ref('');
 
 const effects = useEffects();
 /** 遊戲結束時兩側噴發慶祝彩帶 */
 watch(isGameOver, (value) => {
   if (value) effects.fireConfetti();
 });
+
+/** 依落水時間排名，存活者（diedAt 為 0）為第一名，其餘越晚落水排名越前 */
+function getRankedIdList(penguins: Penguin[]) {
+  return [...penguins]
+    .sort((a, b) => {
+      if (a.diedAt === 0) return -1;
+      if (b.diedAt === 0) return 1;
+
+      return b.diedAt - a.diedAt;
+    })
+    .map(({ params }) => params.ownerId);
+}
 
 /** 偵測是否有贏家 */
 function detectWinner(penguins: Penguin[], engine: Engine) {
@@ -236,13 +243,11 @@ function detectWinner(penguins: Penguin[], engine: Engine) {
   if (alivePenguins.length > 1) return;
 
   engine.stopRenderLoop();
-  const winnerId = alivePenguins[0].params.ownerId;
 
   if (!isGameOver.value) {
     emit('game-over');
   }
 
-  winnerCodeName.value = gameConsole.getPlayerCodeName(winnerId);
   isGameOver.value = true;
 }
 
@@ -304,15 +309,3 @@ async function backToLobby() {
   emit('back-to-lobby');
 }
 </script>
-
-<style scoped lang="sass">
-.card
-  width: 30rem
-  height: 24rem
-  background: white
-  border-radius: 2rem
-  display: flex
-  flex-direction: column
-  justify-content: center
-  align-items: center
-</style>
