@@ -42,8 +42,3 @@ declare module "*&metadata" {
   const out: OutputMetadata | OutputMetadata[];
   export default out;
 }
-
-declare interface ImportMetaEnv {
-  /** 版本號 */
-  readonly PACKAGE_VERSION: string;
-}

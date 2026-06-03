@@ -3,7 +3,6 @@ import { defineConfig } from 'vite';
 import VueRouter from 'unplugin-vue-router/vite';
 import vue from '@vitejs/plugin-vue';
 import ui from '@nuxt/ui/vite';
-import { loadVersion } from '@sws2apps/vite-plugin-package-version';
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
@@ -32,8 +31,6 @@ export default defineConfig(() => {
           },
         },
       }),
-
-      loadVersion(),
     ],
     test: {
       environment: 'happy-dom',
