@@ -10,7 +10,7 @@ import { useHead } from '@unhead/vue';
 import LoadingOverlay from './components/loading-overlay.vue';
 
 useHead({
-  title: `Animals Party v${import.meta.env.PACKAGE_VERSION}`,
+  title: `Animals Party`,
 });
 </script>
 
