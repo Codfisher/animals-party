@@ -14,7 +14,9 @@ const EDGE_HALF_HEIGHT = 16;
 const MIN_EMIT_POWER = 1;
 const MAX_EMIT_POWER = 15;
 
-/** 單次爆發的噴發持續時間（秒），時間到自動停止發射 */
+/** 單側加農砲單次爆發噴出的粒子數（一次性定量噴發，不受幀率影響） */
+const BURST_COUNT = 80;
+/** 爆發後系統自動停止的時間（秒），時間到標記停止以利收尾 */
 const BURST_DURATION = 0.2;
 
 /** 風與重力（gravity 為常數加速度，x 為固定風向、y 為重力） */
@@ -89,8 +91,10 @@ function createCannon(
 
   system.minLifeTime = 4;
   system.maxLifeTime = 6;
-  system.emitRate = 90;
-  /** 一次性爆發：噴發短暫時間後自動停止 */
+  /** 一次性定量爆發：以 manualEmitCount 精確控制噴發數量，不受幀率影響；
+   *  起始設 0 保持靜止，待觸發時再設為 BURST_COUNT */
+  system.manualEmitCount = 0;
+  /** 爆發後到時自動標記停止，利於收尾 */
   system.targetStopDuration = BURST_DURATION;
 
   /** 沿側邊垂直線噴發 */
@@ -132,9 +136,12 @@ export function createConfettiCannons(scene: Scene) {
   ];
 
   return {
-    /** 開始持續噴射 */
+    /** 觸發一次定量爆發 */
     start() {
-      systemList.forEach((system) => system.start());
+      systemList.forEach((system) => {
+        system.manualEmitCount = BURST_COUNT;
+        system.start();
+      });
     },
     /** 停止噴射（既有粒子仍會播完生命週期） */
     stop() {
