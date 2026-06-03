@@ -1,18 +1,16 @@
 <template>
-  <router-view />
-  <loading-overlay />
+  <UApp>
+    <router-view />
+    <loading-overlay />
+  </UApp>
 </template>
 
 <script setup lang="ts">
+import { useHead } from '@unhead/vue';
 import LoadingOverlay from './components/loading-overlay.vue';
-import GameMenu from './components/game-menu.vue';
-import { useMeta } from 'quasar';
 
-useMeta({
-  title: 'Animals Party',
-  titleTemplate(title) {
-    return `${title} v${import.meta.env.PACKAGE_VERSION}`;
-  },
+useHead({
+  title: `Animals Party v${import.meta.env.PACKAGE_VERSION}`,
 });
 </script>
 
@@ -30,12 +28,4 @@ html, body, #app
 #app
   display: flex
   flex-direction: column
-
-html
-  font-size: 1.71vmin
-
-  @media screen and (orientation: portrait) and (max-width: 360px)
-    font-size: 6px
-  @media screen and (orientation: portrait) and (min-width: 1200px)
-    font-size: 30px
 </style>

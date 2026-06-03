@@ -3,7 +3,7 @@
     class="flex flex-center overflow-hidden"
     :style="backgroundStyle"
   >
-    <div class="flex gap-20">
+    <div class="flex gap-8 md:gap-20">
       <div
         v-for="(poly, i) in polygons"
         :key="i"
@@ -11,7 +11,7 @@
         :style="`animation-delay: ${i * 0.1}s`"
       >
         <base-polygon
-          size="9rem"
+          :size="polygonSize"
           :shape="poly.shape"
           fill="solid"
           :color="poly.color"
@@ -25,9 +25,13 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { colors } from 'quasar';
+import { colord } from 'colord';
+import { useWindowSize } from '@vueuse/core';
 import BasePolygon, { ShapeType } from './base-polygon.vue';
-const { lighten, textToRgb, rgbToHsv, hsvToRgb, rgbToHex } = colors;
+
+const { width: windowWidth } = useWindowSize();
+/** 手機版（sm 斷點以下）縮小圖形，避免超出畫面 */
+const polygonSize = computed(() => windowWidth.value <= 600 ? '5rem' : '9rem');
 
 interface Props {
   /** 背景顏色 */
@@ -43,15 +47,10 @@ const props = withDefaults(defineProps<Props>(), {
 
 const backgroundStyle = computed(() => {
   // 變亮
-  const lightenColor = lighten(props.backgroundColor, 20);
+  const lightenColor = colord(props.backgroundColor).lighten(0.2).toHex();
 
   // 變暗並偏移色相
-  const darkColor = lighten(props.backgroundColor, -14);
-
-  const hsvColor = rgbToHsv(textToRgb(darkColor));
-  hsvColor.h -= 15;
-
-  const offsetColor = rgbToHex(hsvToRgb(hsvColor));
+  const offsetColor = colord(props.backgroundColor).darken(0.14).rotate(-15).toHex();
 
   return {
     background: `linear-gradient(-30deg, ${offsetColor}, ${props.backgroundColor}, ${lightenColor}, ${props.backgroundColor}, ${offsetColor})`

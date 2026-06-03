@@ -1,6 +1,6 @@
 <template>
-  <q-card class="flex flex-col rounded-[2rem] shadow-sm overflow-hidden text-sky-900">
-    <q-card-section class=" relative text-white text-4xl text-center bg-sky-600 p-7 !rounded-none">
+  <div class="flex flex-col rounded-[2rem] shadow-sm overflow-hidden text-sky-900 bg-white">
+    <div class=" relative text-white text-4xl text-center bg-sky-600 p-7">
       遊戲說明
 
       <base-polygon
@@ -15,42 +15,41 @@
         shape="pentagon"
         rotate="30deg"
       />
-    </q-card-section>
+    </div>
 
-    <q-card-section class=" text-xl p-10 text-center">
+    <div class=" text-xl p-10 text-center">
       躲避黑色壞壞雞，碰撞 3 次會墜雞喔！
-    </q-card-section>
+    </div>
 
-    <q-card-section class="section">
+    <div class="section">
       <div class="pad ">
         <div class="thumb thumb-action" />
       </div>
       <p class=" text-center flex-1">
         旋轉手機即可控制小雞姿態<br>（建議關閉手機自動旋轉）
       </p>
-    </q-card-section>
+    </div>
 
-    <q-card-section class="section">
+    <div class="section">
       <div class="pad click-pad">
         <div class="thumb" />
       </div>
       <p class=" text-center flex-1">
         按下圓圈即可將姿態歸零
       </p>
-    </q-card-section>
+    </div>
 
-    <q-card-section class="section justify-center flex-1">
+    <div class="section justify-center flex-1">
       <p>
         練習完成後，按下
-        <q-icon
-          name="done"
-          color="white"
-          class="p-2 bg-[#000]/60 rounded-full"
+        <UIcon
+          name="i-material-symbols-done"
+          class="text-white p-2 bg-[#000]/60 rounded-full"
         />
         準備完成
       </p>
-    </q-card-section>
-  </q-card>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -59,10 +58,19 @@ import BasePolygon from '../../components/base-polygon.vue';
 
 <style scoped lang="sass">
 .section
-  @apply text-xl p-6 px-10 flex items-center flex-nowrap gap-6
+  font-size: 1.25rem
+  line-height: 1.75rem
+  padding: 1.5rem 2.5rem
+  display: flex
+  align-items: center
+  flex-wrap: nowrap
+  gap: 1.5rem
 
 .pad
-  @apply rounded-full flex justify-center items-center
+  display: flex
+  justify-content: center
+  align-items: center
+  border-radius: 9999px
   width: 10rem
   height: 10rem
   background: rgba(#111, 0.6)

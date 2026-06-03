@@ -17,20 +17,19 @@ import PlayerList from '../components/player-list.vue';
 
 import { useLoading } from '../composables/use-loading';
 import { useClientGameConsole } from '../composables/use-client-game-console';
-import { useQuasar } from 'quasar';
 import { KeyName } from '../types';
 
 const loading = useLoading();
-const $q = useQuasar();
+const toast = useToast();
 const gameConsole = useClientGameConsole();
 
 function handleCompleted() {
   init();
 }
 function handleError(message: string) {
-  $q.notify({
-    type: 'negative',
-    message
+  toast.add({
+    color: 'error',
+    title: message,
   });
 }
 

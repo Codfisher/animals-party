@@ -1,10 +1,7 @@
 <template>
-  <q-dialog
-    ref="dialogRef"
-    class="rounded-5xl"
-    @hide="onDialogHide"
-  >
-    <div class="card flex flex-col p-20 gap-16 overflow-hidden">
+  <UModal @update:open="(value: boolean) => !value && emit('close', false)">
+    <template #content>
+      <div class="card flex flex-col p-8 gap-8 md:p-20 md:gap-16 overflow-hidden">
       <base-polygon
         class=" absolute -left-32 -top-40 -z-10"
         size="20rem"
@@ -20,7 +17,7 @@
         opacity="0.5"
       />
 
-      <div class="text-5xl font-bold text-center text-[#2a3832]">
+      <div class="text-3xl md:text-5xl font-bold text-center text-[#2a3832]">
         掃描派對 QR Code
       </div>
 
@@ -38,9 +35,9 @@
           v-if="!cameraAvailable"
           class="absolute inset-0 flex flex-col flex-center gap-4 text-center text-white p-8"
         >
-          <q-icon
-            name="no_photography"
-            size="4rem"
+          <UIcon
+            name="i-material-symbols-no-photography"
+            class="text-[4rem]"
           />
           <div class="text-xl">
             無法使用相機，請改用下方貼上房號
@@ -53,42 +50,40 @@
         <div class="text-center text-2xl text-[#2a3832]/70">
           或貼上房號
         </div>
-        <q-input
+        <UInput
           v-model="targetRoomId"
           color="secondary"
-          outlined
-          rounded
+          size="xl"
           placeholder="貼上房號"
-          input-class="text-center"
+          :ui="{ base: 'rounded-full text-center' }"
           @keyup.enter="handleSubmit"
         />
-        <q-btn
-          unelevated
-          rounded
+        <UButton
+          block
           color="secondary"
-          class="p-7 overflow-hidden"
-          label="加入"
+          size="xl"
+          class="relative p-4 md:p-7 rounded-full overflow-hidden justify-center"
           @click="handleSubmit"
         >
+          加入
           <base-polygon
             class=" absolute -left-10 -top-16"
             size="8rem"
             opacity="0.7"
             rotate="45deg"
           />
-          <q-icon
-            class=" absolute -right-[1.4rem] -bottom-[2.6rem] -rotate-[90deg] opacity-80"
-            size="7.5rem"
-            name="celebration"
+          <UIcon
+            class=" absolute -right-[1.4rem] -bottom-[2.6rem] -rotate-90 opacity-80 text-[4rem] md:text-[7.5rem]"
+            name="i-material-symbols-celebration"
           />
-        </q-btn>
+        </UButton>
       </div>
-    </div>
-  </q-dialog>
+      </div>
+    </template>
+  </UModal>
 </template>
 
 <script setup lang="ts">
-import { useDialogPluginComponent, useQuasar } from 'quasar';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import to from 'await-to-js';
 import QrScanner from 'qr-scanner';
@@ -97,15 +92,11 @@ import BasePolygon from './base-polygon.vue';
 
 import { useClientPlayer } from '../composables/use-client-player';
 
-const {
-  dialogRef, onDialogHide, onDialogOK, onDialogCancel
-} = useDialogPluginComponent<string>()
+const emit = defineEmits<{
+  close: [joined: boolean];
+}>();
 
-const emit = defineEmits({
-  ...useDialogPluginComponent.emitsObject
-});
-
-const $q = useQuasar();
+const toast = useToast();
 const player = useClientPlayer();
 
 const targetRoomId = ref('');
@@ -146,9 +137,9 @@ function handleScan(hostId: string) {
 function handleSubmit() {
   const hostId = targetRoomId.value.trim();
   if (!hostId) {
-    $q.notify({
-      type: 'negative',
-      message: '請貼上房號'
+    toast.add({
+      color: 'error',
+      title: '請貼上房號'
     });
     return;
   }
@@ -163,22 +154,23 @@ async function joinRoom(hostId: string) {
   // 停止掃描，避免持續觸發
   scanner?.stop();
 
-  /** 產生 loading notify */
-  const notifyRef = $q.notify({
-    type: 'ongoing',
-    message: '加入房間中'
+  /** 產生 loading toast，duration 0 表示不自動關閉 */
+  const loadingToast = toast.add({
+    color: 'info',
+    title: '加入房間中',
+    duration: 0,
   });
 
   const [err, room] = await to(player.joinRoom(hostId));
 
-  /** 關閉 notify */
-  notifyRef();
+  /** 關閉 loading toast */
+  toast.remove(loadingToast.id);
 
   if (err) {
     joining = false;
-    $q.notify({
-      type: 'negative',
-      message: `加入房間失敗 : ${err?.message ?? err}`
+    toast.add({
+      color: 'error',
+      title: `加入房間失敗 : ${err?.message ?? err}`
     });
     console.error(`加入房間失敗 : `, err);
 
@@ -189,11 +181,11 @@ async function joinRoom(hostId: string) {
     return;
   }
 
-  $q.notify({
-    type: 'positive',
-    message: `加入 ${room.id} 房間成功`
+  toast.add({
+    color: 'success',
+    title: `加入 ${room.id} 房間成功`
   });
-  onDialogOK();
+  emit('close', true);
 }
 </script>
 

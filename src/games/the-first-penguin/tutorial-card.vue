@@ -1,6 +1,6 @@
 <template>
-  <q-card class="flex flex-col rounded-[2rem] shadow-sm overflow-hidden text-sky-900">
-    <q-card-section class=" relative text-white text-4xl text-center bg-sky-600 p-7 !rounded-none">
+  <div class="flex flex-col rounded-[2rem] shadow-sm overflow-hidden text-sky-900 bg-white">
+    <div class=" relative text-white text-4xl text-center bg-sky-600 p-7">
       遊戲說明
 
       <base-polygon
@@ -15,13 +15,13 @@
         shape="pentagon"
         rotate="30deg"
       />
-    </q-card-section>
+    </div>
 
-    <q-card-section class=" text-xl p-10 text-center">
+    <div class=" text-xl p-10 text-center">
       誰都不想第一個下水，努力把別人撞下海中吧！
-    </q-card-section>
+    </div>
 
-    <q-card-section class="section">
+    <div class="section">
       <div class=" w-1/3 flex flex-center">
         <div class="pad ">
           <div class="thumb thumb-action" />
@@ -31,9 +31,9 @@
       <p class=" text-center flex-1">
         移動類比搖桿控制企鵝移動
       </p>
-    </q-card-section>
+    </div>
 
-    <q-card-section class="section">
+    <div class="section">
       <div class=" w-1/3 flex flex-center">
         <div class="button click">
           <div class=" text-white text-5xl">
@@ -46,20 +46,19 @@
       <p class=" text-center flex-1">
         按下 A 發動旋轉攻擊，可以全方位擊退其他企鵝
       </p>
-    </q-card-section>
+    </div>
 
-    <q-card-section class="section justify-center flex-1">
+    <div class="section justify-center flex-1">
       <p>
         練習完成後，按下
-        <q-icon
-          name="done"
-          color="white"
-          class="p-2 bg-[#000]/60 rounded-full"
+        <UIcon
+          name="i-material-symbols-done"
+          class="text-white p-2 bg-[#000]/60 rounded-full"
         />
         準備完成
       </p>
-    </q-card-section>
-  </q-card>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -68,10 +67,19 @@ import BasePolygon from '../../components/base-polygon.vue';
 
 <style scoped lang="sass">
 .section
-  @apply text-xl p-6 px-10 flex items-center flex-nowrap gap-6
+  font-size: 1.25rem
+  line-height: 1.75rem
+  padding: 1.5rem 2.5rem
+  display: flex
+  align-items: center
+  flex-wrap: nowrap
+  gap: 1.5rem
 
 .pad, .button
-  @apply rounded-full flex justify-center items-center
+  display: flex
+  justify-content: center
+  align-items: center
+  border-radius: 9999px
   background: rgba(#111, 0.6)
 
 .pad

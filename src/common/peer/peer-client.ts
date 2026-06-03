@@ -7,6 +7,7 @@ import {
   PeerMessage,
   Room,
 } from '../../types';
+import { toPeerId } from './room-id';
 
 /** 加入房間的等待超時（毫秒） */
 const JOIN_TIMEOUT = 3000;
@@ -26,14 +27,17 @@ export class PeerClient {
     return this.connection?.open ?? false;
   }
 
-  /** 連到指定 host，等收到 room:joined ack 才視為加入成功 */
-  join(hostId: string): Promise<Room> {
+  /** 連到指定 host，等收到 room:joined ack 才視為加入成功
+   *
+   * @param roomCode 使用者輸入的 6 碼數字房號，連線時會補上固定前綴
+   */
+  join(roomCode: string): Promise<Room> {
     return new Promise<Room>((resolve, reject) => {
       let settled = false;
       const metadata: PeerConnectionMetadata = { clientId: this.clientId };
 
       const start = () => {
-        const connection = this.peer.connect(hostId, { reliable: true, metadata });
+        const connection = this.peer.connect(toPeerId(roomCode), { reliable: true, metadata });
         this.connection = connection;
 
         const timer = setTimeout(() => {

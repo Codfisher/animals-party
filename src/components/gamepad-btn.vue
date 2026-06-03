@@ -1,18 +1,24 @@
 <template>
-  <q-btn
-    round
-    unelevated
-    :size="props.size"
-    :icon="props.icon"
-    :color="color"
+  <UButton
+    square
+    color="neutral"
+    variant="solid"
+    class="gamepad-btn rounded-full inline-flex items-center justify-center p-[0.6em] text-white select-none transition-colors duration-200"
+    :class="backgroundClass"
+    :style="{ fontSize: props.size }"
     @mouseup="handleUp"
     @mousedown="handleDown"
     @touchend="handleUp"
     @touchstart="handleDown"
     @contextmenu="(e: any) => e?.preventDefault()"
   >
+    <UIcon
+      v-if="props.icon"
+      :name="props.icon"
+      class="size-[1.5em]"
+    />
     <slot />
-  </q-btn>
+  </UButton>
 </template>
 
 <script setup lang="ts">
@@ -21,18 +27,18 @@ import { computed, ref, watch } from 'vue';
 interface Props {
   /** 尺寸 */
   size?: string;
-  /** 按鈕內 icon 名稱 */
+  /** 按鈕內 icon 名稱（完整 Iconify 名稱，例如 i-material-symbols-done） */
   icon?: string;
-  /** 按鈕底色 */
+  /** 按鈕底色（Tailwind class） */
   color?: string;
-  /** 按鈕觸發底色 */
+  /** 按鈕觸發底色（Tailwind class） */
   activeColor?: string,
 }
 const props = withDefaults(defineProps<Props>(), {
   size: '2rem',
   icon: undefined,
-  color: 'grey-10',
-  activeColor: 'grey-3',
+  color: 'bg-neutral-900!',
+  activeColor: 'bg-neutral-200!',
 });
 
 const emit = defineEmits<{
@@ -45,7 +51,7 @@ const emit = defineEmits<{
 const status = ref(false);
 watch(status, (value) => emit('trigger', value));
 
-const color = computed(() =>
+const backgroundClass = computed(() =>
   status.value ? props.activeColor : props.color
 );
 

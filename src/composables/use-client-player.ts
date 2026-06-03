@@ -4,7 +4,6 @@ import { GameConsoleData, GameConsoleState, Player, Room, SignalData } from "../
 import { useGameConsoleStore } from "../stores/game-console.store";
 import { useMainStore } from "../stores/main.store";
 import { createEventHook } from "@vueuse/core";
-import { getPlayerColor } from "../common/utils";
 
 export function useClientPlayer() {
   const mainStore = useMainStore();
@@ -20,7 +19,7 @@ export function useClientPlayer() {
   }
 
   const stateUpdateHook = createEventHook<GameConsoleState>();
-  const playerUpdateHook = createEventHook<Player[]>();
+  const playerUpdateHook = createEventHook<[Player[]]>();
   const consoleDataHook = createEventHook<GameConsoleData>();
 
   /** 元件解除安裝前，移除 Listener 以免記憶體洩漏 */
@@ -48,7 +47,6 @@ export function useClientPlayer() {
 
     return `${index + 1}P`;
   });
-  const colorName = computed(() => getPlayerColor({ codeName: codeName.value }));
 
   async function emitGamepadData(data: SignalData[]) {
     if (!mainStore.client?.connected) {
@@ -94,7 +92,6 @@ export function useClientPlayer() {
     requestGameConsoleState,
 
     codeName,
-    colorName,
 
     emitGamepadData,
     /** 發送玩家自身資料 */

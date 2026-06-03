@@ -1,15 +1,15 @@
 <template>
-  <q-card>
-    <q-card-section class=" relative bg-teal-5 text-white overflow-hidden">
+  <div class="bg-white rounded-2xl overflow-hidden">
+    <div class="relative bg-teal-500 text-white overflow-hidden p-4">
       <div class=" text-4xl  font-bold">
         Web API 授權清單
       </div>
       <div class="text-2xl flex flex-col gap-2 mt-4">
         <div>
-          當狀態為 <q-icon name="info" /> 時，點擊對應項目進行授權
+          當狀態為 <UIcon name="i-material-symbols-info" /> 時，點擊對應項目進行授權
         </div>
         <div>
-          若狀態為 <q-icon name="cancel" /> 時，請在瀏覽器設定中允許對應 API 權限
+          若狀態為 <UIcon name="i-material-symbols-cancel" /> 時，請在瀏覽器設定中允許對應 API 權限
         </div>
       </div>
 
@@ -20,45 +20,38 @@
         rotate="60deg"
         shape="pentagon"
       />
-    </q-card-section>
+    </div>
 
-    <q-card-section class=" relative overflow-hidden">
-      <q-list>
-        <q-item
-          v-for="permission in permissions"
-          :key="permission.key"
-          v-ripple
-          clickable
-          @click="permission.onClick"
-        >
-          <q-item-section
-            avatar
-            top
-          >
-            <q-avatar
-              :icon="permission.icon"
-              color="grey"
-              text-color="white"
-            />
-          </q-item-section>
+    <div class="relative overflow-hidden p-4 flex flex-col gap-2">
+      <UButton
+        v-for="permission in permissions"
+        :key="permission.key"
+        block
+        color="neutral"
+        variant="ghost"
+        class="justify-start items-center gap-4 p-3 text-left"
+        @click="permission.onClick"
+      >
+        <UAvatar
+          size="lg"
+          class="bg-neutral-400! text-white"
+          :icon="permission.icon"
+        />
 
-          <q-item-section>
-            <q-item-label class=" text-3xl">
-              {{ permission.label }}
-            </q-item-label>
-            <q-item-label class=" text-2xl">
-              {{ permission.caption }}
-            </q-item-label>
-          </q-item-section>
+        <div class="flex-1">
+          <div class=" text-3xl">
+            {{ permission.label }}
+          </div>
+          <div class=" text-2xl">
+            {{ permission.caption }}
+          </div>
+        </div>
 
-          <q-item-section side>
-            <q-icon
-              :name="permission.stateInfo.icon"
-              :color="permission.stateInfo.color"
-            />
-          </q-item-section>
-        </q-item>
-      </q-list>
+        <UIcon
+          :name="permission.stateInfo.icon"
+          :class="permission.stateInfo.color"
+        />
+      </UButton>
 
       <base-polygon
         opacity="0.1"
@@ -69,8 +62,8 @@
         shape="round"
         fill="spot"
       />
-    </q-card-section>
-  </q-card>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -101,23 +94,23 @@ const stateInfoMap: Record<PlayerPermissionState, {
   description: string;
 }> = {
   'granted': {
-    icon: 'check_circle',
-    color: 'green',
+    icon: 'i-material-symbols-check-circle',
+    color: 'text-green-500',
     description: '已同意',
   },
   'denied': {
-    icon: 'cancel',
-    color: 'deep-orange',
+    icon: 'i-material-symbols-cancel',
+    color: 'text-orange-600',
     description: '授權被拒絕',
   },
   'prompt': {
-    icon: 'info',
-    color: 'cyan',
+    icon: 'i-material-symbols-info',
+    color: 'text-cyan-500',
     description: '等待授權',
   },
   'not-support': {
-    icon: 'help',
-    color: 'grey',
+    icon: 'i-material-symbols-help',
+    color: 'text-neutral-400',
     description: '不支援此 API',
   },
 }
@@ -136,7 +129,7 @@ const permissions = computed<{
 }[]>(() => ([
   {
     key: 'gyroscope',
-    icon: 'screen_rotation_alt',
+    icon: 'i-material-symbols-screen-rotation-alt',
     label: '陀螺儀',
     caption: '可以偵測手機旋轉角度，通常用於體感遊戲',
     state: gyroscopeState.value,
@@ -145,7 +138,7 @@ const permissions = computed<{
   },
   {
     key: 'vibrate',
-    icon: 'vibration',
+    icon: 'i-material-symbols-vibration',
     label: '震動回饋',
     caption: '控制震動馬達，提供震動回饋',
     state: vibrateState.value,

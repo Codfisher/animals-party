@@ -5,24 +5,26 @@
       class="outline-none w-full h-full"
     />
 
-    <q-dialog
-      :model-value="isGameOver && props.mode === 'normal'"
-      persistent
+    <UModal
+      :open="isGameOver && props.mode === 'normal'"
+      :dismissible="false"
     >
-      <div class="card gap-14">
-        <div class="flex items-center text-3xl text-gray-600">
-          <q-icon name="emoji_events" />
-          遊戲結束
-        </div>
-        <div class="text-3xl text-sky-700">
-          玩家 {{ winnerCodeName }} 獲勝！
-        </div>
+      <template #content>
+        <div class="card gap-14">
+          <div class="flex items-center text-3xl text-gray-600">
+            <UIcon name="i-material-symbols-emoji-events" />
+            遊戲結束
+          </div>
+          <div class="text-3xl text-sky-700">
+            玩家 {{ winnerCodeName }} 獲勝！
+          </div>
 
-        <div class="text-xl text-gray-400">
-          按下 <q-icon name="done" /> 回到大廳
+          <div class="text-xl text-gray-400">
+            按下 <UIcon name="i-material-symbols-done" /> 回到大廳
+          </div>
         </div>
-      </div>
-    </q-dialog>
+      </template>
+    </UModal>
   </div>
 </template>
 
@@ -36,16 +38,14 @@ import {
 import { Penguin } from './penguin';
 import { curry } from 'lodash-es';
 import { GamepadData, GameSceneMode, KeyName, SignalData } from '../../types';
-import { createAnimation, getPlayerColor, getSquareMatrixPositions } from '../../common/utils';
-import { colors } from 'quasar';
+import { createAnimation, getSquareMatrixPositions } from '../../common/utils';
+import { getPlayerColorRgb } from '../../common/color';
 import { RouteName } from '../../router/router';
 
 import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { useRouter } from 'vue-router';
 import { useLoading } from '../../composables/use-loading';
 import { useBabylonScene } from '../../composables/use-babylon-scene';
-
-const { getPaletteColor, textToRgb } = colors;
 
 interface Props {
   mode?: `${GameSceneMode}`;
@@ -160,9 +160,7 @@ interface CreatePenguinParams {
 async function createPenguin(id: string, index: number, scene: Scene, params: CreatePenguinParams) {
   /** 依照玩家 ID 取得對應顏色名稱並轉換成 rgb */
   const codeName = gameConsole.getPlayerCodeName(id);
-  const color = getPlayerColor({ codeName });
-  const hex = getPaletteColor(color);
-  const rgb = textToRgb(hex);
+  const rgb = getPlayerColorRgb(codeName);
 
   const penguin = await new Penguin(`penguin-${index}`, scene, {
     position: params.position,

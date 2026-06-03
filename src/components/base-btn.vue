@@ -1,6 +1,6 @@
 <template>
   <div
-    class="btn flex flex-center text-3xl p-12 rounded-full"
+    class="btn flex flex-center text-2xl md:text-3xl p-8 md:p-12 rounded-full"
     :class="btnClass"
     @click="handleClick()"
     @mouseenter="handleMouseenter"
@@ -16,33 +16,7 @@
       :style="labelStyle"
     >
       {{ props.label }}
-
-      <!-- stroke -->
-      <div
-        class="label-stroke absolute"
-        :style="strokeStyle"
-      >
-        {{ props.label }}
-      </div>
     </div>
-
-    <svg
-      version="1.1"
-      style="display: none;"
-    >
-      <defs>
-        <filter :id="svgFilterId">
-          <feMorphology
-            operator="dilate"
-            :radius="props.strokeSize"
-          />
-          <feComposite
-            operator="xor"
-            in="SourceGraphic"
-          />
-        </filter>
-      </defs>
-    </svg>
   </div>
 </template>
 
@@ -54,10 +28,9 @@ export interface State {
 </script>
 
 <script setup lang="ts">
-import { nanoid } from 'nanoid';
 import { computed, ref } from 'vue';
 import { ControllableElement } from '../composables/use-gamepad-navigator';
-import { promiseTimeout } from '@vueuse/core';
+import { promiseTimeout, useWindowSize } from '@vueuse/core';
 
 interface Props {
   label?: string;
@@ -85,33 +58,30 @@ const state = ref<State>({
   hover: false,
 });
 
+const { width: windowWidth } = useWindowSize();
+/** 手機版（sm 斷點以下）描邊加粗 2 倍 */
+const strokeWidth = computed(() =>
+  windowWidth.value <= 600 ? Number(props.strokeSize) * 2 : Number(props.strokeSize)
+);
+
 const btnClass = computed(() => ({
   active: state.value.active,
 }));
 
 const labelStyle = computed(() => {
-  let color = props.labelColor;
+  const color = (props.labelHoverColor && state.value.hover)
+    ? props.labelHoverColor
+    : props.labelColor;
 
-  if (props.labelHoverColor) {
-    color = state.value.hover ? props.labelHoverColor : props.labelColor;
-  }
-
-  return {
-    color,
-  }
-});
-
-const svgFilterId = `svg-filter-${nanoid()}`;
-const strokeStyle = computed(() => {
-  let color = props.strokeColor;
-
-  if (props.strokeHoverColor) {
-    color = state.value.hover ? props.strokeHoverColor : props.strokeColor;
-  }
+  const strokeColor = (props.strokeHoverColor && state.value.hover)
+    ? props.strokeHoverColor
+    : props.strokeColor;
 
   return {
     color,
-    filter: `url(#${svgFilterId})`
+    // 描邊畫在填色之後，呈現外框效果
+    paintOrder: 'stroke fill',
+    WebkitTextStroke: `${strokeWidth.value}px ${strokeColor}`,
   }
 });
 
@@ -168,9 +138,5 @@ defineExpose<ControllableElement>({
     transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1)
 
 .label
-  transition-duration: 0.4s
-
-.label-stroke
-  top: 0px
   transition-duration: 0.4s
 </style>

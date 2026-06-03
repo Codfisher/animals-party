@@ -1,8 +1,8 @@
 <template>
-  <q-card class=" !rounded-3xl min-w-[20rem]">
+  <div class="bg-white !rounded-3xl min-w-[20rem] overflow-hidden">
     <slot name="title">
-      <q-card-section
-        class=" relative overflow-hidden text-4xl bg-orange-400 text-white text-center"
+      <div
+        class=" relative overflow-hidden text-4xl bg-orange-400 text-white text-center p-6"
         :class="props.titleClass"
       >
         {{ props.title }}
@@ -19,11 +19,11 @@
           rotate="10deg"
           opacity="0.3"
         />
-      </q-card-section>
+      </div>
     </slot>
 
     <slot name="board">
-      <q-card-section
+      <div
         class="bg-orange-100 py-8 px-10 flex flex-col gap-6"
         :class="props.boardClass"
       >
@@ -49,17 +49,17 @@
             />
           </div>
         </div>
-      </q-card-section>
+      </div>
     </slot>
 
     <slot name="default" />
-  </q-card>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { random, range, sample } from 'lodash-es';
 import { computed, ref } from 'vue';
-import { getPlayerColor } from '../common/utils';
+import { getPlayerColorClass } from '../common/color';
 import { useClientGameConsole } from '../composables/use-client-game-console';
 
 import BasePolygon, { ShapeType, FillType } from './base-polygon.vue';
@@ -83,7 +83,6 @@ const gameConsole = useClientGameConsole();
 const playerList = computed(() =>
   props.idList.map((id) => {
     const codeName = gameConsole.getPlayerCodeName(id);
-    const color = getPlayerColor({ codeName });
 
     const polygon = {
       fill: sample(Object.values(FillType)),
@@ -93,7 +92,7 @@ const playerList = computed(() =>
 
     return {
       codeName,
-      class: `bg-${color}`,
+      class: getPlayerColorClass(codeName),
       polygon,
     }
   })
