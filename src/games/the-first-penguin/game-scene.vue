@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import * as CANNON from 'cannon-es';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import {
   ArcRotateCamera, BackgroundMaterial, CannonJSPlugin, Color3,
   Engine, KeyboardEventTypes, MeshBuilder, PhysicsImpostor, Scene, StandardMaterial, Vector3
@@ -47,6 +47,7 @@ import { useClientGameConsole } from '../../composables/use-client-game-console'
 import { useRouter } from 'vue-router';
 import { useLoading } from '../../composables/use-loading';
 import { useBabylonScene } from '../../composables/use-babylon-scene';
+import { useEffects } from '../../composables/use-effects';
 
 interface Props {
   mode?: `${GameSceneMode}`;
@@ -221,6 +222,12 @@ function detectOutOfBounds(penguins: Penguin[]) {
 
 const isGameOver = ref(false);
 const winnerCodeName = ref('');
+
+const effects = useEffects();
+/** 遊戲結束時兩側噴發慶祝彩帶 */
+watch(isGameOver, (value) => {
+  if (value) effects.fireConfetti();
+});
 
 /** 偵測是否有贏家 */
 function detectWinner(penguins: Penguin[], engine: Engine) {

@@ -11,6 +11,7 @@
     "tailwindcss",
     "Unocss",
     "vueuse",
+    "webgpu",
     "xstate"
   ],
   "typescript.tsdk": "node_modules/typescript/lib"
