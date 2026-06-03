@@ -1,4 +1,5 @@
 import Peer, { DataConnection } from 'peerjs';
+import mitt from 'mitt';
 import {
   ClientEmitEventMap,
   ClientListenEventMap,
@@ -6,7 +7,6 @@ import {
   PeerMessage,
   Room,
 } from '../../types';
-import { TypedEmitter } from './typed-emitter';
 
 /** 加入房間的等待超時（毫秒） */
 const JOIN_TIMEOUT = 3000;
@@ -18,7 +18,7 @@ const JOIN_TIMEOUT = 3000;
 export class PeerClient {
   private peer = new Peer();
   private connection?: DataConnection;
-  private bus = new TypedEmitter<ClientListenEventMap>();
+  private bus = mitt<ClientListenEventMap>();
 
   constructor(private clientId: string) {}
 
@@ -56,7 +56,10 @@ export class PeerClient {
             return;
           }
 
-          this.bus.emitRaw(message.event, message.data);
+          this.bus.emit(
+            message.event as keyof ClientListenEventMap,
+            message.data as ClientListenEventMap[keyof ClientListenEventMap]
+          );
         });
 
         connection.on('error', (error) => {
@@ -104,6 +107,6 @@ export class PeerClient {
   disconnect() {
     this.connection?.close();
     this.peer.destroy();
-    this.bus.clear();
+    this.bus.all.clear();
   }
 }

@@ -14,31 +14,31 @@ export interface PeerConnectionMetadata {
 }
 
 /** 玩家透過 PeerClient 送往 host 的事件 */
-export interface ClientEmitEventMap {
+export type ClientEmitEventMap = {
   'player:gamepad-data': GamepadData;
   'player:profile': Player;
   'player:request-game-console-state': void;
-}
+};
 
 /** 玩家透過 PeerClient 監聽、由 host 廣播的事件 */
-export interface ClientListenEventMap {
+export type ClientListenEventMap = {
   'game-console:state-update': GameConsoleState;
   'game-console:player-update': Player[];
   'game-console:console-data': GameConsoleData;
-}
+};
 
 /** host 透過 PeerHost 廣播給玩家的事件 */
-export interface HostEmitEventMap {
+export type HostEmitEventMap = {
   'game-console:state-update': UpdateStateParams;
   'game-console:console-data': GameConsoleData;
-}
+};
 
 /** host 透過 PeerHost 監聽的事件（來自玩家訊息或自身狀態變更） */
-export interface HostListenEventMap {
+export type HostListenEventMap = {
   'player:gamepad-data': GamepadData;
   'game-console:player-update': Player[];
   'game-console:profile-update': Player;
-}
+};
 
 /** DataChannel 上傳輸的訊息信封 */
 export interface PeerMessage {

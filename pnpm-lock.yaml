@@ -17,6 +17,9 @@ importers:
       cannon-es:
         specifier: ^0.20.0
         version: 0.20.0
+      mitt:
+        specifier: ^3.0.1
+        version: 3.0.1
       peerjs:
         specifier: ^1.5.5
         version: 1.5.5
@@ -1486,6 +1489,9 @@ packages:
 
   minimist@1.2.6:
     resolution: {integrity: sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==}
+
+  mitt@3.0.1:
+    resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
 
   mrmime@1.0.1:
     resolution: {integrity: sha512-hzzEagAgDyoU1Q6yg5uI+AorQgdvMCur3FcKf7NhMKWsaYg+RnbTyHRa/9IlLF9rf455MOCtcqqrQQ83pPP7Uw==}
@@ -3439,6 +3445,8 @@ snapshots:
       brace-expansion: 2.0.1
 
   minimist@1.2.6: {}
+
+  mitt@3.0.1: {}
 
   mrmime@1.0.1: {}
 

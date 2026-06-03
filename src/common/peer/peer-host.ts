@@ -1,7 +1,9 @@
 import Peer, { DataConnection } from 'peerjs';
 import { customAlphabet } from 'nanoid';
+import mitt from 'mitt';
 import {
   GameConsoleState,
+  GamepadData,
   HostEmitEventMap,
   HostListenEventMap,
   PeerConnectionMetadata,
@@ -10,7 +12,6 @@ import {
   Room,
 } from '../../types';
 import { UpdateStateParams } from '../../stores/game-console.store';
-import { TypedEmitter } from './typed-emitter';
 
 /** host peer id 用的無歧義英數字母（避開 0/o、1/l/i） */
 const generateRoomId = customAlphabet('23456789abcdefghjkmnpqrstuvwxyz', 6);
@@ -32,7 +33,7 @@ interface PlayerEntry {
 export class PeerHost {
   private peer?: Peer;
   private playerMap = new Map<string, PlayerEntry>();
-  private bus = new TypedEmitter<HostListenEventMap>();
+  private bus = mitt<HostListenEventMap>();
   private consoleState: Pick<GameConsoleState, 'status' | 'gameName'> = {
     status: 'home',
     gameName: 'the-first-penguin',
@@ -133,7 +134,7 @@ export class PeerHost {
   private handleData(clientId: string, message: PeerMessage) {
     switch (message.event) {
       case 'player:gamepad-data':
-        this.bus.emitRaw('player:gamepad-data', message.data);
+        this.bus.emit('player:gamepad-data', message.data as GamepadData);
         break;
 
       case 'player:profile': {
@@ -142,7 +143,7 @@ export class PeerHost {
         if (entry) {
           entry.profile = profile;
         }
-        this.bus.emitRaw('game-console:profile-update', profile);
+        this.bus.emit('game-console:profile-update', profile);
         this.broadcastPlayerUpdate();
         break;
       }
@@ -185,14 +186,14 @@ export class PeerHost {
   disconnect() {
     this.playerMap.clear();
     this.peer?.destroy();
-    this.bus.clear();
+    this.bus.all.clear();
   }
 
   /** 玩家清單變更：同時廣播給玩家並觸發 host 自身監聽 */
   private broadcastPlayerUpdate() {
     const playerList = this.buildPlayerList();
     this.broadcast('game-console:player-update', playerList);
-    this.bus.emitRaw('game-console:player-update', playerList);
+    this.bus.emit('game-console:player-update', playerList);
   }
 
   private broadcast(event: string, data: unknown) {
