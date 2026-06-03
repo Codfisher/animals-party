@@ -1,7 +1,7 @@
 import { computed, onBeforeUnmount } from "vue";
 import { GameConsoleData, GameConsoleState, Player, Room, SignalData } from "../types";
 
-import { UpdateStateParams, useGameConsoleStore } from "../stores/game-console.store";
+import { useGameConsoleStore } from "../stores/game-console.store";
 import { useMainStore } from "../stores/main.store";
 import { createEventHook } from "@vueuse/core";
 import { getPlayerColor } from "../common/utils";
@@ -10,50 +10,13 @@ export function useClientPlayer() {
   const mainStore = useMainStore();
   const gameConsoleStore = useGameConsoleStore();
 
-  function joinRoom(roomId: string): Promise<Room> {
-    // client 尚未連線，先進行連線
-    if (!mainStore.client?.connected) {
-      const client = mainStore.connect('player');
+  /** 連到指定 host 並加入房間 */
+  async function joinRoom(hostId: string): Promise<Room> {
+    const room = await mainStore.joinHost(hostId);
 
-      return new Promise((resolve, reject) => {
-        client.once('connect', () => {
-          client.removeAllListeners();
-
-          emitJoinRoom(client, roomId)
-            .then(resolve)
-            .catch(reject)
-        });
-
-        // 發生連線異常
-        client.once('connect_error', (error) => {
-          client.removeAllListeners();
-          client.disconnect();
-          reject(error);
-        });
-      });
-    }
-
-    // client 已經連線，直接發出事件
-    return emitJoinRoom(mainStore.client, roomId);
-  }
-
-  /** 發送 player:join-room 事件至 server 並設定 3 秒超時 */
-  function emitJoinRoom(client: NonNullable<typeof mainStore['client']>, roomId: string): Promise<Room> {
-    return new Promise((resolve, reject) => {
-      client.timeout(3000).emit('player:join-room', roomId, (err, res) => {
-        if (err) {
-          return reject(err);
-        }
-
-        if (res.status === 'err') {
-          return reject(res);
-        }
-
-        /** 儲存 room id */
-        gameConsoleStore.setRoomId(res.data.id);
-        resolve(res.data);
-      });
-    });
+    /** 儲存 room id */
+    gameConsoleStore.setRoomId(room.id);
+    return room;
   }
 
   const stateUpdateHook = createEventHook<GameConsoleState>();
@@ -62,17 +25,16 @@ export function useClientPlayer() {
 
   /** 元件解除安裝前，移除 Listener 以免記憶體洩漏 */
   onBeforeUnmount(() => {
-    mainStore.client?.removeListener('game-console:state-update', stateUpdateHook.trigger);
-    mainStore.client?.removeListener('game-console:player-update', playerUpdateHook.trigger);
-    mainStore.client?.removeListener('game-console:console-data', consoleDataHook.trigger);
-
+    mainStore.client?.off('game-console:state-update', stateUpdateHook.trigger);
+    mainStore.client?.off('game-console:player-update', playerUpdateHook.trigger);
+    mainStore.client?.off('game-console:console-data', consoleDataHook.trigger);
   });
 
   async function requestGameConsoleState() {
     if (!mainStore.client?.connected) {
       return Promise.reject('client 尚未連線');
     }
-    mainStore.client.emit('player:request-game-console-state');
+    mainStore.client.send('player:request-game-console-state', undefined);
   }
 
   const codeName = computed(() => {
@@ -93,7 +55,7 @@ export function useClientPlayer() {
       return Promise.reject('client 尚未連線');
     }
 
-    mainStore.client.emit('player:gamepad-data', {
+    mainStore.client.send('player:gamepad-data', {
       playerId: mainStore.clientId,
       keys: data,
     })
@@ -104,7 +66,7 @@ export function useClientPlayer() {
       return Promise.reject('client 尚未連線');
     }
 
-    mainStore.client.emit('player:profile', {
+    mainStore.client.send('player:profile', {
       clientId: mainStore.clientId,
       ...data,
     });

@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import { ClientSocket, ClientType } from '../types';
+import { markRaw, shallowRef } from 'vue';
 import { nanoid } from 'nanoid';
-import { io } from 'socket.io-client';
+import { ClientType, Room } from '../types';
+import { PeerHost } from '../common/peer/peer-host';
+import { PeerClient } from '../common/peer/peer-client';
 
 export const useMainStore = defineStore('main', () => {
   /** 檢查 localStorage 是否有儲存 client id，沒有則產生 id */
@@ -10,38 +11,49 @@ export const useMainStore = defineStore('main', () => {
   const clientId = savedId ?? nanoid();
   localStorage.setItem(`animals-party:clientId`, clientId);
 
-  const client = ref<ClientSocket>();
-  const type = ref<`${ClientType}`>();
+  const type = shallowRef<`${ClientType}`>();
+  /** 主機端連線（game-console 角色） */
+  const host = shallowRef<PeerHost>();
+  /** 玩家端連線（player 角色） */
+  const client = shallowRef<PeerClient>();
 
-  function connect(clientType: `${ClientType}`) {
-    // 已經存在
-    if (client.value) {
-      client.value.connect();
-      return client.value;
-    }
+  /** 建立房間，成為 host */
+  function createHost(): Promise<Room> {
+    disconnect();
 
-    // 建立連線，傳送 query data
-    client.value = io({
-      query: {
-        clientId,
-        type: clientType,
-      },
-    });
-    type.value = clientType;
+    const peerHost = markRaw(new PeerHost(clientId));
+    host.value = peerHost;
+    type.value = 'game-console';
 
-    return client.value;
+    return peerHost.create();
+  }
+
+  /** 以玩家身分加入指定 host */
+  function joinHost(hostId: string): Promise<Room> {
+    client.value?.disconnect();
+
+    const peerClient = markRaw(new PeerClient(clientId));
+    client.value = peerClient;
+    type.value = 'player';
+
+    return peerClient.join(hostId);
   }
 
   function disconnect() {
+    host.value?.disconnect();
     client.value?.disconnect();
+    host.value = undefined;
+    client.value = undefined;
   }
 
   return {
     clientId,
-    client,
     type,
+    host,
+    client,
 
-    connect,
+    createHost,
+    joinHost,
     disconnect,
   }
 })

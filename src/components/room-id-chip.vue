@@ -1,5 +1,8 @@
 <template>
-  <div class=" relative overflow-hidden">
+  <div
+    v-if="id"
+    class=" relative overflow-hidden"
+  >
     <div class="chip rounded-full flex items-center gap-6">
       <base-polygon
         size="1rem"
@@ -41,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useGameConsoleStore } from '../stores/game-console.store';
 
 import BasePolygon from './base-polygon.vue';
@@ -49,7 +52,7 @@ import BasePolygon from './base-polygon.vue';
 
 const gameConsoleStore = useGameConsoleStore();
 
-const id = computed(() => gameConsoleStore.roomId ?? '123456');
+const id = computed(() => gameConsoleStore.roomId);
 </script>
 
 <style scoped lang="sass">
