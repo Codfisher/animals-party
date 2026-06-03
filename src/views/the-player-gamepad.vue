@@ -39,10 +39,10 @@ function init() {
   }
 
   player.onGameConsoleStateUpdate((state) => {
-    const { status, gameName } = state;
-
-    console.log(`[ onGameConsoleStateUpdate ] state : `, state);
     gameConsoleStore.updateState(state);
+
+    // 從合併後的 store 取值，避免 partial 更新（如僅含 status）導致欄位缺漏
+    const { status, gameName } = gameConsoleStore;
 
     if (status === 'home') {
       router.push({
@@ -57,9 +57,9 @@ function init() {
 
     if (status !== 'playing') return;
 
-    console.log(`[ onStateUpdate ] gameName : `, gameName);
-
     const target = gamepadMap[gameName];
+    if (!target) return;
+
     router.push({ name: target.routeName });
   });
 
