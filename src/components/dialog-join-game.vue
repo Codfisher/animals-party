@@ -17,10 +17,6 @@
           opacity="0.5"
         />
 
-        <div class="text-3xl md:text-5xl font-bold text-center text-[#2a3832]">
-          掃描派對 QR Code
-        </div>
-
         <!-- 相機掃描區 -->
         <div class="scanner relative rounded-3xl overflow-hidden bg-black/80">
           <video
@@ -81,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import to from 'await-to-js';
 import QrScanner from 'qr-scanner';
 
@@ -97,18 +93,22 @@ const toast = useToast();
 const player = useClientPlayer();
 
 const targetRoomId = ref('');
-const video = ref<HTMLVideoElement>();
+const video = useTemplateRef<HTMLVideoElement>('video');
 const cameraAvailable = ref(true);
 
 let scanner: QrScanner | undefined;
 /** 避免掃到後重複加入 */
 let joining = false;
 
-onMounted(async () => {
-  if (!video.value) return;
+/**
+ * video 在 UModal 內透過 Teleport 延遲掛載，onMounted 時可能尚未存在，
+ * 因此改 watch ref，待元素就緒再啟動 scanner。
+ */
+watch(video, async (element) => {
+  if (!element || scanner) return;
 
   const instance = new QrScanner(
-    video.value,
+    element,
     (result) => handleScan(result.data),
     { preferredCamera: 'environment', highlightScanRegion: true }
   );
@@ -119,7 +119,7 @@ onMounted(async () => {
     cameraAvailable.value = false;
     console.error(`[ dialog-join-game ] 相機啟動失敗 : `, err);
   }
-});
+}, { immediate: true });
 
 onBeforeUnmount(() => {
   scanner?.stop();
