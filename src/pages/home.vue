@@ -66,6 +66,7 @@
 <script setup lang="ts">
 import to from 'await-to-js';
 import { onMounted } from 'vue';
+import { useWindowSize } from '@vueuse/core';
 
 import BackgroundPolygonsFloating from '../components/background-polygons-floating.vue';
 import BaseBtn from '../components/base-btn.vue';
@@ -84,7 +85,20 @@ const toast = useToast();
 const overlay = useOverlay();
 const joinGameModal = overlay.create(DialogJoinGame);
 
+const { width: windowWidth } = useWindowSize();
+/** 主機畫面需要足夠寬度，低於此值禁止建立派對（md 斷點） */
+const MIN_PARTY_WIDTH = 768;
+
 async function startParty() {
+  if (windowWidth.value < MIN_PARTY_WIDTH) {
+    toast.add({
+      color: 'warning',
+      title: '畫面太窄囉 ԅ( ˘ω˘ԅ)',
+      description: '建立派對需要更寬的畫面，請改用電腦或平板'
+    });
+    return;
+  }
+
   await loading.show();
 
   const [err, room] = await to(gameConsole.startParty());
@@ -92,7 +106,7 @@ async function startParty() {
     console.error(`[ startParty ] err : `, err);
     toast.add({
       color: 'error',
-      title: '建立派對失敗，請吸嗨後再度嘗試'
+      title: '建立派對失敗，請吸嗨後再度嘗試 (;´༎ຶД༎ຶ`)'
     });
     loading.hide();
     return;
