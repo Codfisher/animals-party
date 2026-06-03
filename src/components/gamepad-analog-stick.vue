@@ -1,8 +1,11 @@
 <template>
   <div
     ref="pad"
-    v-touch-pan.prevent.mouse="handleTouch"
-    class="pad rounded-full bg-grey-10"
+    class="pad rounded-full bg-neutral-900 touch-none"
+    @pointerdown="onPointerDown"
+    @pointermove="onPointerMove"
+    @pointerup="onPointerUp"
+    @pointercancel="onPointerUp"
     @contextmenu="(e) => e.preventDefault()"
   >
     <div
@@ -15,41 +18,17 @@
 
 <script setup lang="ts">
 import { Vector2 } from '@babylonjs/core';
-import { useElementSize, useIntervalFn } from '@vueuse/core';
+import { useIntervalFn } from '@vueuse/core';
 import { clamp } from 'lodash-es';
 import { computed, ref } from 'vue';
-
-interface TouchPenDetails {
-  touch: boolean;
-  mouse: boolean;
-  position: {
-    top: number;
-    left: number;
-  };
-  direction: 'up' | 'right' | 'down' | 'left';
-  isFirst: boolean;
-  isFinal: boolean;
-  duration: number;
-  distance: {
-    x: number;
-    y: number;
-  };
-  offset: {
-    x: number;
-    y: number;
-  };
-  delta: {
-    x: number;
-    y: number;
-  };
-}
 
 interface Props {
   /** 尺寸，直徑 */
   size?: string
 }
 const props = withDefaults(defineProps<Props>(), {
-  size: '34rem'
+  /** 上限 42vw，與右側按鈕並排時不重疊 */
+  size: 'min(13rem, 42vw)'
 });
 
 const emit = defineEmits<{
@@ -58,17 +37,7 @@ const emit = defineEmits<{
 
 
 const pad = ref<HTMLElement>();
-const { width, height } = useElementSize(pad);
-
-const padCenterPosition = computed(() => {
-  const top = pad.value?.offsetTop ?? 0;
-  const left = pad.value?.offsetLeft ?? 0;
-
-  return {
-    top: top + height.value / 2,
-    left: left + width.value / 2,
-  }
-});
+const dragging = ref(false);
 
 const thumb = ref({
   offset: {
@@ -82,37 +51,48 @@ const thumbStyle = computed(() => ({
   opacity: thumb.value.active ? 0.8 : undefined,
 }));
 
-function handleTouch(details: TouchPenDetails) {
-  const { position, isFirst, isFinal } = details;
+/** 依指標位置更新搖桿偏移，限制在圓形範圍內 */
+function updateOffset(clientX: number, clientY: number) {
+  const element = pad.value;
+  if (!element) return;
 
-  const x = position.left - padCenterPosition.value.left;
-  const y = position.top - padCenterPosition.value.top;
+  const rect = element.getBoundingClientRect();
+  const x = clientX - (rect.left + rect.width / 2);
+  const y = clientY - (rect.top + rect.height / 2);
 
   /** 計算位移的長度 */
-  const vectorLength = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+  const vectorLength = Math.sqrt(x ** 2 + y ** 2) || 1;
 
   /** 計算目前偏移最大值 */
-  const xMax = (Math.abs(x) / vectorLength) * (width.value / 2);
-  const yMax = (Math.abs(y) / vectorLength) * (height.value / 2);
+  const xMax = (Math.abs(x) / vectorLength) * (rect.width / 2);
+  const yMax = (Math.abs(y) / vectorLength) * (rect.height / 2);
 
   /** 利用 clamp 限制偏移數值在 -max 與 max 之間 */
   thumb.value.offset = {
     x: clamp(x, -xMax, xMax),
     y: clamp(y, -yMax, yMax),
   };
+}
 
-  if (isFirst) {
-    thumb.value.active = true;
-  }
-
-  if (isFinal) {
-    thumb.value = {
-      offset: { x: 0, y: 0 },
-      active: false
-    }
-
-    emit('trigger', { x: 0, y: 0 });
-  }
+function onPointerDown(event: PointerEvent) {
+  event.preventDefault();
+  pad.value?.setPointerCapture(event.pointerId);
+  dragging.value = true;
+  thumb.value.active = true;
+  updateOffset(event.clientX, event.clientY);
+}
+function onPointerMove(event: PointerEvent) {
+  if (!dragging.value) return;
+  updateOffset(event.clientX, event.clientY);
+}
+function onPointerUp() {
+  if (!dragging.value) return;
+  dragging.value = false;
+  thumb.value = {
+    offset: { x: 0, y: 0 },
+    active: false,
+  };
+  emit('trigger', { x: 0, y: 0 });
 }
 
 useIntervalFn(() => {

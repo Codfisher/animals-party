@@ -27,7 +27,7 @@
           />
 
           <UIcon
-            name="i-material-symbols-sports-esports"
+            name="material-symbols:sports-esports"
             class="absolute game-icon text-white text-[5rem] md:text-[8rem]"
           />
         </div>
@@ -54,7 +54,7 @@
             opacity="0.6"
           />
           <UIcon
-            name="i-material-symbols-person-add"
+            name="material-symbols:person-add"
             class="absolute join-icon text-white text-[5rem] md:text-[7.8rem]"
           />
         </div>

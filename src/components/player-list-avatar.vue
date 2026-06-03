@@ -83,28 +83,28 @@ function showBalloon(text: string) {
 const keyToIcon = [
   {
     keyName: KeyName.UP,
-    icon: 'i-material-symbols-arrow-drop-up'
+    icon: 'material-symbols:arrow-drop-up'
   },
   {
     keyName: KeyName.LEFT,
-    icon: 'i-material-symbols-arrow-left'
+    icon: 'material-symbols:arrow-left'
   },
   {
     keyName: KeyName.RIGHT,
-    icon: 'i-material-symbols-arrow-right'
+    icon: 'material-symbols:arrow-right'
   },
   {
     keyName: KeyName.DOWN,
-    icon: 'i-material-symbols-arrow-drop-down'
+    icon: 'material-symbols:arrow-drop-down'
   },
   {
     keyName: KeyName.CONFIRM,
-    icon: 'i-material-symbols-done'
+    icon: 'material-symbols:done'
   },
 ]
 function getIconName(name: string) {
   const target = keyToIcon.find(({ keyName }) => keyName === name);
-  return target?.icon ?? 'i-material-symbols-question-mark';
+  return target?.icon ?? 'material-symbols:question-mark';
 }
 
 defineExpose({

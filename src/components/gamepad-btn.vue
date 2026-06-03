@@ -3,7 +3,7 @@
     square
     color="neutral"
     variant="solid"
-    class="gamepad-btn rounded-full inline-flex items-center justify-center p-[0.6em] text-white select-none transition-colors duration-200"
+    class="gamepad-btn rounded-full inline-flex items-center justify-center p-[0.6em] text-white select-none transition-colors duration-200 max-w-[50vw] max-h-[50vw]"
     :class="backgroundClass"
     :style="{ fontSize: props.size }"
     @mouseup="handleUp"
@@ -27,7 +27,7 @@ import { computed, ref, watch } from 'vue';
 interface Props {
   /** 尺寸 */
   size?: string;
-  /** 按鈕內 icon 名稱（完整 Iconify 名稱，例如 i-material-symbols-done） */
+  /** 按鈕內 icon 名稱（完整 Iconify 名稱，例如 material-symbols:done） */
   icon?: string;
   /** 按鈕底色（Tailwind class） */
   color?: string;

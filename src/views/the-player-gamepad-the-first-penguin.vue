@@ -7,18 +7,18 @@
 
     <gamepad-btn
       class="absolute bottom-10 right-10"
-      size="6rem"
+      size="2.6rem"
       @trigger="(status) => handleBtnTrigger('a', status)"
     >
-      <div class="text-9xl mb-8">
+      <div class="text-4xl mb-3">
         A
       </div>
     </gamepad-btn>
 
     <gamepad-btn
       class="absolute top-10 right-10 opacity-90"
-      size="3rem"
-      icon="done"
+      size="1.6rem"
+      icon="material-symbols:done"
       @trigger="(status) => handleBtnTrigger('confirm', status)"
     />
   </player-gamepad-container>

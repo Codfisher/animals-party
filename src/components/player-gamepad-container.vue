@@ -17,7 +17,7 @@
       <template #content>
         <div class="p-8 flex flex-col items-center gap-6">
           <UIcon
-            name="i-lucide-loader-circle"
+            name="material-symbols:progress-activity"
             class="animate-spin text-primary text-[10rem]"
           />
           <div class="text-4xl">
@@ -73,6 +73,6 @@ const targetOrientation = computed(() =>
   display: flex
   justify-content: center
   padding: 0.1rem
-  font-size: 10rem
-  text-shadow: 0px 0px 2rem rgba(#000, 0.5)
+  font-size: 5rem
+  text-shadow: 0px 0px 1rem rgba(#000, 0.5)
 </style>

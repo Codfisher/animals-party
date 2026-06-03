@@ -2,82 +2,79 @@
   <UModal @update:open="(value: boolean) => !value && emit('close', false)">
     <template #content>
       <div class="card flex flex-col p-8 gap-8 md:p-20 md:gap-16 overflow-hidden">
-      <base-polygon
-        class=" absolute -left-32 -top-40 -z-10"
-        size="20rem"
-        rotate="30deg"
-        opacity="0.6"
-      />
-      <base-polygon
-        class=" absolute -right-[14rem] -bottom-[20rem] -z-10"
-        size="30rem"
-        shape="pentagon"
-        fill="solid"
-        rotate="-30deg"
-        opacity="0.5"
-      />
-
-      <div class="text-3xl md:text-5xl font-bold text-center text-[#2a3832]">
-        掃描派對 QR Code
-      </div>
-
-      <!-- 相機掃描區 -->
-      <div class="scanner relative rounded-3xl overflow-hidden bg-black/80">
-        <video
-          ref="video"
-          class="w-full h-full object-cover"
-          muted
-          playsinline
+        <base-polygon
+          class=" absolute -left-32 -top-40 -z-10"
+          size="20rem"
+          rotate="30deg"
+          opacity="0.6"
+        />
+        <base-polygon
+          class=" absolute -right-[14rem] -bottom-[20rem] -z-10"
+          size="30rem"
+          shape="pentagon"
+          fill="solid"
+          rotate="-30deg"
+          opacity="0.5"
         />
 
-        <!-- 相機無法使用時的提示 -->
-        <div
-          v-if="!cameraAvailable"
-          class="absolute inset-0 flex flex-col flex-center gap-4 text-center text-white p-8"
-        >
-          <UIcon
-            name="i-material-symbols-no-photography"
-            class="text-[4rem]"
+        <div class="text-3xl md:text-5xl font-bold text-center text-[#2a3832]">
+          掃描派對 QR Code
+        </div>
+
+        <!-- 相機掃描區 -->
+        <div class="scanner relative rounded-3xl overflow-hidden bg-black/80">
+          <video
+            ref="video"
+            class="w-full h-full object-cover"
+            muted
+            playsinline
           />
-          <div class="text-xl">
-            無法使用相機，請改用下方貼上房號
+
+          <!-- 相機無法使用時的提示 -->
+          <div
+            v-if="!cameraAvailable"
+            class="absolute inset-0 flex flex-col flex-center gap-4 text-center text-white p-8"
+          >
+            <UIcon
+              name="material-symbols:no-photography"
+              class="text-[4rem]"
+            />
+            <div class="text-xl">
+              無法使用相機，請改用下方輸入房號
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- 手動貼上房號退路 -->
-      <div class="flex flex-col gap-6">
-        <div class="text-center text-2xl text-[#2a3832]/70">
-          或貼上房號
+        <!-- 手動輸入房號退路 -->
+        <div class="flex flex-col gap-6">
+          <UInput
+            v-model="targetRoomId"
+            color="secondary"
+            size="xl"
+            placeholder="手動輸入房號"
+            :ui="{ base: 'rounded-full text-center' }"
+            @keyup.enter="handleSubmit"
+          />
+          <UButton
+            block
+            color="secondary"
+            size="xl"
+            class="relative p-4 md:p-7 rounded-full overflow-hidden justify-center"
+            @click="handleSubmit"
+          >
+            加入
+            <base-polygon
+              class=" absolute -left-10 -top-16"
+              size="8rem"
+              opacity="0.7"
+              rotate="45deg"
+            />
+            <UIcon
+              class=" absolute -right-[0.5rem] -bottom-[1.5rem] -rotate-90 opacity-80 text-[4rem] md:text-[7.5rem]"
+              name="material-symbols:celebration"
+            />
+          </UButton>
         </div>
-        <UInput
-          v-model="targetRoomId"
-          color="secondary"
-          size="xl"
-          placeholder="貼上房號"
-          :ui="{ base: 'rounded-full text-center' }"
-          @keyup.enter="handleSubmit"
-        />
-        <UButton
-          block
-          color="secondary"
-          size="xl"
-          class="relative p-4 md:p-7 rounded-full overflow-hidden justify-center"
-          @click="handleSubmit"
-        >
-          加入
-          <base-polygon
-            class=" absolute -left-10 -top-16"
-            size="8rem"
-            opacity="0.7"
-            rotate="45deg"
-          />
-          <UIcon
-            class=" absolute -right-[1.4rem] -bottom-[2.6rem] -rotate-90 opacity-80 text-[4rem] md:text-[7.5rem]"
-            name="i-material-symbols-celebration"
-          />
-        </UButton>
-      </div>
       </div>
     </template>
   </UModal>
@@ -139,7 +136,7 @@ function handleSubmit() {
   if (!hostId) {
     toast.add({
       color: 'error',
-      title: '請貼上房號'
+      title: '請輸入房號'
     });
     return;
   }

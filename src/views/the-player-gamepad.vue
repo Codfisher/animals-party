@@ -5,23 +5,12 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted } from 'vue';
 import { RouteName } from '../router/router';
 
 import { useRouter } from 'vue-router';
 import { useGameConsoleStore } from '../stores/game-console.store';
 import { useClientPlayer } from '../composables/use-client-player';
 import { GameName } from '../types';
-
-/** 遙控器為手機專用、需填滿螢幕，故僅在此頁面以視窗縮放 root 字級，
- * 讓既有 rem 尺寸自動適應各種手機大小；離開頁面即還原。
- */
-onMounted(() => {
-  document.documentElement.style.fontSize = '1.71vmin';
-});
-onBeforeUnmount(() => {
-  document.documentElement.style.fontSize = '';
-});
 
 const gameConsoleStore = useGameConsoleStore();
 const router = useRouter();

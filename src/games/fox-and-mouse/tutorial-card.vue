@@ -63,7 +63,7 @@
       <p>
         練習完成後，按下
         <UIcon
-          name="i-material-symbols-done"
+          name="material-symbols:done"
           class="text-white p-2 bg-[#000]/60 rounded-full"
         />
         準備完成
