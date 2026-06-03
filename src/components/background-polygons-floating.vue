@@ -21,10 +21,10 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { colors } from 'quasar';
+import { colord } from 'colord';
 import { nanoid } from 'nanoid';
 import { random, sample } from 'lodash-es';
-import { promiseTimeout, useIntervalFn } from '@vueuse/core';
+import { promiseTimeout, useIntervalFn, useWindowSize } from '@vueuse/core';
 
 import BasePolygon, { FillType, ShapeType } from '../components/base-polygon.vue';
 
@@ -39,8 +39,6 @@ interface PolygonParams {
   color: string;
   animationDuration: string;
 }
-
-const { lighten, textToRgb, rgbToHsv, hsvToRgb, rgbToHex } = colors;
 
 interface Props {
   /** 背景顏色 */
@@ -64,16 +62,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const backgroundStyle = computed(() => {
   // 變亮並偏移色相
-  const lightenColor = lighten(props.backgroundColor, 10);
-  const hsvColor = rgbToHsv(textToRgb(lightenColor));
-  hsvColor.h += 10;
-
-  const result = rgbToHex(hsvToRgb(hsvColor));
+  const result = colord(props.backgroundColor).lighten(0.1).rotate(10).toHex();
 
   return {
     background: `linear-gradient(-10deg, ${props.backgroundColor}, ${result})`
   }
 });
+
+const { width: windowWidth } = useWindowSize();
+/** 手機版（sm 斷點以下）多邊形尺寸縮小 50% */
+const sizeScale = computed(() => windowWidth.value <= 600 ? 0.5 : 1);
 
 const polygonsMap = ref<Map<string, PolygonParams>>(new Map());
 
@@ -81,7 +79,7 @@ function createPolygonParams() {
   const params: PolygonParams = {
     left: `${random(0, 100)}%`,
     top: `${random(0, 100)}%`,
-    size: `${random(2, 15)}rem`,
+    size: `${random(2, 15) * sizeScale.value}rem`,
     rotate: `${random(0, 180)}deg`,
     opacity: random(0.4, 0.6, true),
     color: sample(props.polygonColors) ?? 'white',

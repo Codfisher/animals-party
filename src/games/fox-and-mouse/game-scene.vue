@@ -5,16 +5,18 @@
       class="outline-none w-full h-full"
     />
 
-    <q-dialog
-      :model-value="isGameOver && props.mode === 'normal'"
-      persistent
+    <UModal
+      :open="isGameOver && props.mode === 'normal'"
+      :dismissible="false"
     >
-      <player-leaderboard :id-list="getRankedIdList(players)">
-        <div class="text-xl text-gray-400 p-5 text-center">
-          按下 <q-icon name="done" /> 回到大廳
-        </div>
-      </player-leaderboard>
-    </q-dialog>
+      <template #content>
+        <player-leaderboard :id-list="getRankedIdList(players)">
+          <div class="text-xl text-gray-400 p-5 text-center">
+            按下 <UIcon name="i-material-symbols-done" /> 回到大廳
+          </div>
+        </player-leaderboard>
+      </template>
+    </UModal>
   </div>
 </template>
 
@@ -38,17 +40,15 @@ import '@babylonjs/inspector';
 import { Fox } from './fox';
 import { Mouse } from './mouse';
 import { cloneDeep, compact, curry, range, throttle } from 'lodash-es';
-import { getPlayerColor, getRandomPositions, getSquareMatrixPositions } from '../../common/utils';
+import { getRandomPositions, getSquareMatrixPositions } from '../../common/utils';
 import { GamepadData, GameSceneMode, KeyName, SignalData } from '../../types';
-import { colors } from 'quasar';
+import { getPlayerColorRgb } from '../../common/color';
 
 import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 
 import { useBabylonScene } from '../../composables/use-babylon-scene';
 import { promiseTimeout } from '@vueuse/core';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
-
-const { getPaletteColor, textToRgb } = colors;
 
 interface Props {
   mode?: `${GameSceneMode}`;
@@ -213,9 +213,7 @@ async function createMice(scene: Scene) {
 async function createFox(id: string, position: Vector3, scene: Scene) {
   /** 依照玩家 ID 取得對應顏色名稱並轉換成 rgb */
   const codeName = gameConsole.getPlayerCodeName(id);
-  const color = getPlayerColor({ codeName });
-  const hex = getPaletteColor(color);
-  const rgb = textToRgb(hex);
+  const rgb = getPlayerColorRgb(codeName);
 
   const fox = await new Fox(`fox-${id}`, scene, {
     ownerId: id,

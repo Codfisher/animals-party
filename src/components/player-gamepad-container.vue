@@ -10,15 +10,15 @@
       {{ codeName }}
     </div>
 
-    <q-dialog
-      v-model="isWrongOrientation"
-      persistent
+    <UModal
+      :open="isWrongOrientation"
+      :dismissible="false"
     >
-      <q-card class="p-8">
-        <q-card-section class="flex flex-col items-center gap-6">
-          <q-spinner-box
-            color="primary"
-            size="10rem"
+      <template #content>
+        <div class="p-8 flex flex-col items-center gap-6">
+          <UIcon
+            name="i-lucide-loader-circle"
+            class="animate-spin text-primary text-[10rem]"
           />
           <div class="text-4xl">
             請將手機轉為{{ targetOrientation }}
@@ -26,9 +26,9 @@
           <div class="text-base">
             轉為{{ targetOrientation }}後，此視窗會自動關閉
           </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
 
@@ -36,6 +36,7 @@
 import { computed } from 'vue';
 
 import { useClientPlayer } from '../composables/use-client-player';
+import { getPlayerColorClass } from '../common/color';
 import { useScreenOrientation } from '@vueuse/core';
 
 interface Props {
@@ -47,7 +48,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const { orientation } = useScreenOrientation();
-const { codeName, colorName } = useClientPlayer();
+const { codeName } = useClientPlayer();
 
 const isWrongOrientation = computed(() => {
   if (!props.orientation) {
@@ -56,7 +57,7 @@ const isWrongOrientation = computed(() => {
 
   return orientation.value?.includes(props.orientation) ?? false;
 });
-const bgClass = computed(() => `bg-${colorName.value}`);
+const bgClass = computed(() => getPlayerColorClass(codeName.value));
 
 const targetOrientation = computed(() =>
   props.orientation === 'landscape' ? '直向' : '橫向'

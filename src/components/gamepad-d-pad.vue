@@ -1,30 +1,30 @@
 <template>
-  <div class="d-pad rounded-full bg-grey-10">
+  <div class="d-pad rounded-full bg-neutral-900">
     <gamepad-btn
       class="btn up"
-      color="grey-9"
-      icon="arrow_drop_up"
+      color="bg-neutral-800!"
+      icon="i-material-symbols-arrow-drop-up"
       size="3rem"
       @trigger="(status) => handleBtnTrigger('up', status)"
     />
     <gamepad-btn
       class="btn left"
-      color="grey-9"
-      icon="arrow_left"
+      color="bg-neutral-800!"
+      icon="i-material-symbols-arrow-left"
       size="3rem"
       @trigger="(status) => handleBtnTrigger('left', status)"
     />
     <gamepad-btn
       class="btn right"
-      color="grey-9"
-      icon="arrow_right"
+      color="bg-neutral-800!"
+      icon="i-material-symbols-arrow-right"
       size="3rem"
       @trigger="(status) => handleBtnTrigger('right', status)"
     />
     <gamepad-btn
       class="btn down"
-      color="grey-9"
-      icon="arrow_drop_down"
+      color="bg-neutral-800!"
+      icon="i-material-symbols-arrow-drop-down"
       size="3rem"
       @trigger="(status) => handleBtnTrigger('down', status)"
     />

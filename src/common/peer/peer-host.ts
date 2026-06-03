@@ -1,5 +1,4 @@
 import Peer, { DataConnection } from 'peerjs';
-import { customAlphabet } from 'nanoid';
 import mitt from 'mitt';
 import {
   GameConsoleState,
@@ -12,9 +11,7 @@ import {
   Room,
 } from '../../types';
 import { UpdateStateParams } from '../../stores/game-console.store';
-
-/** host peer id 用的無歧義英數字母（避開 0/o、1/l/i） */
-const generateRoomId = customAlphabet('23456789abcdefghjkmnpqrstuvwxyz', 6);
+import { generateRoomCode, toPeerId } from './room-id';
 
 /** id 撞號時重新產生的最大次數 */
 const MAX_CREATE_RETRY = 5;
@@ -63,16 +60,18 @@ export class PeerHost {
       }, CREATE_TIMEOUT);
 
       const tryCreate = () => {
-        const peer = new Peer(generateRoomId());
+        const code = generateRoomCode();
+        const peer = new Peer(toPeerId(code));
         this.peer = peer;
 
-        peer.once('open', (openId) => {
+        peer.once('open', () => {
           if (settled) return;
           settled = true;
           clearTimeout(timer);
-          this.id = openId;
+          // 對外只暴露 6 碼數字房號，實際 peer id 含前綴
+          this.id = code;
           this.bindConnectionEvents(peer);
-          resolve({ id: openId, founderId: this.clientId, playerIds: [] });
+          resolve({ id: code, founderId: this.clientId, playerIds: [] });
         });
 
         peer.once('error', (error) => {

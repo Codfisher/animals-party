@@ -4,3 +4,8 @@ dist
 dist-ssr
 coverage
 *.local
+
+# Nuxt UI 自動產生的型別宣告
+auto-imports.d.ts
+components.d.ts
+.data

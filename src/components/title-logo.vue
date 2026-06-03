@@ -1,18 +1,18 @@
 <template>
   <div class=" relative leading-none">
     <div
-      ref="titleDiv"
       class=" flex flex-col flex-center text-white pb-6"
+      :style="titleStyle"
     >
       <div class="flex flex-col flex-center jelly-bounce">
-        <div class="text-[8rem] font-game">
+        <div class="text-7xl sm:text-8xl lg:text-9xl font-game">
           ANIMALS
         </div>
-        <div class="text-[12.5rem] font-game">
+        <div class="text-8xl sm:text-9xl lg:text-[12rem] font-game">
           PARTY
         </div>
       </div>
-      <div class=" text-[4rem] font-black mt-3 flex gap-2 joy-bounce">
+      <div class=" text-3xl sm:text-4xl lg:text-6xl font-black mt-3 flex gap-2 joy-bounce">
         <span class="text-red-400">動</span>
         <span class="text-lime-400">物</span>
         <span class="text-sky-400">派</span>
@@ -23,68 +23,28 @@
         <span class="text-fuchsia-400">！</span>
       </div>
     </div>
-
-    <!-- stroke -->
-    <div
-      class=" absolute top-0 flex flex-col flex-center stroke-color"
-      :style="strokeStyle"
-      v-html="titleDiv?.innerHTML"
-    />
-
-    <svg
-      version="1.1"
-      style="display: none;"
-    >
-      <defs>
-        <filter :id="svgFilterId">
-          <feMorphology
-            operator="dilate"
-            :radius="radius"
-          />
-          <feComposite
-            operator="xor"
-            in="SourceGraphic"
-          />
-        </filter>
-      </defs>
-    </svg>
   </div>
 </template>
 
 <script setup lang="ts">
-import { nanoid } from 'nanoid';
-import { useQuasar } from 'quasar';
-import { ref, computed } from 'vue';
+import { useWindowSize } from '@vueuse/core';
+import { computed } from 'vue';
 
-const $q = useQuasar();
+const { width: windowWidth } = useWindowSize();
 
-const titleDiv = ref<HTMLDivElement>();
+/** 小螢幕用較細的描邊 */
+const strokeWidth = computed(() => windowWidth.value <= 600 ? 6 : 10);
 
-const svgFilterId = `svg-filter-${nanoid()}`;
-const strokeStyle = computed(() => {
-  return {
-    filter: `url(#${svgFilterId})`
-  }
-});
-
-const radius = computed(() => {
-  if ($q.screen.width <= 600) {
-    return 6;
-  }
-
-  return 10;
-});
+const titleStyle = computed(() => ({
+  // 描邊畫在填色之後，呈現外框效果
+  paintOrder: 'stroke fill',
+  WebkitTextStroke: `${strokeWidth.value}px #2e1c00`,
+}));
 </script>
 
-<style scoped lang="sass">  
+<style scoped lang="sass">
 .font-game
   font-family: 'Luckiest Guy'
-
-// 避免顏色顏色覆蓋外框艷色
-.stroke-color
-  color: #2e1c00
-  span
-    color: #2e1c00
 
 .jelly-bounce
   animation: jelly-bounce 3.2s infinite

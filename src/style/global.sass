@@ -1,15 +1,3 @@
-@import ./quasar-variables
-
-@mixin color-class($class, $value)
-  .bg-#{$class}
-    background: $value
-  .text-#{$class}
-    color: $value
-  .border-#{$class}
-    border-color: $value
-
-@include color-class('main', $main)
-
 #scene-explorer-host, #inspector-host
   position: fixed !important
   top: 0 !important

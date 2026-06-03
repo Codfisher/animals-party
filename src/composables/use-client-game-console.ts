@@ -58,7 +58,7 @@ export function useClientGameConsole() {
   }
 
   const gamepadDataHook = createEventHook<GamepadData>();
-  const playerUpdateHook = createEventHook<Player[]>();
+  const playerUpdateHook = createEventHook<[Player[]]>();
   const profileUpdateHook = createEventHook<Player>();
 
   onBeforeUnmount(() => {

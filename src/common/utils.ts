@@ -72,25 +72,6 @@ export function createAnimation(
 }
 
 
-const playerColorNames = [
-  'red', 'deep-purple', 'light-blue',
-  'green', 'amber', 'deep-orange',
-  'blue-grey', 'brown',
-];
-
-/** 取得玩家顏色 */
-export function getPlayerColor({ codeName }: { codeName: string }) {
-  if (!codeName.includes('P')) {
-    return 'grey';
-  }
-
-  try {
-    const index = parseInt(codeName.replaceAll('P', ''), 10) - 1;
-    return playerColorNames?.[index] ?? 'grey';
-  } catch (error) {
-    return 'grey';
-  }
-}
 
 /** 取得指定數量方形矩陣，可用於排列登場角色
  * 

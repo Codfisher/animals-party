@@ -7,20 +7,22 @@
     <gamepad-btn
       class="absolute bottom-10 right-10 opacity-90"
       size="6rem"
-      icon="done"
+      icon="i-material-symbols-done"
       @trigger="(status) => handleBtnTrigger('confirm', status)"
     />
 
     <gamepad-btn
       class="absolute top-10 right-10 opacity-90"
       size="4rem"
-      icon="api"
+      icon="i-material-symbols-api"
       @click="openPermissionCard()"
     />
 
-    <q-dialog v-model="permissionCardVisible">
-      <permission-card @update="handlePermission" />
-    </q-dialog>
+    <UModal v-model:open="permissionCardVisible">
+      <template #content>
+        <permission-card @update="handlePermission" />
+      </template>
+    </UModal>
   </player-gamepad-container>
 </template>
 

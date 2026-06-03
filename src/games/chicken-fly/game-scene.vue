@@ -5,16 +5,18 @@
       class="outline-none w-full h-full"
     />
 
-    <q-dialog
-      v-model="isGameOver"
-      persistent
+    <UModal
+      v-model:open="isGameOver"
+      :dismissible="false"
     >
-      <player-leaderboard :id-list="getRankedIdList(playerChickens)">
-        <div class="text-xl text-gray-400 p-5 text-center">
-          按下 <q-icon name="done" /> 回到大廳
-        </div>
-      </player-leaderboard>
-    </q-dialog>
+      <template #content>
+        <player-leaderboard :id-list="getRankedIdList(playerChickens)">
+          <div class="text-xl text-gray-400 p-5 text-center">
+            按下 <UIcon name="i-material-symbols-done" /> 回到大廳
+          </div>
+        </player-leaderboard>
+      </template>
+    </UModal>
   </div>
 </template>
 
@@ -37,8 +39,8 @@ import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
 import { cloneDeep, curry, flow, range } from 'lodash-es';
 import { ref, watch } from 'vue';
-import { colors } from 'quasar';
-import { getPlayerColor, getSquareMatrixPositions } from '../../common/utils';
+import { getPlayerColorRgb } from '../../common/color';
+import { getSquareMatrixPositions } from '../../common/utils';
 import { GamepadData, GameSceneMode, KeyName, Player, SignalData } from '../../types';
 
 import { BadChicken } from './bad-chicken';
@@ -49,8 +51,6 @@ import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { useBabylonScene } from '../../composables/use-babylon-scene';
 import { useInterval, whenever } from '@vueuse/core';
-
-const { getPaletteColor, textToRgb } = colors;
 
 interface Props {
   mode?: `${GameSceneMode}`;
@@ -422,9 +422,7 @@ function detectOutOfBounds(chickens: Chicken[]) {
 async function createChicken(id: string, position: Vector3, scene: Scene) {
   /** 依照玩家 ID 取得對應顏色名稱並轉換成 rgb */
   const codeName = gameConsole.getPlayerCodeName(id);
-  const color = getPlayerColor({ codeName });
-  const hex = getPaletteColor(color);
-  const rgb = textToRgb(hex);
+  const rgb = getPlayerColorRgb(codeName);
 
   const chicken = await new Chicken(`chicken-${id}`, scene, {
     ownerId: id,

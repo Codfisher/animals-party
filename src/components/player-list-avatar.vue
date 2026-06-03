@@ -2,7 +2,7 @@
   <div class="frame relative">
     <div
       class="avatar relative rounded-full flex justify-center p-2 overflow-hidden"
-      :class="classes"
+      :class="avatarClass"
     >
       {{ props.codeName }}
 
@@ -19,9 +19,8 @@
           :key="messageInfo.id"
           class="balloon"
         >
-          <q-icon
-            color="grey-9"
-            size="4rem"
+          <UIcon
+            class="text-[4rem] text-neutral-800"
             :name="getIconName(messageInfo.text)"
           />
         </div>
@@ -33,7 +32,7 @@
 <script setup lang="ts">
 import { computed, reactive } from 'vue';
 import { KeyName, Player } from '../types';
-import { getPlayerColor } from '../common/utils';
+import { getPlayerColorClass } from '../common/color';
 import { debounce, random, sample } from 'lodash-es';
 import { nanoid } from 'nanoid';
 
@@ -46,11 +45,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {});
 
-const classes = computed(() => {
-  const colorName = getPlayerColor({ codeName: props.codeName });
-
-  return [`bg-${colorName}`];
-});
+const avatarClass = computed(() => getPlayerColorClass(props.codeName));
 
 const polygonParams = computed<InstanceType<typeof BasePolygon>['$props']>(() => {
   const shape = sample(Object.values(ShapeType)) ?? 'round';
@@ -88,28 +83,28 @@ function showBalloon(text: string) {
 const keyToIcon = [
   {
     keyName: KeyName.UP,
-    icon: 'arrow_drop_up'
+    icon: 'i-material-symbols-arrow-drop-up'
   },
   {
     keyName: KeyName.LEFT,
-    icon: 'arrow_left'
+    icon: 'i-material-symbols-arrow-left'
   },
   {
     keyName: KeyName.RIGHT,
-    icon: 'arrow_right'
+    icon: 'i-material-symbols-arrow-right'
   },
   {
     keyName: KeyName.DOWN,
-    icon: 'arrow_drop_down'
+    icon: 'i-material-symbols-arrow-drop-down'
   },
   {
     keyName: KeyName.CONFIRM,
-    icon: 'done'
+    icon: 'i-material-symbols-done'
   },
 ]
 function getIconName(name: string) {
   const target = keyToIcon.find(({ keyName }) => keyName === name);
-  return target?.icon ?? 'question_mark';
+  return target?.icon ?? 'i-material-symbols-question-mark';
 }
 
 defineExpose({

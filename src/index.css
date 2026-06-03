@@ -1,3 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 1024px;
+  --breakpoint-lg: 1440px;
+  --breakpoint-xl: 1920px;
+}
+
+/* 同時置中主軸與交叉軸，取代 Quasar 的 .flex-center */
+@utility flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

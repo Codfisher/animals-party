@@ -13,46 +13,20 @@
         <div :key="text">
           <!-- 文字 -->
           <div
-            ref="textRef"
             class="text"
             :class="getClass()"
+            :style="textStyle"
           >
             {{ text }}
           </div>
-
-          <!-- 文字外框 -->
-          <div
-            class="text absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 stroke-color"
-            :style="strokeStyle"
-            v-html="textRef?.innerHTML"
-          />
         </div>
       </transition>
     </div>
   </transition>
-
-  <svg
-    version="1.1"
-    style="display: none;"
-  >
-    <defs>
-      <filter :id="svgFilterId">
-        <feMorphology
-          operator="dilate"
-          radius="6"
-        />
-        <feComposite
-          operator="xor"
-          in="SourceGraphic"
-        />
-      </filter>
-    </defs>
-  </svg>
 </template>
 
 <script setup lang="ts">
 import { sample } from 'lodash-es';
-import { nanoid } from 'nanoid';
 import { computed, ref, watch } from 'vue';
 
 import { useIntervalFn } from '@vueuse/core';
@@ -102,12 +76,11 @@ const { resume, pause } = useIntervalFn(() => {
   immediate: props.immediate,
 })
 
-const textRef = ref<HTMLDivElement>();
-
-const svgFilterId = `svg-filter-${nanoid()}`;
-const strokeStyle = computed(() => ({
-  filter: `url(#${svgFilterId})`
-}));
+const textStyle = {
+  // 描邊畫在填色之後，呈現外框效果
+  paintOrder: 'stroke fill',
+  WebkitTextStroke: '6px white',
+};
 
 const colors = [
   'text-red-400',
@@ -132,12 +105,6 @@ defineExpose({
 .text
   font-family: 'Luckiest Guy'
   font-size: v-bind('props.fontSize')
-
-// 避免顏色顏色覆蓋外框艷色
-.stroke-color
-  color: white
-  span
-    color: white
 
 .countdown
   &-enter-active, &-leave-active

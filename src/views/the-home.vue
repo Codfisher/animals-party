@@ -1,17 +1,17 @@
 <template>
   <background-polygons-floating class="absolute inset-0" />
 
-  <div class="absolute inset-0 flex justify-center items-center content-center gap-32">
+  <div class="absolute inset-0 flex flex-col md:flex-row justify-center items-center content-center gap-16 md:gap-32">
     <title-logo />
 
-    <div class="flex flex-col flex-center gap-20">
+    <div class="flex flex-col flex-center gap-10 md:gap-20">
       <base-btn
         v-slot="{ hover }"
         label="建立派對"
         label-hover-color="#ff9a1f"
         stroke-color="#856639"
         stroke-hover-color="white"
-        class=" w-[30rem]"
+        class="w-72 sm:w-80 md:w-[28rem]"
         @click="startParty"
       >
         <div
@@ -26,11 +26,9 @@
             opacity="0.6"
           />
 
-          <q-icon
-            name="sports_esports"
-            color="white"
-            size="8rem"
-            class="absolute game-icon"
+          <UIcon
+            name="i-material-symbols-sports-esports"
+            class="absolute game-icon text-white text-[5rem] md:text-[8rem]"
           />
         </div>
       </base-btn>
@@ -41,7 +39,7 @@
         label-hover-color="#ff9a1f"
         stroke-color="#856639"
         stroke-hover-color="white"
-        class=" w-[30rem]"
+        class="w-72 sm:w-80 md:w-[28rem]"
         @click="joinGame"
       >
         <div
@@ -55,11 +53,9 @@
             shape="pentagon"
             opacity="0.6"
           />
-          <q-icon
-            name="person_add"
-            color="white"
-            size="7.8rem"
-            class="absolute join-icon"
+          <UIcon
+            name="i-material-symbols-person-add"
+            class="absolute join-icon text-white text-[5rem] md:text-[7.8rem]"
           />
         </div>
       </base-btn>
@@ -80,13 +76,14 @@ import DialogJoinGame from '../components/dialog-join-game.vue';
 
 import { useLoading } from '../composables/use-loading';
 import { useRouter } from 'vue-router';
-import { useQuasar } from 'quasar';
 import { useClientGameConsole } from '../composables/use-client-game-console';
 
 const gameConsole = useClientGameConsole();
 const loading = useLoading();
 const router = useRouter();
-const $q = useQuasar();
+const toast = useToast();
+const overlay = useOverlay();
+const joinGameModal = overlay.create(DialogJoinGame);
 
 async function startParty() {
   await loading.show();
@@ -94,9 +91,9 @@ async function startParty() {
   const [err, room] = await to(gameConsole.startParty());
   if (err) {
     console.error(`[ startParty ] err : `, err);
-    $q.notify({
-      type: 'negative',
-      message: '建立派對失敗，請吸嗨後再度嘗試'
+    toast.add({
+      color: 'error',
+      title: '建立派對失敗，請吸嗨後再度嘗試'
     });
     loading.hide();
     return;
@@ -109,14 +106,15 @@ async function startParty() {
   });
 }
 async function joinGame() {
-  $q.dialog({
-    component: DialogJoinGame,
-  }).onOk(async () => {
-    await loading.show();
+  const joined = await joinGameModal.open();
+  if (!joined) {
+    return;
+  }
 
-    router.push({
-      name: RouteName.PLAYER_GAMEPAD
-    });
+  await loading.show();
+
+  router.push({
+    name: RouteName.PLAYER_GAMEPAD
   });
 }
 
