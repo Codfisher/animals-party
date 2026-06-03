@@ -72,9 +72,6 @@ watch(roomId, async (id) => {
   border-radius: 1rem
   background: rgba(#2a3832, 0.06)
 
-.room-id
-  pointer-events: none
-
 .room-id-badge
   padding: 0.55rem 1rem
   border-radius: 1rem
