@@ -77,10 +77,13 @@ export function createIce(name: string, scene: Scene, params: Params) {
 
     /** 開始播放動畫 */
     scene.beginAnimation(ripple, 0, frameRate, true);
+
+    return ripple;
   }
-  createRipple();
+  const ripple = createRipple();
 
   return {
-    mesh
+    mesh,
+    ripple,
   }
 }
