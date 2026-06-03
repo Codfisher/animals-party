@@ -76,7 +76,6 @@ watch(roomId, async (id) => {
   padding: 0.25rem 0.5rem
   border-radius: 1rem
   background: #2a3832
-  box-shadow: 0 4px 14px rgba(#1d3e57, 0.18)
 
 .room-id-text
   color: white
