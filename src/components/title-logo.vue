@@ -1,7 +1,7 @@
 <template>
   <div class=" relative leading-none">
     <div
-      class=" flex flex-col flex-center text-white pb-6"
+      class=" flex flex-col flex-center text-white"
       :style="titleStyle"
     >
       <div
