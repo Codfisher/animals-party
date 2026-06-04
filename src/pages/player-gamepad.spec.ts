@@ -22,6 +22,7 @@ vi.mock('../composables/use-client-player', () => ({
     onPlayerUpdate: () => undefined,
     requestGameConsoleState: () => undefined,
     joinRoom: () => Promise.resolve(),
+    codeName: { value: 'unknown' },
   }),
 }));
 

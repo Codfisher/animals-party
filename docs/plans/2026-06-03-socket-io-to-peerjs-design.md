@@ -102,6 +102,7 @@ type PeerMessage =
   player 端清單靠收 `game-console:player-update` 更新（同現狀）。
 - 身分與重連：`clientId` 存 localStorage。player 重連（同 clientId）host 以 clientId 為 key，新 conn 取代舊 conn。
   - player 端房號存 sessionStorage（`game-console.store` 的 `roomId`）；不慎重新整理後，`player-gamepad` 進頁時若偵測到有房號但 `clientConnected` 為 false，便自動 `joinRoom` 重連，host 依 clientId 補回原位；重連失敗（房間已關）則清除房號退回首頁。
+  - 重連期間由 `player-gamepad` 自管獨立蓋板（不沿用全域 loading）；因玩家清單抵達前 `codeName` 為 unknown，蓋板維持到 `codeName` 被辨識才收起，並設安全逾時避免卡死。
   - host 端 peer id 無法復原，故 `game-console` 進頁時若 `host` 未連線（如重新整理），直接清房號退回首頁。
 - `Room` 型別保留 `{ id, founderId, playerIds }`：`id` = host peer id、`founderId` = host clientId、
   `playerIds` = 連線中玩家 clientId 清單。移除沒人用的 `SocketResponse`。
