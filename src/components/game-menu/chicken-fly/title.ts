@@ -1,11 +1,15 @@
 import {
-  Scene, Vector3, SceneLoader,
-  StandardMaterial, Color3, TransformNode,
+  Scene,
+  Vector3,
+  SceneLoader,
+  StandardMaterial,
+  Color3,
+  TransformNode,
   Animation,
   SineEase,
   EasingFunction,
-} from "@babylonjs/core";
-import { defaults } from "lodash-es";
+} from '@babylonjs/core';
+import { defaults } from 'lodash-es';
 
 interface Option {
   scaling?: number;
@@ -17,12 +21,10 @@ const defaultOption: Required<Option> = {
   scaling: 1,
   position: Vector3.Zero(),
   rotation: Vector3.Zero(),
-}
+};
 
 export async function createTitle(name: string, scene: Scene, option?: Option) {
-  const {
-    scaling, position, rotation
-  } = defaults(option, defaultOption);
+  const { scaling, position, rotation } = defaults(option, defaultOption);
 
   const rootNode = new TransformNode('chicken-fly-island-title');
   const result = await SceneLoader.ImportMeshAsync('', '/chicken-fly/', 'title.glb', scene);
@@ -49,9 +51,11 @@ export async function createTitle(name: string, scene: Scene, option?: Option) {
   function initAnimation() {
     const frameRate = 20;
     const floatAnimation = new Animation(
-      'float', 'position', frameRate / 3,
+      'float',
+      'position',
+      frameRate / 3,
       Animation.ANIMATIONTYPE_VECTOR3,
-      Animation.ANIMATIONLOOPMODE_CYCLE
+      Animation.ANIMATIONLOOPMODE_CYCLE,
     );
 
     const offset = 0.2;
@@ -82,5 +86,5 @@ export async function createTitle(name: string, scene: Scene, option?: Option) {
   return {
     rootNode,
     setParent: rootNode.setParent.bind(rootNode),
-  }
+  };
 }

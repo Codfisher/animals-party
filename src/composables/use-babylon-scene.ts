@@ -1,24 +1,44 @@
 import { defaults } from 'lodash-es';
 import {
   ArcRotateCamera,
-  Engine, HemisphericLight, Scene, Vector3,
+  Engine,
+  HemisphericLight,
+  Scene,
+  Vector3,
+  WebGPUEngine,
 } from '@babylonjs/core';
 import { useEventListener } from '@vueuse/core';
 import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 
+/** WebGPU 與 WebGL engine 的共用型別 */
+export type BabylonEngine = Engine | WebGPUEngine;
+
 interface UseBabylonSceneParams {
-  createEngine?: (canvas: HTMLCanvasElement) => Engine;
-  createScene?: (engine: Engine) => Scene;
+  createEngine?: (canvas: HTMLCanvasElement) => BabylonEngine | Promise<BabylonEngine>;
+  createScene?: (engine: BabylonEngine) => Scene;
   createCamera?: (scene: Scene) => ArcRotateCamera;
   init?: (params: {
     canvas: HTMLCanvasElement;
-    engine: Engine;
+    engine: BabylonEngine;
     scene: Scene;
     camera: ArcRotateCamera;
   }) => Promise<void>;
 }
 const defaultParams: Required<UseBabylonSceneParams> = {
-  createEngine(canvas) {
+  /** 優先建立 WebGPU engine，不支援或初始化失敗時退回 WebGL */
+  async createEngine(canvas) {
+    if (await WebGPUEngine.IsSupportedAsync) {
+      let webgpuEngine: WebGPUEngine | undefined;
+      try {
+        webgpuEngine = new WebGPUEngine(canvas, { antialias: true });
+        await webgpuEngine.initAsync();
+        return webgpuEngine;
+      } catch (error) {
+        console.warn('[useBabylonScene] WebGPU 初始化失敗，改用 WebGL', error);
+        /** 釋放半初始化的 WebGPU engine，避免殘留錯誤 */
+        webgpuEngine?.dispose();
+      }
+    }
     return new Engine(canvas, true);
   },
   createScene(engine) {
@@ -39,24 +59,25 @@ const defaultParams: Required<UseBabylonSceneParams> = {
       Math.PI / 4,
       34,
       new Vector3(0, 0, 2),
-      scene
+      scene,
     );
 
     return camera;
   },
   init: () => Promise.resolve(),
-}
+};
 
 export function useBabylonScene(params?: UseBabylonSceneParams) {
   const canvas = ref<HTMLCanvasElement>();
 
-  const engine = shallowRef<Engine>();
+  const engine = shallowRef<BabylonEngine>();
   const scene = shallowRef<Scene>();
   const camera = shallowRef<ArcRotateCamera>();
 
-  const {
-    createEngine, createScene, createCamera, init
-  } = defaults(params, defaultParams);
+  /** 標記元件是否已卸載，避免 WebGPU 非同步初始化完成時元件已不存在 */
+  let disposed = false;
+
+  const { createEngine, createScene, createCamera, init } = defaults(params, defaultParams);
 
   /** 於 setup 同步階段註冊，useEventListener 才能在元件卸載時自動清除 */
   useEventListener(window, 'resize', handleResize);
@@ -71,7 +92,14 @@ export function useBabylonScene(params?: UseBabylonSceneParams) {
       console.error('無法取得 canvas DOM');
       return;
     }
-    engine.value = createEngine(canvas.value);
+    const createdEngine = await createEngine(canvas.value);
+    /** WebGPU 初始化期間元件可能已卸載，此時直接釋放並中止 */
+    if (disposed) {
+      createdEngine.dispose();
+      return;
+    }
+
+    engine.value = createdEngine;
     scene.value = createScene(engine.value);
     camera.value = createCamera(scene.value);
 
@@ -89,6 +117,7 @@ export function useBabylonScene(params?: UseBabylonSceneParams) {
   });
 
   onBeforeUnmount(() => {
+    disposed = true;
     engine.value?.dispose();
   });
 
@@ -120,5 +149,5 @@ export function useBabylonScene(params?: UseBabylonSceneParams) {
     engine,
     scene,
     camera,
-  }
+  };
 }

@@ -10,5 +10,5 @@ export const useLoadingStore = defineStore('loading', () => {
     isLeaving: ref(false),
     /** loading 樣式，預留未來可以切換多種樣式 */
     type: ref(''),
-  }
-})
+  };
+});

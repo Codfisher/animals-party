@@ -3,12 +3,8 @@
     <template #content>
       <div class="flex flex-col justify-between p-5 min-w-[400px] min-h-[150px]">
         <div class="flex items-center">
-          <UAvatar
-            :icon="props.icon.name"
-            class="bg-white!"
-            :style="{ color: props.icon.color }"
-          />
-          <span class=" ml-6 text-xl text-[#5E5E5E]">
+          <UAvatar :icon="props.icon.name" class="bg-white!" :style="{ color: props.icon.color }" />
+          <span class="ml-6 text-xl text-[#5E5E5E]">
             {{ props.message }}
           </span>
         </div>
@@ -59,5 +55,4 @@ const emit = defineEmits<{
 }>();
 </script>
 
-<style scoped lang="sass">
-</style>
+<style scoped lang="sass"></style>

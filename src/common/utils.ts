@@ -1,4 +1,13 @@
-import { Animation, AnimationGroup, Color3, CubicEase, EasingFunction, QuarticEase, Quaternion, Vector3 } from '@babylonjs/core';
+import {
+  Animation,
+  AnimationGroup,
+  Color3,
+  CubicEase,
+  EasingFunction,
+  QuarticEase,
+  Quaternion,
+  Vector3,
+} from '@babylonjs/core';
 import { defaults, flow, get, fill, random } from 'lodash-es';
 
 export interface CreateAnimationOption {
@@ -21,60 +30,58 @@ const defaultCreateAnimationOption: Required<CreateAnimationOption> = {
   frameRate: 60,
   speedRatio: 1,
   easingFunction: defaultEasingFunction,
-}
+};
 
 /** 建立從目前狀態至目標狀態的動畫
- * 
+ *
  * @param target 目標物件
  * @param property 過度的目標屬性
  * @param to 目標狀態
  * @param option 參數
- * @returns 
+ * @returns
  */
 export function createAnimation(
   target: any,
   property: string,
   to: number | Vector3 | Color3 | Quaternion,
-  option?: CreateAnimationOption
+  option?: CreateAnimationOption,
 ) {
-  const {
-    frameRate, speedRatio, easingFunction,
-  } = defaults(option, defaultCreateAnimationOption);
+  const { frameRate, speedRatio, easingFunction } = defaults(option, defaultCreateAnimationOption);
 
   const keys = [
     {
-      frame: 0, value: get(target, property),
+      frame: 0,
+      value: get(target, property),
     },
     {
-      frame: frameRate, value: to,
+      frame: frameRate,
+      value: to,
     },
   ];
 
   let animationType = Animation.ANIMATIONTYPE_FLOAT;
   if (typeof to === 'number') {
-    animationType = Animation.ANIMATIONTYPE_FLOAT
+    animationType = Animation.ANIMATIONTYPE_FLOAT;
   } else if (to instanceof Vector3) {
-    animationType = Animation.ANIMATIONTYPE_VECTOR3
+    animationType = Animation.ANIMATIONTYPE_VECTOR3;
   } else if (to instanceof Color3) {
-    animationType = Animation.ANIMATIONTYPE_COLOR3
+    animationType = Animation.ANIMATIONTYPE_COLOR3;
   } else if (to instanceof Quaternion) {
-    animationType = Animation.ANIMATIONTYPE_QUATERNION
+    animationType = Animation.ANIMATIONTYPE_QUATERNION;
   }
 
   const animation = Animation.CreateAnimation(
     property,
     animationType,
     frameRate * speedRatio,
-    easingFunction
+    easingFunction,
   );
   animation.setKeys(keys);
   return { animation, frameRate };
 }
 
-
-
 /** 取得指定數量方形矩陣，可用於排列登場角色
- * 
+ *
  * @param gap 間距
  * @param length 數量
  * @param origin 座標原點，預設 new Vector3(0, 0, 0)
@@ -84,7 +91,7 @@ export function getSquareMatrixPositions(
   gap: number,
   length: number,
   origin = new Vector3(0, 0, 0),
-  plane: 'xy' | 'xz' | 'yz' = 'xz'
+  plane: 'xy' | 'xz' | 'yz' = 'xz',
 ) {
   /** 最大 col 為 length 開根號後無條件進位 */
   const maxCol = Math.ceil(Math.sqrt(length));
@@ -109,7 +116,8 @@ export function getSquareMatrixPositions(
             return new Vector3(col * gap, row * gap, 0);
           case 'yz':
             return new Vector3(0, col * gap, row * gap);
-          case 'xz': default:
+          case 'xz':
+          default:
             return new Vector3(col * gap, 0, row * gap);
         }
       });
@@ -118,7 +126,7 @@ export function getSquareMatrixPositions(
     /** 將目前中心點平移至目前原點  */
     (positions: Vector3[]) => {
       /** -1 是因為偏移量要從 0 開始算 */
-      const currentCenter = new Vector3((maxCol - 1) * gap / 2, 0, (maxRow - 1) * gap / 2);
+      const currentCenter = new Vector3(((maxCol - 1) * gap) / 2, 0, ((maxRow - 1) * gap) / 2);
       return positions.map((position) => position.subtract(currentCenter));
     },
 
@@ -130,11 +138,7 @@ export function getSquareMatrixPositions(
 }
 
 /** 將 value 從 a 範圍映射至 b 範圍 */
-export function mapRange(
-  value: number,
-  aMin: number, aMax: number,
-  bMin: number, bMax: number
-) {
+export function mapRange(value: number, aMin: number, aMax: number, bMin: number, bMax: number) {
   return bMin + ((value - aMin) * (bMax - bMin)) / (aMax - aMin);
 }
 
@@ -144,13 +148,13 @@ interface GetRandomPositionsParam {
     x: number;
     y: number;
     z: number;
-  },
+  };
   /** 每個座標之間最小距離 */
-  minDistance: number,
+  minDistance: number;
   /** 數量 */
-  length: number,
+  length: number;
   /** 座標原點，預設 new Vector3(0, 0, 0) */
-  origin?: Vector3,
+  origin?: Vector3;
 }
 /** 取得指定數量的隨機座標 */
 export function getRandomPositions(param: GetRandomPositionsParam) {
@@ -172,15 +176,11 @@ export function getRandomPositions(param: GetRandomPositionsParam) {
           throw new Error('無法計算座標');
         }
 
-        const position = new Vector3(
-          random(-x, x, true),
-          random(-y, y, true),
-          random(-z, z, true),
-        );
+        const position = new Vector3(random(-x, x, true), random(-y, y, true), random(-z, z, true));
 
         /** 檢查是否與任一現存座標重疊 */
         const invalid = positions.some(
-          (existPosition) => Vector3.Distance(position, existPosition) < minDistance
+          (existPosition) => Vector3.Distance(position, existPosition) < minDistance,
         );
         /** 無效，進入下一輪 */
         if (invalid) {
@@ -212,7 +212,7 @@ export function* animationBlending(
   fromAnimation: AnimationGroup,
   toAnimation: AnimationGroup,
   loop = true,
-  step = 0.1
+  step = 0.1,
 ) {
   let currentWeight = 1;
   let targetWeight = 0;

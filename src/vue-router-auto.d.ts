@@ -1,1 +1,1 @@
-/// <reference types="unplugin-vue-router/client" />
+/// <reference types="vue-router/auto" />

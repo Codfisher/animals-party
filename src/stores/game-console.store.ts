@@ -1,17 +1,21 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import {
-  GameConsoleState, GameConsoleStatus,
-  GameName, Player
-} from '../types';
+import { useSessionStorage } from '@vueuse/core';
+import { GameConsoleState, GameConsoleStatus, GameName, Player } from '../types';
 
 export type UpdateStateParams = Partial<GameConsoleState>;
 
 export const useGameConsoleStore = defineStore('game-console', () => {
-  const roomId = ref<string>();
+  /** 房號持久化於 sessionStorage：玩家不慎重新整理後仍可據此自動重連，
+   *  關閉分頁即自動清除，避免下次又連上早已結束的房間。 */
+  const roomId = useSessionStorage('animals-party:roomId', '');
 
   function setRoomId(id: string) {
     roomId.value = id;
+  }
+
+  function clearRoomId() {
+    roomId.value = '';
   }
 
   const status = ref<`${GameConsoleStatus}`>('home');
@@ -26,23 +30,19 @@ export const useGameConsoleStore = defineStore('game-console', () => {
       /** 以既有玩家資料為底，再覆蓋 host 廣播的權威資料
        *  （incoming 帶 permission 時直接生效，未帶則保留既有，例如 updateProfile 設定的權限） */
       players.value = state.players.map((incoming) => {
-        const target = players.value.find(
-          (player) => player.clientId === incoming.clientId
-        );
+        const target = players.value.find((player) => player.clientId === incoming.clientId);
 
         return {
           ...target,
           ...incoming,
-        }
+        };
       });
     }
   }
 
   function updateProfile(data: Player) {
     /** 檢查是否已存在 */
-    const index = players.value.findIndex(({ clientId }) =>
-      data.clientId === clientId
-    );
+    const index = players.value.findIndex(({ clientId }) => data.clientId === clientId);
 
     /** 不存在，新增 */
     if (index < 0) {
@@ -61,7 +61,8 @@ export const useGameConsoleStore = defineStore('game-console', () => {
     players,
 
     setRoomId,
+    clearRoomId,
     updateState,
     updateProfile,
-  }
-})
+  };
+});

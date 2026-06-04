@@ -1,9 +1,6 @@
 <template>
   <div class="overflow-hidden">
-    <canvas
-      ref="canvas"
-      class="outline-none w-full h-full"
-    />
+    <canvas ref="canvas" class="outline-none w-full h-full" />
 
     <UModal
       :open="isGameOver && props.mode === 'normal'"
@@ -26,7 +23,8 @@ import * as CANNON from 'cannon-es';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import {
   MeshBuilder,
-  Scene, BackgroundMaterial,
+  Scene,
+  BackgroundMaterial,
   Color3,
   StandardMaterial,
   SolidParticleSystem,
@@ -34,7 +32,6 @@ import {
   Vector3,
   CannonJSPlugin,
   PhysicsImpostor,
-  Engine,
 } from '@babylonjs/core';
 import { Fox } from './fox';
 import { Mouse } from './mouse';
@@ -45,7 +42,7 @@ import { getPlayerColorRgb } from '../../common/color';
 
 import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 
-import { useBabylonScene } from '../../composables/use-babylon-scene';
+import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
 import { promiseTimeout } from '@vueuse/core';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { useEffects } from '../../composables/use-effects';
@@ -76,7 +73,7 @@ watch(isGameOver, (value) => {
 const sceneBoundary = {
   x: 16,
   z: 10,
-}
+};
 
 const players: Fox[] = [];
 function getRankedIdList(foxes: Fox[]) {
@@ -112,14 +109,13 @@ const { canvas } = useBabylonScene({
     });
 
     emit('init');
-  }
+  },
 });
-
 
 function createSnowfield(scene: Scene) {
   const snowfield = MeshBuilder.CreateGround('snowfield ', { height: 150, width: 150 });
 
-  const material = new BackgroundMaterial("snowfield-material", scene);
+  const material = new BackgroundMaterial('snowfield-material', scene);
   material.useRGBColor = false;
   material.primaryColor = new Color3(0.93, 0.95, 0.95);
 
@@ -128,7 +124,7 @@ function createSnowfield(scene: Scene) {
     snowfield,
     PhysicsImpostor.PlaneImpostor,
     { mass: 0, friction: 0, restitution: 0 },
-    scene
+    scene,
   );
 
   return snowfield;
@@ -136,7 +132,7 @@ function createSnowfield(scene: Scene) {
 
 function createStones(scene: Scene) {
   const stones = new SolidParticleSystem('stones', scene, {
-    useModelMaterial: true
+    useModelMaterial: true,
   });
 
   const material = new StandardMaterial('stone-material', scene);
@@ -196,14 +192,14 @@ async function createMice(scene: Scene) {
     new Mouse(`mouse-${i}`, scene, {
       position,
       size: (i + 1) * 100,
-    }).init()
+    }).init(),
   );
 
   const results = await Promise.allSettled(task);
 
-  return compact(results.map(
-    (result) => result.status === 'fulfilled' ? result.value : undefined,
-  ));
+  return compact(
+    results.map((result) => (result.status === 'fulfilled' ? result.value : undefined)),
+  );
 }
 async function createFox(id: string, position: Vector3, scene: Scene) {
   /** 依照玩家 ID 取得對應顏色名稱並轉換成 rgb */
@@ -222,22 +218,20 @@ async function createFoxes(scene: Scene) {
   const players = gameConsole.players.value;
   const positions = getSquareMatrixPositions(5, players.length, new Vector3(0, 1, 0));
 
-  const tasks = players.map((player, i) =>
-    createFox(player.clientId, positions[i], scene),
-  );
+  const tasks = players.map((player, i) => createFox(player.clientId, positions[i], scene));
 
   const results = await Promise.allSettled(tasks);
 
   /** 去除建立失敗的狐狸 */
-  const foxes = compact(results.map(
-    (result) => result.status === 'fulfilled' ? result.value : undefined,
-  ));
+  const foxes = compact(
+    results.map((result) => (result.status === 'fulfilled' ? result.value : undefined)),
+  );
 
   return foxes;
 }
 
 /** 為每個玩家建立 throttled emit */
-type ThrottledEmitMouseSizeMap = Record<string, (size: number) => void>
+type ThrottledEmitMouseSizeMap = Record<string, (size: number) => void>;
 const throttledEmitMouseSizeMap: ThrottledEmitMouseSizeMap = gameConsole.players.value.reduce(
   (result, player) => {
     result[player.clientId] = throttle((size: number) => {
@@ -246,13 +240,13 @@ const throttledEmitMouseSizeMap: ThrottledEmitMouseSizeMap = gameConsole.players
         data: {
           name: 'vibrate',
           value: size,
-        }
+        },
       });
     }, 500);
 
     return result;
   },
-  {} as ThrottledEmitMouseSizeMap
+  {} as ThrottledEmitMouseSizeMap,
 );
 
 /** 偵測碰撞事件 */
@@ -284,7 +278,7 @@ function detectCollideEvent(foxes: Fox[], mice: Mouse[]) {
       if (isIntersects) {
         caughtSize = mouse.params.size;
       }
-    })
+    });
 
     /** 發送尺寸 */
     throttledEmitMouseSizeMap[fox.param.ownerId]?.(caughtSize);
@@ -292,7 +286,7 @@ function detectCollideEvent(foxes: Fox[], mice: Mouse[]) {
 }
 
 /** 偵測遊戲是否結束 */
-async function detectGameOver(foxes: Fox[], engine: Engine) {
+async function detectGameOver(foxes: Fox[], engine: BabylonEngine) {
   const anyEmptyHanded = foxes.some(({ mouseSize }) => mouseSize === 0);
 
   /** 有人還沒抓到老鼠，遊戲尚未結束 */
@@ -313,9 +307,7 @@ function initGamepadEvent(foxes: Fox[]) {
     const { playerId } = data;
 
     /** 找到對應的狐狸 */
-    const target = foxes.find(
-      ({ param }) => param.ownerId === playerId
-    );
+    const target = foxes.find(({ param }) => param.ownerId === playerId);
     if (!target) return;
 
     ctrlFox(target, data);
@@ -324,7 +316,7 @@ function initGamepadEvent(foxes: Fox[]) {
 
 /** 根據 key 取得資料 */
 const findSingleData = curry((keys: SignalData[], name: `${KeyName}`): SignalData | undefined =>
-  keys.find((key) => key.name === name)
+  keys.find((key) => key.name === name),
 );
 
 /** 控制指定狐狸 */

@@ -1,22 +1,11 @@
 <template>
   <transition name="opacity">
     <!-- 小於 0 後元件自動消失 -->
-    <div
-      v-if="counter >= 0"
-      class=" absolute w-full h-full flex justify-center items-center"
-    >
-      <transition
-        name="countdown"
-        mode="out-in"
-        appear
-      >
+    <div v-if="counter >= 0" class="absolute w-full h-full flex justify-center items-center">
+      <transition name="countdown" mode="out-in" appear>
         <div :key="text">
           <!-- 文字 -->
-          <div
-            class="text"
-            :class="getClass()"
-            :style="textStyle"
-          >
+          <div class="text" :class="getClass()" :style="textStyle">
             {{ text }}
           </div>
         </div>
@@ -70,11 +59,15 @@ const text = computed(() => {
   return counter.value;
 });
 
-const { resume, pause } = useIntervalFn(() => {
-  counter.value -= 1;
-}, 1500, {
-  immediate: props.immediate,
-})
+const { resume, pause } = useIntervalFn(
+  () => {
+    counter.value -= 1;
+  },
+  1500,
+  {
+    immediate: props.immediate,
+  },
+);
 
 const textStyle = {
   // 描邊畫在填色之後，呈現外框效果
@@ -98,7 +91,7 @@ function getClass() {
 
 defineExpose({
   start: resume,
-})
+});
 </script>
 
 <style scoped lang="sass">

@@ -4,9 +4,7 @@
     <loading-overlay />
     <effects-overlay />
 
-    <div class="absolute bottom-2 right-2 text-xs text-white opacity-20">
-      v{{ version }}
-    </div>
+    <div class="absolute bottom-2 right-2 text-xs text-white opacity-20">v{{ version }}</div>
   </UApp>
 </template>
 

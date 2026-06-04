@@ -1,6 +1,11 @@
 import {
-  Scene, TransformNode, MeshBuilder, Mesh,
-  StandardMaterial, Vector3, Color3,
+  Scene,
+  TransformNode,
+  MeshBuilder,
+  Mesh,
+  StandardMaterial,
+  Vector3,
+  Color3,
 } from '@babylonjs/core';
 import { random, range } from 'lodash-es';
 import { playCycleAnimation } from './utils';

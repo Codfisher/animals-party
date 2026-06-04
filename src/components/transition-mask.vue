@@ -6,10 +6,7 @@
     @before-leave="handleBeforeLeave"
     @after-leave="handleAfterLeave"
   >
-    <div
-      v-if="props.modelValue"
-      class="mask"
-    >
+    <div v-if="props.modelValue" class="mask">
       <slot />
     </div>
   </transition>
@@ -21,8 +18,8 @@ export enum AnimationType {
 }
 
 export interface State {
-  isEntering: boolean,
-  isLeaving: boolean,
+  isEntering: boolean;
+  isLeaving: boolean;
 }
 </script>
 
@@ -47,7 +44,7 @@ const state = ref<State>({
 });
 
 watch(state, () => emit('update', state.value), {
-  deep: true
+  deep: true,
 });
 
 function handleBeforeEnter() {
@@ -68,14 +65,14 @@ function handleAfterLeave() {
 
 /** 定義元件可對外提供之資料 */
 defineExpose({
-  state
+  state,
 });
 </script>
 
 <style scoped lang="sass">
 .round-enter-active
   animation-duration: 1.4s
-.round-leave-active 
+.round-leave-active
   transition-duration: 0.4s
   transition-timing-function: ease-in-out
 .round-enter-from, .round-enter-to
@@ -92,6 +89,6 @@ defineExpose({
     clip-path: circle(70.7% at 50% 50%)
 .round-leave-from
   clip-path: circle(70.7% at 50% 50%)
-.round-leave-to 
+.round-leave-to
   clip-path: circle(40% at 140% 140%)
 </style>

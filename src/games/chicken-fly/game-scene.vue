@@ -1,9 +1,6 @@
 <template>
   <div class="overflow-hidden">
-    <canvas
-      ref="canvas"
-      class="outline-none w-full h-full"
-    />
+    <canvas ref="canvas" class="outline-none w-full h-full" />
 
     <UModal
       v-model:open="isGameOver"
@@ -22,19 +19,22 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import * as CANNON from 'cannon-es';
 import {
   ArcRotateCamera,
   CannonJSPlugin,
   Color3,
   Color4,
-  Engine,
   GlowLayer,
-  MeshBuilder, PhysicsImpostor,
+  MeshBuilder,
+  PhysicsImpostor,
   Scalar,
-  Scene, SolidParticleSystem,
-  StandardMaterial, Tools, Vector3,
+  Scene,
+  SolidParticleSystem,
+  StandardMaterial,
+  Tools,
+  Vector3,
 } from '@babylonjs/core';
 import { SkyMaterial } from '@babylonjs/materials';
 import { cloneDeep, curry, flow, range } from 'lodash-es';
@@ -49,7 +49,7 @@ import { Chicken } from './chicken';
 import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 
 import { useClientGameConsole } from '../../composables/use-client-game-console';
-import { useBabylonScene } from '../../composables/use-babylon-scene';
+import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
 import { useEffects } from '../../composables/use-effects';
 import { useInterval, whenever } from '@vueuse/core';
 
@@ -66,25 +66,26 @@ const emit = defineEmits<{
 }>();
 
 /** 每秒 +1 */
-const {
-  counter, pause, resume
-} = useInterval(1000, { controls: true });
+const { counter, pause, resume } = useInterval(1000, { controls: true });
 whenever(
   () => counter.value >= 150,
   () => pause(),
-)
-watch(() => props.mode, (mode) => {
-  /** 練習、展示模式不加速 */
-  if (['training', 'showcase'].includes(mode)) {
-    pause();
-  }
+);
+watch(
+  () => props.mode,
+  (mode) => {
+    /** 練習、展示模式不加速 */
+    if (['training', 'showcase'].includes(mode)) {
+      pause();
+    }
 
-  /** 一般模式開始計時 */
-  if (mode === 'normal') {
-    resume();
-  }
-}, { immediate: true });
-
+    /** 一般模式開始計時 */
+    if (mode === 'normal') {
+      resume();
+    }
+  },
+  { immediate: true },
+);
 
 const gameConsole = useClientGameConsole();
 
@@ -100,14 +101,14 @@ watch(isGameOver, (value) => {
 const sceneBoundary = {
   x: 5,
   y: 2.5,
-}
+};
 const playerChickens: Chicken[] = [];
 
 function getRankedIdList(chickens: Chicken[]) {
   const result = cloneDeep(chickens)
     .sort((a, b) => {
       /** diedAt 為 0 表示第一名，其他則從最大排到最小
-       * 
+       *
        * -1 表示將目前的 a 排在 b 前面
        * 1 表示將目前的 a 排在 b 後面
        */
@@ -143,7 +144,7 @@ const { canvas } = useBabylonScene({
     scene.enablePhysics(new Vector3(0, 0, 0), physicsPlugin);
 
     const glowLayer = new GlowLayer('glow', scene, {
-      blurKernelSize: 16
+      blurKernelSize: 16,
     });
 
     createSky(scene);
@@ -164,7 +165,7 @@ const { canvas } = useBabylonScene({
     });
 
     emit('init');
-  }
+  },
 });
 
 function createSky(scene: Scene) {
@@ -195,26 +196,27 @@ function createBoundary(scene: Scene) {
       name: 'boundary-bottom',
       option: { height: 0.5, width: 10, depth: 0.5 },
       position: new Vector3(0, -sceneBoundary.y, 0),
-
     },
     {
       name: 'boundary-left',
       option: { height: 10, width: 0.5, depth: 0.5 },
       position: new Vector3(-sceneBoundary.x, 0, 0),
-
     },
     {
       name: 'boundary-right',
       option: { height: 10, width: 0.5, depth: 0.5 },
       position: new Vector3(sceneBoundary.x, 0, 0),
     },
-  ]
+  ];
 
   list.forEach(({ name, option, position }) => {
     const wall = MeshBuilder.CreateBox(name, option, scene);
     wall.position = position;
-    wall.physicsImpostor = new PhysicsImpostor(wall, PhysicsImpostor.BoxImpostor,
-      { mass: 0, friction: 0, restitution: 0 }, scene
+    wall.physicsImpostor = new PhysicsImpostor(
+      wall,
+      PhysicsImpostor.BoxImpostor,
+      { mass: 0, friction: 0, restitution: 0 },
+      scene,
     );
     wall.isVisible = false;
   });
@@ -225,9 +227,15 @@ function createClouds(scene: Scene) {
 
   const cloudDepth = 2;
   /** 建立雲朵 */
-  const cloud = MeshBuilder.CreateBox('cloud', {
-    width: 1.5, height: 0.5, depth: cloudDepth,
-  }, scene);
+  const cloud = MeshBuilder.CreateBox(
+    'cloud',
+    {
+      width: 1.5,
+      height: 0.5,
+      depth: cloudDepth,
+    },
+    scene,
+  );
 
   /** 建立 50 個一樣的 mesh */
   clouds.addShape(cloud, 50);
@@ -251,7 +259,7 @@ function createClouds(scene: Scene) {
       particle.scaling = new Vector3(
         Scalar.RandomRange(1, 3),
         Scalar.RandomRange(1, 2),
-        Scalar.RandomRange(1, 3)
+        Scalar.RandomRange(1, 3),
       );
       /** 半透明白色 */
       particle.color = new Color4(1, 1, 1, 0.5);
@@ -276,12 +284,12 @@ function createClouds(scene: Scene) {
     particle.position.addInPlace(particle.velocity);
 
     return particle;
-  }
+  };
 
   /** 持續呼叫，粒子才會渲染 updateParticle 後的結果 */
   scene.onAfterRenderObservable.add(() => {
     clouds.setParticles();
-  })
+  });
 
   return clouds;
 }
@@ -290,9 +298,15 @@ function createSpeedLines(scene: Scene) {
   const lines = new SolidParticleSystem('speed-lines', scene);
   const depth = 1;
 
-  const line = MeshBuilder.CreateBox('line', {
-    width: 0.01, height: 0.01, depth,
-  }, scene);
+  const line = MeshBuilder.CreateBox(
+    'line',
+    {
+      width: 0.01,
+      height: 0.01,
+      depth,
+    },
+    scene,
+  );
 
   /** 建立材質，並加入光暈 */
   const material = new StandardMaterial('speed-line', scene);
@@ -330,11 +344,11 @@ function createSpeedLines(scene: Scene) {
     particle.position.addInPlace(particle.velocity);
 
     return particle;
-  }
+  };
 
   scene.onAfterRenderObservable.add(() => {
     lines.setParticles();
-  })
+  });
 
   return lines;
 }
@@ -342,25 +356,29 @@ function createSpeedLines(scene: Scene) {
 async function createBadChickens(scene: Scene) {
   /** 小雞間距 */
   const gap = 50;
-  const tasks = range(3).map(
-    (value) => new BadChicken(`bad-chicken-${value}`, scene, {
+  const tasks = range(3).map((value) =>
+    new BadChicken(`bad-chicken-${value}`, scene, {
       position: new Vector3(0, 0, (value + 1) * -gap),
       recyclePosition: gap,
       recycleStartPosition: gap * -2,
-    }).init()
+    }).init(),
   );
   const chickens = await Promise.all(tasks);
 
-  watch(counter, (value) => {
-    /** 展示模式壞雞不移動 */
-    if (props.mode === 'showcase') return;
+  watch(
+    counter,
+    (value) => {
+      /** 展示模式壞雞不移動 */
+      if (props.mode === 'showcase') return;
 
-    const speed = 0.1 + value * 0.01;
+      const speed = 0.1 + value * 0.01;
 
-    chickens.forEach((chicken) => {
-      chicken.setSpeed(speed);
-    });
-  }, { immediate: true });
+      chickens.forEach((chicken) => {
+        chicken.setSpeed(speed);
+      });
+    },
+    { immediate: true },
+  );
 
   return chickens;
 }
@@ -372,8 +390,7 @@ function detectCollideEvents(chickens: Chicken[], badChickens: BadChicken[]) {
     if (!badChickenMesh) return;
 
     /** 不可能碰到小雞，跳過 */
-    if (badChickenMesh.position.z < -1 ||
-      badChickenMesh.position.z > 1) return;
+    if (badChickenMesh.position.z < -1 || badChickenMesh.position.z > 1) return;
 
     /** 依序檢查小雞 */
     chickens.forEach((chicken) => {
@@ -389,7 +406,7 @@ function detectCollideEvents(chickens: Chicken[], badChickens: BadChicken[]) {
   });
 }
 /** 偵測遊戲是否結束 */
-function detectGameOver(chickens: Chicken[], engine: Engine) {
+function detectGameOver(chickens: Chicken[], engine: BabylonEngine) {
   const theLivingList = chickens.filter(({ mesh }) => !mesh?.isDisposed());
 
   /** 2 人以上表示遊戲還沒結束 */
@@ -405,13 +422,10 @@ function detectOutOfBounds(chickens: Chicken[]) {
 
     const { x, y } = chicken.mesh.position;
 
-    if (Math.abs(x) > sceneBoundary.x ||
-      Math.abs(y) > sceneBoundary.y) {
+    if (Math.abs(x) > sceneBoundary.x || Math.abs(y) > sceneBoundary.y) {
       chicken.mesh.position = new Vector3(0, 0, 0);
 
-      chicken.mesh.physicsImpostor?.setLinearVelocity(
-        new Vector3(0, 0, 0),
-      )
+      chicken.mesh.physicsImpostor?.setLinearVelocity(new Vector3(0, 0, 0));
     }
   });
 }
@@ -434,15 +448,9 @@ async function createChicken(id: string, position: Vector3, scene: Scene) {
   return chicken;
 }
 async function createChickens(players: Player[], scene: Scene) {
-  const positions = getSquareMatrixPositions(
-    1, players.length, undefined, 'xy'
-  );
+  const positions = getSquareMatrixPositions(1, players.length, undefined, 'xy');
 
-  const tasks = players.map(
-    (player, i) => createChicken(
-      player.clientId, positions[i], scene,
-    )
-  );
+  const tasks = players.map((player, i) => createChicken(player.clientId, positions[i], scene));
 
   const chickens = await Promise.all(tasks);
 
@@ -454,9 +462,7 @@ function initGamepadEvent(chickens: Chicken[]) {
     const { playerId } = data;
 
     /** 找到對應的小雞 */
-    const target = chickens.find(
-      ({ params }) => params.ownerId === playerId
-    );
+    const target = chickens.find(({ params }) => params.ownerId === playerId);
     if (!target) return;
 
     ctrlChicken(target, data);
@@ -465,7 +471,7 @@ function initGamepadEvent(chickens: Chicken[]) {
 
 /** 根據 key 取得資料 */
 const findSingleData = curry((keys: SignalData[], name: `${KeyName}`): SignalData | undefined =>
-  keys.find((key) => key.name === name)
+  keys.find((key) => key.name === name),
 );
 
 /** 控制指定小雞 */
@@ -490,14 +496,10 @@ function ctrlChicken(chicken: Chicken, data: GamepadData) {
 
   if (typeof x === 'number' && typeof z === 'number') {
     /** 搖桿傳送過來的角度單位是 Degrees，需要轉換成小雞姿態角度單位（Radians），
-     * 
+     *
      * 手機的 +z 軸是遊戲座標的 -x、+x 軸是遊戲座標的 -z
      */
-    chicken.setAttitude(
-      Tools.ToRadians(-z),
-      Tools.ToRadians(-x)
-    );
+    chicken.setAttitude(Tools.ToRadians(-z), Tools.ToRadians(-x));
   }
 }
-
 </script>

@@ -1,9 +1,16 @@
-import { GameConsoleData, GameConsoleState, GameConsoleStatus, GamepadData, Player, Room } from "../types";
-import { computed, onBeforeUnmount } from "vue";
+import {
+  GameConsoleData,
+  GameConsoleState,
+  GameConsoleStatus,
+  GamepadData,
+  Player,
+  Room,
+} from '../types';
+import { computed, onBeforeUnmount } from 'vue';
 
-import { createEventHook } from "@vueuse/core";
-import { useGameConsoleStore } from "../stores/game-console.store";
-import { useMainStore } from "../stores/main.store";
+import { createEventHook } from '@vueuse/core';
+import { useGameConsoleStore } from '../stores/game-console.store';
+import { useMainStore } from '../stores/main.store';
 
 export function useClientGameConsole() {
   const mainStore = useMainStore();
@@ -20,7 +27,7 @@ export function useClientGameConsole() {
 
   function setStatus(status: `${GameConsoleStatus}`) {
     gameConsoleStore.updateState({
-      status
+      status,
     });
 
     if (!mainStore.host?.connected) {
@@ -28,7 +35,7 @@ export function useClientGameConsole() {
     }
 
     mainStore.host.emit('game-console:state-update', {
-      status
+      status,
     });
   }
   /** 一次原子更新 status 與 gameName，避免拆兩筆 partial 造成的時序競態 */
@@ -43,9 +50,7 @@ export function useClientGameConsole() {
   }
 
   function getPlayerCodeName(id: string) {
-    const index = gameConsoleStore.players.findIndex(({ clientId }) =>
-      clientId === id
-    );
+    const index = gameConsoleStore.players.findIndex(({ clientId }) => clientId === id);
 
     if (index < 0) {
       return 'unknown ';
@@ -87,19 +92,19 @@ export function useClientGameConsole() {
     getPlayerCodeName,
 
     /** 搖桿控制訊號事件 */
-    onGamepadData: (fn: Parameters<typeof gamepadDataHook['on']>[0]) => {
+    onGamepadData: (fn: Parameters<(typeof gamepadDataHook)['on']>[0]) => {
       mainStore.host?.on('player:gamepad-data', gamepadDataHook.trigger);
       return gamepadDataHook.on(fn);
     },
 
     /** 玩家變更事件，例如玩家加入或斷線等等 */
-    onPlayerUpdate: (fn: Parameters<typeof playerUpdateHook['on']>[0]) => {
+    onPlayerUpdate: (fn: Parameters<(typeof playerUpdateHook)['on']>[0]) => {
       mainStore.host?.on('game-console:player-update', playerUpdateHook.trigger);
       return playerUpdateHook.on(fn);
     },
 
     /** 玩家資料事件，例如 Web API 權限更新等等 */
-    onProfileUpdate: (fn: Parameters<typeof profileUpdateHook['on']>[0]) => {
+    onProfileUpdate: (fn: Parameters<(typeof profileUpdateHook)['on']>[0]) => {
       mainStore.host?.on('game-console:profile-update', profileUpdateHook.trigger);
       return profileUpdateHook.on(fn);
     },
@@ -108,5 +113,5 @@ export function useClientGameConsole() {
     currentGame: computed(() => gameConsoleStore.gameName),
 
     emitConsoleData,
-  }
+  };
 }

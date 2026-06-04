@@ -12,11 +12,7 @@
     @touchstart="handleDown"
     @contextmenu="(e: any) => e?.preventDefault()"
   >
-    <UIcon
-      v-if="props.icon"
-      :name="props.icon"
-      class="size-[1.5em]"
-    />
+    <UIcon v-if="props.icon" :name="props.icon" class="size-[1.5em]" />
     <slot />
   </UButton>
 </template>
@@ -32,7 +28,7 @@ interface Props {
   /** 按鈕底色（Tailwind class） */
   color?: string;
   /** 按鈕觸發底色（Tailwind class） */
-  activeColor?: string,
+  activeColor?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
   size: '2rem',
@@ -51,9 +47,7 @@ const emit = defineEmits<{
 const status = ref(false);
 watch(status, (value) => emit('trigger', value));
 
-const backgroundClass = computed(() =>
-  status.value ? props.activeColor : props.color
-);
+const backgroundClass = computed(() => (status.value ? props.activeColor : props.color));
 
 function handleUp(e: TouchEvent | MouseEvent) {
   e.preventDefault();
@@ -70,5 +64,4 @@ function handleDown(e: TouchEvent | MouseEvent) {
 }
 </script>
 
-<style scoped lang="sass">
-</style>
+<style scoped lang="sass"></style>

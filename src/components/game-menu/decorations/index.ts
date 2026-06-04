@@ -1,6 +1,4 @@
-import {
-  Scene, TransformNode, Vector3, Color3,
-} from '@babylonjs/core';
+import { Scene, TransformNode, Vector3, Color3 } from '@babylonjs/core';
 import { random } from 'lodash-es';
 import { getRandomPositions } from '../../../common/utils';
 import { createCloud, createCloudMaterial } from './cloud';

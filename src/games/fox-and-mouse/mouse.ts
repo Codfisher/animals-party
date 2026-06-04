@@ -1,6 +1,11 @@
 import {
-  Scene, Vector3, AbstractMesh,
-  MeshBuilder, PhysicsImpostor, StandardMaterial, Color3,
+  Scene,
+  Vector3,
+  AbstractMesh,
+  MeshBuilder,
+  PhysicsImpostor,
+  StandardMaterial,
+  Color3,
   Animation,
 } from '@babylonjs/core';
 
@@ -31,11 +36,15 @@ export class Mouse {
   }
 
   async init() {
-    const mesh = MeshBuilder.CreateTorus(`mouse-${this.name}`, {
-      diameter: 2,
-      tessellation: 4,
-      thickness: 0.1,
-    }, this.scene);
+    const mesh = MeshBuilder.CreateTorus(
+      `mouse-${this.name}`,
+      {
+        diameter: 2,
+        tessellation: 4,
+        thickness: 0.1,
+      },
+      this.scene,
+    );
 
     const material = new StandardMaterial('mouse-material', this.scene);
     material.diffuseColor = new Color3(0.8, 0.8, 0.5);
@@ -47,22 +56,22 @@ export class Mouse {
       'alpha',
       frameRate / 2,
       Animation.ANIMATIONTYPE_FLOAT,
-      Animation.ANIMATIONLOOPMODE_CYCLE
+      Animation.ANIMATIONLOOPMODE_CYCLE,
     );
 
     const keyFrames = [
       {
         frame: 0,
-        value: 0.1
+        value: 0.1,
       },
       {
         frame: frameRate / 2,
-        value: 0.4
+        value: 0.4,
       },
       {
         frame: frameRate,
-        value: 0.1
-      }
+        value: 0.1,
+      },
     ];
 
     alphaAnimation.setKeys(keyFrames);
@@ -83,9 +92,7 @@ export class Mouse {
 
     /** 隱藏動畫 */
     if (!this.mesh?.material) return;
-    const {
-      animation, frameRate
-    } = createAnimation(this.mesh.material, 'alpha', 0);
+    const { animation, frameRate } = createAnimation(this.mesh.material, 'alpha', 0);
 
     this.mesh.material.animations = [animation];
     this.scene.beginAnimation(this.mesh.material, 0, frameRate);

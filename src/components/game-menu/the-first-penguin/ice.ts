@@ -1,7 +1,16 @@
 import {
-  StandardMaterial, MeshBuilder, Scene, Vector3, Color3,
-  Animation, AnimationGroup, IAnimationKey, AnimationKeyInterpolation, CircleEase, EasingFunction,
-} from "@babylonjs/core";
+  StandardMaterial,
+  MeshBuilder,
+  Scene,
+  Vector3,
+  Color3,
+  Animation,
+  AnimationGroup,
+  IAnimationKey,
+  AnimationKeyInterpolation,
+  CircleEase,
+  EasingFunction,
+} from '@babylonjs/core';
 
 interface Params {
   width: number;
@@ -50,7 +59,7 @@ export function createIce(name: string, scene: Scene, params: Params) {
       /** 目標屬性類型 */
       Animation.ANIMATIONTYPE_VECTOR3,
       /** 循環方式 */
-      Animation.ANIMATIONLOOPMODE_CYCLE
+      Animation.ANIMATIONLOOPMODE_CYCLE,
     );
 
     const keyFrames: IAnimationKey[] = [
@@ -64,7 +73,7 @@ export function createIce(name: string, scene: Scene, params: Params) {
       },
       {
         frame: frameRate,
-        value: new Vector3(1, 1, 1)
+        value: new Vector3(1, 1, 1),
       },
     ];
     breatheAnimation.setKeys(keyFrames);
@@ -85,5 +94,5 @@ export function createIce(name: string, scene: Scene, params: Params) {
   return {
     mesh,
     ripple,
-  }
+  };
 }

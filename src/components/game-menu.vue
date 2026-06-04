@@ -7,24 +7,21 @@
       @completed="handleCompleted()"
     />
 
-    <div class=" w-1/2 h-full flex flex-col items-center justify-center gap-12 pr-24 pb-10 z-0">
+    <div class="w-1/2 h-full flex flex-col items-center justify-center gap-12 pr-24 pb-10 z-0">
       <room-qr-code class="menu-item" />
 
       <base-btn
         :ref="mountButton"
         v-slot="{ hover }"
         label="開始遊戲"
-        class=" w-[28rem] menu-item"
+        class="w-[28rem] menu-item"
         label-hover-color="#3676a3"
         stroke-color="#456b87"
         stroke-hover-color="white"
         @click="startGame()"
       >
         <transition name="opacity">
-          <div
-            v-if="hover"
-            class="btn-content absolute inset-0"
-          >
+          <div v-if="hover" class="btn-content absolute inset-0">
             <div class="polygon-lt">
               <base-polygon
                 size="13rem"
@@ -52,17 +49,14 @@
         :ref="mountButton"
         v-slot="{ hover }"
         label="結束派對"
-        class=" w-[28rem] menu-item"
+        class="w-[28rem] menu-item"
         label-hover-color="#3676a3"
         stroke-color="#456b87"
         stroke-hover-color="white"
         @click="endParty()"
       >
         <transition name="opacity">
-          <div
-            v-if="hover"
-            class="btn-content absolute inset-0"
-          >
+          <div v-if="hover" class="btn-content absolute inset-0">
             <div class="polygon-lt">
               <base-polygon
                 size="13.4rem"
@@ -88,7 +82,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import gsap from 'gsap';
@@ -113,8 +106,8 @@ interface GameInfo {
   condition: {
     minPlayers: number;
     maxPlayers?: number;
-    requiredPermissions: (keyof PlayerPermission)[]
-  },
+    requiredPermissions: (keyof PlayerPermission)[];
+  };
 }
 
 const emit = defineEmits<{
@@ -131,7 +124,7 @@ const games: GameInfo[] = [
       /** 企鵝太多浮冰會塞不下 XD */
       maxPlayers: 6,
       requiredPermissions: [],
-    }
+    },
   },
   {
     name: 'chicken-fly',
@@ -139,10 +132,8 @@ const games: GameInfo[] = [
     condition: {
       minPlayers: 2,
       maxPlayers: 30,
-      requiredPermissions: [
-        'gyroscope',
-      ],
-    }
+      requiredPermissions: ['gyroscope'],
+    },
   },
   {
     name: 'fox-and-mouse',
@@ -152,7 +143,7 @@ const games: GameInfo[] = [
       maxPlayers: 8,
       // 震動非必要：iOS 不支援震動，改以視覺脈衝回饋判斷老鼠大小
       requiredPermissions: [],
-    }
+    },
   },
 ];
 
@@ -161,41 +152,53 @@ const router = useRouter();
 const loading = useLoading();
 
 const currentIndex = ref(
-  games.findIndex(({ name }) => name === gameConsole.currentGame.value) ?? 0
+  games.findIndex(({ name }) => name === gameConsole.currentGame.value) ?? 0,
 );
 const selectedGame = computed(() => games[currentIndex.value]);
-const prevGame = throttle(() => {
-  currentIndex.value--;
-  if (currentIndex.value < 0) {
-    currentIndex.value += games.length;
-  }
-}, 2000, {
-  leading: true,
-  trailing: false,
-});
-const nextGame = throttle(() => {
-  currentIndex.value++;
-  currentIndex.value %= games.length;
-}, 2000, {
-  leading: true,
-  trailing: false,
-});
+const prevGame = throttle(
+  () => {
+    currentIndex.value--;
+    if (currentIndex.value < 0) {
+      currentIndex.value += games.length;
+    }
+  },
+  2000,
+  {
+    leading: true,
+    trailing: false,
+  },
+);
+const nextGame = throttle(
+  () => {
+    currentIndex.value++;
+    currentIndex.value %= games.length;
+  },
+  2000,
+  {
+    leading: true,
+    trailing: false,
+  },
+);
 
 let menuTween: ReturnType<typeof gsap.fromTo>;
 onMounted(() => {
-  menuTween = gsap.fromTo('.menu-item', {
-    opacity: 0,
-    translateY: '50%',
-  }, {
-    opacity: 1,
-    translateY: '0%',
-    duration: 0.6,
-    ease: 'back.out(1.7)',
-    /** 多個元素間隔時間 */
-    stagger: 0.2,
-    /** 動畫完成後刪除 inline-style，以免影響其他 CSS */
-    clearProps: 'transform',
-  });
+  menuTween = gsap.fromTo(
+    '.menu-item',
+    {
+      opacity: 0,
+      translateY: '50%',
+    },
+    {
+      opacity: 1,
+      translateY: '0%',
+      duration: 0.6,
+      ease: 'back.out(1.7)',
+      /** 多個元素間隔時間 */
+      stagger: 0.2,
+      /** 動畫完成後刪除 inline-style，以免影響其他 CSS */
+      clearProps: 'transform',
+    },
+  );
   menuTween.pause();
 });
 
@@ -206,19 +209,16 @@ function handleCompleted() {
   emit('completed');
 }
 
-
 const { mountElement, click, next, prev } = useGamepadNavigator();
 
 /** 將按鈕綁定 */
 function mountButton(el: unknown) {
   const controlElement = el as InstanceType<typeof BaseBtn>;
-  mountElement(controlElement)
+  mountElement(controlElement);
 }
 
 function checkGameCondition(condition: GameInfo['condition'], players: Player[]) {
-  const {
-    minPlayers, maxPlayers, requiredPermissions,
-  } = condition;
+  const { minPlayers, maxPlayers, requiredPermissions } = condition;
   if (players.length < minPlayers) {
     return `人數太少惹，不能小於 ${minPlayers} 個小夥伴。`;
   }
@@ -241,44 +241,56 @@ function checkGameCondition(condition: GameInfo['condition'], players: Player[])
   return undefined;
 }
 
-const startGame = debounce(async () => {
-  const game = selectedGame.value;
-  const players = gameConsole.players.value;
+const startGame = debounce(
+  async () => {
+    const game = selectedGame.value;
+    const players = gameConsole.players.value;
 
-  const error = checkGameCondition(game.condition, players);
-  if (error) {
-    emit('error', error);
-    return;
-  }
+    const error = checkGameCondition(game.condition, players);
+    if (error) {
+      emit('error', error);
+      return;
+    }
 
-  gameConsole.setGameState({ gameName: game.name, status: 'playing' });
+    gameConsole.setGameState({ gameName: game.name, status: 'playing' });
 
-  await loading.show();
+    await loading.show();
 
-  router.push({
-    name: game.routeName
-  });
-}, 3000, {
-  leading: true,
-  trailing: false,
-});
+    router.push({
+      name: game.routeName,
+    });
+  },
+  3000,
+  {
+    leading: true,
+    trailing: false,
+  },
+);
 
-const endParty = debounce(async () => {
-  gameConsole.setStatus('home');
-  await loading.show();
-  gameConsole.endParty();
+const endParty = debounce(
+  async () => {
+    gameConsole.setStatus('home');
+    await loading.show();
+    gameConsole.endParty();
 
-  router.push({
-    name: '/home'
-  });
-}, 3000, {
-  leading: true,
-  trailing: false,
-});
+    router.push({
+      name: '/home',
+    });
+  },
+  3000,
+  {
+    leading: true,
+    trailing: false,
+  },
+);
 
 /** 讓其他元件可以控制選單 */
 defineExpose({
-  click, next, prev, prevGame, nextGame,
+  click,
+  next,
+  prev,
+  prevGame,
+  nextGame,
 });
 </script>
 

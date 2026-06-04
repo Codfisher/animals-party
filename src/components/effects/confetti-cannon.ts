@@ -1,5 +1,11 @@
 import {
-  Scene, ParticleSystem, DynamicTexture, NoiseProceduralTexture, Vector3, Color3, Color4,
+  Scene,
+  ParticleSystem,
+  DynamicTexture,
+  NoiseProceduralTexture,
+  Vector3,
+  Color3,
+  Color4,
 } from '@babylonjs/core';
 
 /** 彩帶配色 */
@@ -126,10 +132,7 @@ function createCannon(
 export function createConfettiCannons(scene: Scene) {
   const atlas = createConfettiAtlas(scene);
   const noise = createNoise(scene);
-  const systemList = [
-    createCannon(scene, atlas, noise, -1),
-    createCannon(scene, atlas, noise, 1),
-  ];
+  const systemList = [createCannon(scene, atlas, noise, -1), createCannon(scene, atlas, noise, 1)];
 
   return {
     /** 觸發一次定量爆發 */

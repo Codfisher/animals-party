@@ -8,11 +8,7 @@
     @pointercancel="onPointerUp"
     @contextmenu="(e) => e.preventDefault()"
   >
-    <div
-      class="thumb"
-      :class="{ 'active': thumb.active }"
-      :style="thumbStyle"
-    />
+    <div class="thumb" :class="{ active: thumb.active }" :style="thumbStyle" />
   </div>
 </template>
 
@@ -24,17 +20,16 @@ import { computed, ref } from 'vue';
 
 interface Props {
   /** 尺寸，直徑 */
-  size?: string
+  size?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
   /** 上限 42vw，與右側按鈕並排時不重疊 */
-  size: 'min(13rem, 42vw)'
+  size: 'min(13rem, 42vw)',
 });
 
 const emit = defineEmits<{
-  (e: 'trigger', data: { x: number, y: number }): void;
+  (e: 'trigger', data: { x: number; y: number }): void;
 }>();
-
 
 const pad = ref<HTMLElement>();
 const dragging = ref(false);
@@ -42,7 +37,7 @@ const dragging = ref(false);
 const thumb = ref({
   offset: {
     x: 0,
-    y: 0
+    y: 0,
   },
   active: false,
 });

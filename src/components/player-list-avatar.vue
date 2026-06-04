@@ -6,19 +6,12 @@
     >
       {{ props.codeName }}
 
-      <base-polygon
-        v-bind="polygonParams"
-        class=" absolute -top-4 -left-4"
-      />
+      <base-polygon v-bind="polygonParams" class="absolute -top-4 -left-4" />
     </div>
 
     <div class="balloon-box">
       <transition name="balloon">
-        <div
-          v-if="messageInfo.text"
-          :key="messageInfo.id"
-          class="balloon"
-        >
+        <div v-if="messageInfo.text" :key="messageInfo.id" class="balloon">
           <UIcon
             class="relative text-[4rem] text-neutral-800 z-10"
             :name="getIconName(messageInfo.text)"
@@ -38,7 +31,6 @@ import { nanoid } from 'nanoid';
 
 import BasePolygon, { FillType, ShapeType } from './base-polygon.vue';
 
-
 interface Props {
   player: Player;
   codeName: string;
@@ -57,7 +49,7 @@ const polygonParams = computed<InstanceType<typeof BasePolygon>['$props']>(() =>
     size: '4rem',
     opacity: 0.3,
     rotate: `${random(0, 180)}deg`,
-  }
+  };
 });
 
 const messageInfo = reactive({
@@ -83,25 +75,25 @@ function showBalloon(text: string) {
 const keyToIcon = [
   {
     keyName: KeyName.UP,
-    icon: 'material-symbols:arrow-drop-up'
+    icon: 'material-symbols:arrow-drop-up',
   },
   {
     keyName: KeyName.LEFT,
-    icon: 'material-symbols:arrow-left'
+    icon: 'material-symbols:arrow-left',
   },
   {
     keyName: KeyName.RIGHT,
-    icon: 'material-symbols:arrow-right'
+    icon: 'material-symbols:arrow-right',
   },
   {
     keyName: KeyName.DOWN,
-    icon: 'material-symbols:arrow-drop-down'
+    icon: 'material-symbols:arrow-drop-down',
   },
   {
     keyName: KeyName.CONFIRM,
-    icon: 'material-symbols:done'
+    icon: 'material-symbols:done',
   },
-]
+];
 function getIconName(name: string) {
   const target = keyToIcon.find(({ keyName }) => keyName === name);
   return target?.icon ?? 'material-symbols:question-mark';
@@ -109,7 +101,7 @@ function getIconName(name: string) {
 
 defineExpose({
   playerId: props.player.clientId,
-  showBalloon
+  showBalloon,
 });
 </script>
 

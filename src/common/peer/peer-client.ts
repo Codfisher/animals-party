@@ -26,7 +26,10 @@ export class PeerClient {
   private connection?: DataConnection;
   private bus = mitt<ClientListenEventMap>();
 
-  constructor(private clientId: string, private options: PeerClientOptions = {}) {}
+  constructor(
+    private clientId: string,
+    private options: PeerClientOptions = {},
+  ) {}
 
   get connected() {
     return this.connection?.open ?? false;
@@ -71,7 +74,7 @@ export class PeerClient {
 
           this.bus.emit(
             message.event as keyof ClientListenEventMap,
-            message.data as ClientListenEventMap[keyof ClientListenEventMap]
+            message.data as ClientListenEventMap[keyof ClientListenEventMap],
           );
         });
 
@@ -99,14 +102,14 @@ export class PeerClient {
 
   on<Event extends keyof ClientListenEventMap>(
     event: Event,
-    handler: (data: ClientListenEventMap[Event]) => void
+    handler: (data: ClientListenEventMap[Event]) => void,
   ) {
     this.bus.on(event, handler);
   }
 
   off<Event extends keyof ClientListenEventMap>(
     event: Event,
-    handler: (data: ClientListenEventMap[Event]) => void
+    handler: (data: ClientListenEventMap[Event]) => void,
   ) {
     this.bus.off(event, handler);
   }

@@ -1,9 +1,15 @@
 import {
-  Scene, Vector3, SceneLoader,
-  Animation, BackEase, SineEase,
-  StandardMaterial, Color3, TransformNode,
-} from "@babylonjs/core";
-import { defaults } from "lodash-es";
+  Scene,
+  Vector3,
+  SceneLoader,
+  Animation,
+  BackEase,
+  SineEase,
+  StandardMaterial,
+  Color3,
+  TransformNode,
+} from '@babylonjs/core';
+import { defaults } from 'lodash-es';
 
 interface Option {
   scaling?: number;
@@ -15,15 +21,18 @@ const defaultOption: Required<Option> = {
   scaling: 1,
   position: Vector3.Zero(),
   rotation: Vector3.Zero(),
-}
+};
 
 export async function createTitle(name: string, scene: Scene, option?: Option) {
-  const {
-    scaling, position, rotation
-  } = defaults(option, defaultOption);
+  const { scaling, position, rotation } = defaults(option, defaultOption);
 
   const rootNode = new TransformNode('penguin-island-title');
-  const result = await SceneLoader.ImportMeshAsync('', '/the-first-penguin/', 'penguin-title.glb', scene);
+  const result = await SceneLoader.ImportMeshAsync(
+    '',
+    '/the-first-penguin/',
+    'penguin-title.glb',
+    scene,
+  );
 
   const scalingVector = new Vector3(scaling, scaling, scaling);
 
@@ -52,9 +61,11 @@ export async function createTitle(name: string, scene: Scene, option?: Option) {
   function initAnimation() {
     const frameRate = 20;
     const floatAnimation = new Animation(
-      'float', 'position', frameRate / 3,
+      'float',
+      'position',
+      frameRate / 3,
       Animation.ANIMATIONTYPE_VECTOR3,
-      Animation.ANIMATIONLOOPMODE_CYCLE
+      Animation.ANIMATIONLOOPMODE_CYCLE,
     );
 
     floatAnimation.setKeys([
@@ -75,9 +86,11 @@ export async function createTitle(name: string, scene: Scene, option?: Option) {
     floatAnimation.setEasingFunction(new SineEase());
 
     const scaleAnimation = new Animation(
-      'scale', 'scaling', frameRate / 2,
+      'scale',
+      'scaling',
+      frameRate / 2,
       Animation.ANIMATIONTYPE_VECTOR3,
-      Animation.ANIMATIONLOOPMODE_CYCLE
+      Animation.ANIMATIONLOOPMODE_CYCLE,
     );
     const scaleValue = 0.01;
     scaleAnimation.setKeys([
@@ -101,5 +114,5 @@ export async function createTitle(name: string, scene: Scene, option?: Option) {
   }
   initAnimation();
 
-  return { node: rootNode }
+  return { node: rootNode };
 }

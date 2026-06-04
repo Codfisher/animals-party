@@ -1,6 +1,11 @@
 import {
-  Scene, TransformNode, MeshBuilder,
-  StandardMaterial, Vector3, Angle, PointLight,
+  Scene,
+  TransformNode,
+  MeshBuilder,
+  StandardMaterial,
+  Vector3,
+  Angle,
+  PointLight,
   Color3,
 } from '@babylonjs/core';
 import { ModelIsland } from '../../../types';
@@ -14,7 +19,6 @@ export type PenguinIsland = ModelIsland;
 
 export async function createPenguinIsland(scene: Scene): Promise<PenguinIsland> {
   const rootNode = new TransformNode('penguin-island');
-
 
   function createIces() {
     const list = [
@@ -53,7 +57,8 @@ export async function createPenguinIsland(scene: Scene): Promise<PenguinIsland> 
     const material = new StandardMaterial('ice-material', scene);
     list.forEach((data, i) => {
       const ice = createIce(`ice-${i}`, scene, {
-        ...data, material
+        ...data,
+        material,
       });
       ice.mesh.setParent(rootNode);
     });
@@ -61,7 +66,7 @@ export async function createPenguinIsland(scene: Scene): Promise<PenguinIsland> 
   createIces();
 
   async function createPenguins() {
-    /** 
+    /**
      * 從 createPenguin 函數獲取第三個參數的類型（索引為2，因為索引從 0 開始）
      */
     const list: Parameters<typeof createPenguin>[2][] = [
@@ -91,9 +96,7 @@ export async function createPenguinIsland(scene: Scene): Promise<PenguinIsland> 
     ];
 
     /** 建立 createPenguin 的 Promise 矩陣 */
-    const tasks = list.map((option, i) =>
-      createPenguin(`penguin-${i}`, scene, option)
-    );
+    const tasks = list.map((option, i) => createPenguin(`penguin-${i}`, scene, option));
     /** 當所有的 Promise 都完成時，回傳所有 Promise 的結果。 */
     const results = await Promise.allSettled(tasks);
 
@@ -106,11 +109,7 @@ export async function createPenguinIsland(scene: Scene): Promise<PenguinIsland> 
   await createPenguins();
 
   function createLight() {
-    const light = new PointLight(
-      'penguin-island-light',
-      new Vector3(-7.8, 7.1, -3),
-      scene,
-    );
+    const light = new PointLight('penguin-island-light', new Vector3(-7.8, 7.1, -3), scene);
     light.diffuse = new Color3(186 / 255, 229 / 255, 1);
     light.intensity = 0.6;
     light.parent = rootNode;
@@ -135,9 +134,13 @@ export async function createPenguinIsland(scene: Scene): Promise<PenguinIsland> 
   function setActive(value: boolean) {
     active.value = value;
   }
-  watch(active, (value) => {
-    playActiveAnimation(value);
-  }, { immediate: true });
+  watch(
+    active,
+    (value) => {
+      playActiveAnimation(value);
+    },
+    { immediate: true },
+  );
 
   function playActiveAnimation(value: boolean) {
     /** 浮出水面或下降 */
@@ -157,5 +160,5 @@ export async function createPenguinIsland(scene: Scene): Promise<PenguinIsland> 
     name: 'the-first-penguin',
     rootNode,
     setActive,
-  }
+  };
 }

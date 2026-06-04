@@ -1,127 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animals Party v2</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <link
-    rel="icon"
-    href="/favicon.ico"
-  />
-  <link
-    rel="apple-touch-icon"
-    sizes="180x180"
-    href="/apple-touch-icon.png"
-  >
-  <link
-    rel="icon"
-    type="image/png"
-    sizes="32x32"
-    href="/favicon-32x32.png"
-  >
-  <link
-    rel="icon"
-    type="image/png"
-    sizes="16x16"
-    href="/favicon-16x16.png"
-  >
-  <link
-    rel="manifest"
-    href="/site.webmanifest"
-  >
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-  <title>Animals Party v2</title>
+    <meta name="description" content="讓手機化為 joy-con，一起來玩派對遊戲吧！(/≧▽≦)/" />
+    <meta name="keywords" content="vue, babylonjs, nestjs" />
+    <meta name="robots" content="index, follow" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="language" content="zh-tw" />
 
-  <meta
-    name="description"
-    content="讓手機化為 joy-con，一起來玩派對遊戲吧！(/≧▽≦)/"
-  >
-  <meta
-    name="keywords"
-    content="vue, babylonjs, nestjs"
-  >
-  <meta
-    name="robots"
-    content="index, follow"
-  >
-  <meta
-    http-equiv="Content-Type"
-    content="text/html; charset=utf-8"
-  >
-  <meta
-    name="language"
-    content="zh-tw"
-  >
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Animals Party v2" />
+    <meta property="og:description" content="讓手機化為 joy-con，一起來玩派對遊戲吧！(/≧▽≦)/" />
+    <meta property="og:image" content="/cover.jpg" />
+    <meta property="og:locale" content="zh_TW" />
 
-  <!-- Open Graph -->
-  <meta
-    property="og:type"
-    content="website"
-  />
-  <meta
-    property="og:title"
-    content="Animals Party v2"
-  />
-  <meta
-    property="og:description"
-    content="讓手機化為 joy-con，一起來玩派對遊戲吧！(/≧▽≦)/"
-  />
-  <meta
-    property="og:image"
-    content="/cover.jpg"
-  />
-  <meta
-    property="og:locale"
-    content="zh_TW"
-  />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Animals Party v2" />
+    <meta name="twitter:description" content="讓手機化為 joy-con，一起來玩派對遊戲吧！(/≧▽≦)/" />
+    <meta name="twitter:image" content="/cover.jpg" />
 
-  <!-- Twitter Card -->
-  <meta
-    name="twitter:card"
-    content="summary_large_image"
-  />
-  <meta
-    name="twitter:title"
-    content="Animals Party v2"
-  />
-  <meta
-    name="twitter:description"
-    content="讓手機化為 joy-con，一起來玩派對遊戲吧！(/≧▽≦)/"
-  />
-  <meta
-    name="twitter:image"
-    content="/cover.jpg"
-  />
+    <!-- Google AdSense -->
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6608581811170481"
+      crossorigin="anonymous"
+    ></script>
 
-  <!-- Google AdSense -->
-  <script
-    async
-    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6608581811170481"
-    crossorigin="anonymous"
-  ></script>
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = 'https://www.clarity.ms/tag/' + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, 'clarity', 'script', 'x1jeifk9pe');
+    </script>
+  </head>
 
-  <!-- Microsoft Clarity -->
-  <script type="text/javascript">
-    (function (c, l, a, r, i, t, y) {
-      c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-      t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
-      y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-    })(window, document, "clarity", "script", "x1jeifk9pe");
-  </script>
-
-</head>
-
-<body>
-  <div
-    id="app"
-    class="isolate"
-  ></div>
-  <script
-    type="module"
-    src="/src/main.ts"
-  ></script>
-</body>
-
+  <body>
+    <div id="app" class="isolate"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

@@ -32,6 +32,15 @@ export function getPlayerColorClass(codeName: string): string {
   return getPlayerColor(codeName).class;
 }
 
+/** 取得玩家底色的 hex 色值，供 inline style 使用
+ *
+ * Tailwind v4 的色票以 oklch() 輸出，舊版手機瀏覽器（如 LINE／FB 內建瀏覽器、
+ * 舊 iOS Safari）不支援而導致底色失效。改用 hex 可確保各瀏覽器皆能正確上色。
+ */
+export function getPlayerColorHex(codeName: string): string {
+  return getPlayerColor(codeName).hex;
+}
+
 /** 取得玩家顏色的 RGB 物件，供 3D 場景等需要實際色值處使用 */
 export function getPlayerColorRgb(codeName: string) {
   return colord(getPlayerColor(codeName).hex).toRgb();

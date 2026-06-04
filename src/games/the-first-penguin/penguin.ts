@@ -1,7 +1,13 @@
 import {
-  Scene, Color3, Vector3,
-  SceneLoader, AbstractMesh, AnimationGroup,
-  MeshBuilder, PhysicsImpostor, StandardMaterial,
+  Scene,
+  Color3,
+  Vector3,
+  SceneLoader,
+  AbstractMesh,
+  AnimationGroup,
+  MeshBuilder,
+  PhysicsImpostor,
+  StandardMaterial,
   Animation,
 } from '@babylonjs/core';
 /** 引入 loaders，這樣才能載入 glb 檔案*/
@@ -10,9 +16,9 @@ import { debounce, defaultsDeep, throttle } from 'lodash-es';
 import { createAnimation } from '../../common/utils';
 
 interface AnimationMap {
-  idle?: AnimationGroup,
-  walk?: AnimationGroup,
-  attack?: AnimationGroup,
+  idle?: AnimationGroup;
+  walk?: AnimationGroup;
+  attack?: AnimationGroup;
 }
 
 export interface PenguinParams {
@@ -66,7 +72,9 @@ export class Penguin {
   }
   private createHitBox() {
     const hitBox = MeshBuilder.CreateBox(`${this.name}-hit-box`, {
-      width: 2, depth: 2, height: 4
+      width: 2,
+      depth: 2,
+      height: 4,
     });
     hitBox.position = this.params.position;
     // 設為半透明方便觀察
@@ -77,7 +85,7 @@ export class Penguin {
       hitBox,
       PhysicsImpostor.BoxImpostor,
       { mass: 1, friction: 0.7, restitution: 0.7 },
-      this.scene
+      this.scene,
     );
 
     hitBox.physicsImpostor = hitBoxImpostor;
@@ -85,7 +93,9 @@ export class Penguin {
   }
   private createBadge() {
     const badge = MeshBuilder.CreateBox(`${this.name}-badge`, {
-      width: 0.5, depth: 0.5, height: 0.5
+      width: 0.5,
+      depth: 0.5,
+      height: 0.5,
     });
     const material = new StandardMaterial('badgeMaterial', this.scene);
     material.diffuseColor = this.params.color;
@@ -102,18 +112,18 @@ export class Penguin {
       'rotation.y',
       frameRate / 5,
       Animation.ANIMATIONTYPE_FLOAT,
-      Animation.ANIMATIONLOOPMODE_CYCLE
+      Animation.ANIMATIONLOOPMODE_CYCLE,
     );
 
     const keyFrames = [
       {
         frame: 0,
-        value: 0
+        value: 0,
       },
       {
         frame: frameRate,
-        value: 2 * Math.PI
-      }
+        value: 2 * Math.PI,
+      },
     ];
 
     badgeRotate.setKeys(keyFrames);
@@ -173,9 +183,14 @@ export class Penguin {
       }
     }
 
-    const { animation, frameRate } = createAnimation(this.mesh, 'rotation', new Vector3(0, angle, 0), {
-      speedRatio: 3,
-    });
+    const { animation, frameRate } = createAnimation(
+      this.mesh,
+      'rotation',
+      new Vector3(0, angle, 0),
+      {
+        speedRatio: 3,
+      },
+    );
 
     this.scene.beginDirectAnimation(this.mesh, [animation], 0, frameRate);
   }
@@ -186,7 +201,7 @@ export class Penguin {
     this.state = value;
   }
   /** 處理狀態動畫
-   * 
+   *
    * 利用 [runCoroutineAsync API](https://doc.babylonjs.com/features/featuresDeepDive/events/coroutines) 實現
    */
   private processStateAnimation(newState: State) {
@@ -203,14 +218,21 @@ export class Penguin {
     /** 切換至攻擊動畫速度要快一點 */
     const offset = this.state === 'attack' ? 0.3 : undefined;
 
-    this.scene.onBeforeRenderObservable.runCoroutineAsync(this.animationBlending(playingAnimation, targetAnimation, loop, offset));
+    this.scene.onBeforeRenderObservable.runCoroutineAsync(
+      this.animationBlending(playingAnimation, targetAnimation, loop, offset),
+    );
   }
   /** 動畫混合
    * 讓目前播放動畫的權重從 1 到 0，而目標動畫從 0 到 1。
    * 利用 Generator Function 配合 babylon 的 [runCoroutineAsync API](https://doc.babylonjs.com/features/featuresDeepDive/events/coroutines)
    * 迭代，達成融合效果。
    */
-  private * animationBlending(fromAnimation: AnimationGroup, toAnimation: AnimationGroup, loop = true, step = 0.1) {
+  private *animationBlending(
+    fromAnimation: AnimationGroup,
+    toAnimation: AnimationGroup,
+    loop = true,
+    step = 0.1,
+  ) {
     let currentWeight = 1;
     let targetWeight = 0;
 
@@ -230,7 +252,12 @@ export class Penguin {
   }
 
   async init() {
-    const result = await SceneLoader.ImportMeshAsync('', '/the-first-penguin/', 'penguin.glb', this.scene);
+    const result = await SceneLoader.ImportMeshAsync(
+      '',
+      '/the-first-penguin/',
+      'penguin.glb',
+      this.scene,
+    );
     this.initAnimation(result.animationGroups);
 
     // 產生 hitBox
@@ -246,7 +273,6 @@ export class Penguin {
     const badge = this.createBadge();
     badge.setParent(hitBox);
     badge.position = new Vector3(0, 3, 0);
-
 
     // 持續在每個 frame render 之前呼叫
     this.scene.registerBeforeRender(() => {
@@ -280,38 +306,50 @@ export class Penguin {
   /** 停止呼叫後 500ms 設為 idle 狀態 */
   private walkToIdleDebounce = debounce(async () => {
     this.setState('idle');
-  }, 500)
+  }, 500);
 
   /** 攻擊，限制攻擊頻率，2 秒一次 */
-  attack = throttle(() => {
-    this.setState('attack');
-    this.attackToIdleDebounce();
-    this.walkToIdleDebounce.cancel();
-  }, 2000, {
-    leading: true,
-    trailing: false,
-  })
+  attack = throttle(
+    () => {
+      this.setState('attack');
+      this.attackToIdleDebounce();
+      this.walkToIdleDebounce.cancel();
+    },
+    2000,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
   /** 攻擊結束後 1 秒時，回到 idle 狀態 */
-  private attackToIdleDebounce = debounce(() => {
-    this.setState('idle');
-  }, 1000, {
-    leading: false,
-    trailing: true,
-  })
+  private attackToIdleDebounce = debounce(
+    () => {
+      this.setState('idle');
+    },
+    1000,
+    {
+      leading: false,
+      trailing: true,
+    },
+  );
 
   /** 被攻擊
    * @param direction 移動方向
    */
-  assaulted = throttle((direction: Vector3) => {
-    if (!this.mesh) {
-      throw new Error('未建立 Mesh');
-    }
+  assaulted = throttle(
+    (direction: Vector3) => {
+      if (!this.mesh) {
+        throw new Error('未建立 Mesh');
+      }
 
-    // 計算力量
-    const force = direction.normalize().scaleInPlace(this.assaultedForce);
-    this.mesh.physicsImpostor?.applyImpulse(force, Vector3.Zero());
-  }, 500, {
-    leading: true,
-    trailing: false,
-  })
+      // 計算力量
+      const force = direction.normalize().scaleInPlace(this.assaultedForce);
+      this.mesh.physicsImpostor?.applyImpulse(force, Vector3.Zero());
+    },
+    500,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
 }

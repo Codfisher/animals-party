@@ -1,12 +1,20 @@
 import {
-  Scene, SolidParticleSystem, SolidParticle, MeshBuilder,
-  StandardMaterial, Material, Color3, Color4, Vector3,
+  Scene,
+  SolidParticleSystem,
+  SolidParticle,
+  MeshBuilder,
+  StandardMaterial,
+  Material,
+  Color3,
+  Color4,
+  Vector3,
 } from '@babylonjs/core';
 import { random, sample } from 'lodash-es';
 
 /** 彩帶配色 */
-const PALETTE = ['#ff5b5b', '#ffd83d', '#5bc8ef', '#8be06a', '#c792ea', '#ff9f43']
-  .map((hex) => Color3.FromHexString(hex).toColor4(1));
+const PALETTE = ['#ff5b5b', '#ffd83d', '#5bc8ef', '#8be06a', '#c792ea', '#ff9f43'].map((hex) =>
+  Color3.FromHexString(hex).toColor4(1),
+);
 
 /** 彩帶數量（稀疏，僅一點點點綴） */
 const COUNT = 100;
@@ -110,7 +118,11 @@ export function createConfettiFall(scene: Scene) {
     /** 雜訊飄移：正弦擺動 + 隨機 jitter，呈現布朗運動般的左右飄動 */
     const sway = Math.sin(data.swayPhase + elapsed * data.swayFrequency);
     particle.position.x += (sway * data.swayAmplitude + random(-0.6, 0.6, true)) * deltaSecond;
-    particle.position.z += (Math.cos(data.swayPhase + elapsed * data.swayFrequency * 0.8) * data.swayAmplitude * 0.6) * deltaSecond;
+    particle.position.z +=
+      Math.cos(data.swayPhase + elapsed * data.swayFrequency * 0.8) *
+      data.swayAmplitude *
+      0.6 *
+      deltaSecond;
 
     /** 立體翻滾：三軸獨立旋轉 */
     particle.rotation.x += data.angularVelocity.x * deltaSecond;
@@ -118,9 +130,10 @@ export function createConfettiFall(scene: Scene) {
     particle.rotation.z += data.angularVelocity.z * deltaSecond;
 
     /** 接近水面淡出 */
-    particle.color!.a = particle.position.y > FADE_START_Y
-      ? 1
-      : Math.max(0, (particle.position.y - FLOOR_Y) / (FADE_START_Y - FLOOR_Y));
+    particle.color!.a =
+      particle.position.y > FADE_START_Y
+        ? 1
+        : Math.max(0, (particle.position.y - FLOOR_Y) / (FADE_START_Y - FLOOR_Y));
 
     /** 落地回收至高空 */
     if (particle.position.y < FLOOR_Y) {

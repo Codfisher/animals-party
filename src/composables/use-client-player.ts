@@ -1,9 +1,9 @@
-import { computed, onBeforeUnmount } from "vue";
-import { GameConsoleData, GameConsoleState, Player, Room, SignalData } from "../types";
+import { computed, onBeforeUnmount } from 'vue';
+import { GameConsoleData, GameConsoleState, Player, Room, SignalData } from '../types';
 
-import { useGameConsoleStore } from "../stores/game-console.store";
-import { useMainStore } from "../stores/main.store";
-import { createEventHook } from "@vueuse/core";
+import { useGameConsoleStore } from '../stores/game-console.store';
+import { useMainStore } from '../stores/main.store';
+import { createEventHook } from '@vueuse/core';
 
 export function useClientPlayer() {
   const mainStore = useMainStore();
@@ -37,8 +37,8 @@ export function useClientPlayer() {
   }
 
   const codeName = computed(() => {
-    const index = gameConsoleStore.players.findIndex((player) =>
-      player.clientId === mainStore.clientId
+    const index = gameConsoleStore.players.findIndex(
+      (player) => player.clientId === mainStore.clientId,
     );
 
     if (index < 0) {
@@ -56,7 +56,7 @@ export function useClientPlayer() {
     mainStore.client.send('player:gamepad-data', {
       playerId: mainStore.clientId,
       keys: data,
-    })
+    });
   }
 
   async function emitProfile(data: Omit<Player, 'clientId'>) {
@@ -73,18 +73,18 @@ export function useClientPlayer() {
   return {
     joinRoom,
 
-    onGameConsoleStateUpdate: (fn: Parameters<typeof stateUpdateHook['on']>[0]) => {
+    onGameConsoleStateUpdate: (fn: Parameters<(typeof stateUpdateHook)['on']>[0]) => {
       /** 監聽 game-console:state-update 事件 */
       mainStore.client?.on('game-console:state-update', stateUpdateHook.trigger);
       return stateUpdateHook.on(fn);
     },
     /** 玩家變更事件，例如玩家加入或斷線等等 */
-    onPlayerUpdate: (fn: Parameters<typeof playerUpdateHook['on']>[0]) => {
+    onPlayerUpdate: (fn: Parameters<(typeof playerUpdateHook)['on']>[0]) => {
       mainStore.client?.on('game-console:player-update', playerUpdateHook.trigger);
       return playerUpdateHook.on(fn);
     },
     /** 接收遊戲機發送資料 */
-    onConsoleData: (fn: Parameters<typeof consoleDataHook['on']>[0]) => {
+    onConsoleData: (fn: Parameters<(typeof consoleDataHook)['on']>[0]) => {
       mainStore.client?.on('game-console:console-data', consoleDataHook.trigger);
       return consoleDataHook.on(fn);
     },
@@ -96,5 +96,5 @@ export function useClientPlayer() {
     emitGamepadData,
     /** 發送玩家自身資料 */
     emitProfile,
-  }
+  };
 }

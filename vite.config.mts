@@ -1,62 +1,77 @@
-/// <reference types="vitest/config" />
-import { defineConfig } from 'vite';
-import VueRouter from 'unplugin-vue-router/vite';
+import { defineConfig } from 'vite-plus';
+// 增廣 UserConfig 的 test 欄位型別（等同舊 vitest/config），供下方 test 區塊使用
+import 'vite-plus/test/config';
+import VueRouter from 'vue-router/vite';
 import vue from '@vitejs/plugin-vue';
 import ui from '@nuxt/ui/vite';
 
 // https://vitejs.dev/config/
-export default defineConfig(() => {
-  return {
-    plugins: [
-      // 檔案路由（須置於 vue() 之前），來源資料夾為 src/pages
-      VueRouter({
-        routesFolder: 'src/pages',
-      }),
+export default defineConfig({
+  // 沿用專案既有單引號風格，降低與舊 prettier 格式的差異
+  // 排除 markdown 散文與 .claude 技能檔，僅格式化程式碼
+  fmt: {
+    singleQuote: true,
+    ignorePatterns: ['**/*.md', '.claude/**'],
+  },
+  lint: {
+    jsPlugins: [{ name: 'vite-plus', specifier: 'vite-plus/oxlint-plugin' }],
+    rules: {
+      'vite-plus/prefer-vite-plus-imports': 'error',
+    },
+    options: {
+      typeAware: true,
+      typeCheck: true,
+    },
+  },
+  plugins: [
+    // 檔案路由（須置於 vue() 之前），來源資料夾為 src/pages
+    VueRouter({
+      routesFolder: 'src/pages',
+    }),
 
-      vue(),
+    vue(),
 
-      // colorMode: false 關閉 Nuxt UI 的 useDark() 插件，強制鎖定亮色模式
-      ui({
-        colorMode: false,
-        // 全域主題：toast 套用派對風毛玻璃樣式，呼應 base-btn 的圓潤、柔和暖色調
-        ui: {
-          toast: {
-            slots: {
-              root: 'rounded-[1.75rem] bg-[#fff6e9]/90 backdrop-blur-md ring-1 ring-[#856639]/15 shadow-[0_12px_30px_-8px_rgba(133,102,57,0.3),0_6px_12px_-6px_rgba(0,0,0,0.1)] p-4 gap-3',
-              icon: 'size-6',
-              title: 'font-black tracking-wide text-[#4a3b22]',
-              description: 'text-[#7a6240]',
-              progress: 'rounded-full',
-            },
+    // colorMode: false 關閉 Nuxt UI 的 useDark() 插件，強制鎖定亮色模式
+    ui({
+      colorMode: false,
+      // 全域主題：toast 套用派對風毛玻璃樣式，呼應 base-btn 的圓潤、柔和暖色調
+      ui: {
+        toast: {
+          slots: {
+            root: 'rounded-[1.75rem] bg-[#fff6e9]/90 backdrop-blur-md ring-1 ring-[#856639]/15 shadow-[0_12px_30px_-8px_rgba(133,102,57,0.3),0_6px_12px_-6px_rgba(0,0,0,0.1)] p-4 gap-3',
+            icon: 'size-6',
+            title: 'font-black tracking-wide text-[#4a3b22]',
+            description: 'text-[#7a6240]',
+            progress: 'rounded-full',
           },
         },
-      }),
+      },
+    }),
+  ],
+  // 提前預打包重型／延遲載入的依賴，避免 dev server 執行中才發現並觸發重新打包與 reload
+  optimizeDeps: {
+    include: [
+      '@babylonjs/core',
+      '@babylonjs/core/Debug/debugLayer',
+      '@babylonjs/inspector',
+      '@babylonjs/gui',
+      '@babylonjs/loaders',
+      '@babylonjs/materials',
+      '@babylonjs/serializers',
+      'cannon-es',
+      'gsap',
+      'peerjs',
+      'qrcode',
+      'qr-scanner',
+      'lodash-es',
+      'colord',
+      'mitt',
+      'nanoid',
+      'xstate',
+      'await-to-js',
     ],
-    // 提前預打包重型／延遲載入的依賴，避免 dev server 執行中才發現並觸發重新打包與 reload
-    optimizeDeps: {
-      include: [
-        '@babylonjs/core',
-        '@babylonjs/core/Debug/debugLayer',
-        '@babylonjs/inspector',
-        '@babylonjs/gui',
-        '@babylonjs/loaders',
-        '@babylonjs/materials',
-        '@babylonjs/serializers',
-        'cannon-es',
-        'gsap',
-        'peerjs',
-        'qrcode',
-        'qr-scanner',
-        'lodash-es',
-        'colord',
-        'mitt',
-        'nanoid',
-        'xstate',
-        'await-to-js',
-      ],
-    },
-    test: {
-      environment: 'happy-dom',
-    },
-  }
-})
+  },
+  test: {
+    environment: 'happy-dom',
+  },
+});

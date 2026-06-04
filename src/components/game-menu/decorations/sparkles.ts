@@ -1,6 +1,4 @@
-import {
-  Scene, ParticleSystem, DynamicTexture, Vector3, Color4,
-} from '@babylonjs/core';
+import { Scene, ParticleSystem, DynamicTexture, Vector3, Color4 } from '@babylonjs/core';
 
 /** 繪製柔和光暈的程式材質（中心亮、邊緣透明） */
 function createGlowTexture(scene: Scene) {
@@ -9,8 +7,12 @@ function createGlowTexture(scene: Scene) {
   const context = texture.getContext();
 
   const gradient = context.createRadialGradient(
-    size / 2, size / 2, 0,
-    size / 2, size / 2, size / 2,
+    size / 2,
+    size / 2,
+    0,
+    size / 2,
+    size / 2,
+    size / 2,
   );
   gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
   gradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.55)');

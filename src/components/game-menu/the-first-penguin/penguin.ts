@@ -1,7 +1,5 @@
-import {
-  Scene, Vector3, AnimationGroup, SceneLoader,
-} from "@babylonjs/core";
-import { defaults } from "lodash-es";
+import { Scene, Vector3, AnimationGroup, SceneLoader } from '@babylonjs/core';
+import { defaults } from 'lodash-es';
 
 interface Option {
   scaling?: number;
@@ -16,12 +14,10 @@ const defaultOption: Required<Option> = {
   position: Vector3.Zero(),
   rotation: Vector3.Zero(),
   playAnimation: '',
-}
+};
 
 export async function createPenguin(name: string, scene: Scene, option?: Option) {
-  const {
-    scaling, position, rotation
-  } = defaults(option, defaultOption);
+  const { scaling, position, rotation } = defaults(option, defaultOption);
 
   const result = await SceneLoader.ImportMeshAsync('', '/the-first-penguin/', 'penguin.glb', scene);
 
@@ -44,5 +40,5 @@ export async function createPenguin(name: string, scene: Scene, option?: Option)
   }
   initAnimation(result.animationGroups);
 
-  return { mesh }
+  return { mesh };
 }

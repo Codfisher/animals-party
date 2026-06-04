@@ -1,6 +1,4 @@
-import {
-  Scene, TransformNode, Vector3, StandardMaterial, Color3, Angle,
-} from '@babylonjs/core';
+import { Scene, TransformNode, Vector3, StandardMaterial, Color3, Angle } from '@babylonjs/core';
 import { random } from 'lodash-es';
 import { createIce } from '../the-first-penguin/ice';
 import { playCycleAnimation } from './utils';

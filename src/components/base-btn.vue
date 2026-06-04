@@ -11,10 +11,7 @@
     <slot v-bind="state" />
 
     <!-- label -->
-    <div
-      class="label relative font-black tracking-widest"
-      :style="labelStyle"
-    >
+    <div class="label relative font-black tracking-widest" :style="labelStyle">
       {{ props.label }}
     </div>
   </div>
@@ -22,8 +19,8 @@
 
 <script lang="ts">
 export interface State {
-  active: boolean,
-  hover: boolean,
+  active: boolean;
+  hover: boolean;
 }
 </script>
 
@@ -46,7 +43,7 @@ const props = withDefaults(defineProps<Props>(), {
   labelHoverColor: undefined,
   strokeColor: '#888',
   strokeHoverColor: undefined,
-  strokeSize: '3'
+  strokeSize: '3',
 });
 
 const emit = defineEmits<{
@@ -61,7 +58,7 @@ const state = ref<State>({
 const { width: windowWidth } = useWindowSize();
 /** 手機版（sm 斷點以下）描邊加粗 2 倍 */
 const strokeWidth = computed(() =>
-  windowWidth.value <= 600 ? Number(props.strokeSize) * 2 : Number(props.strokeSize)
+  windowWidth.value <= 600 ? Number(props.strokeSize) * 2 : Number(props.strokeSize),
 );
 
 const btnClass = computed(() => ({
@@ -69,20 +66,18 @@ const btnClass = computed(() => ({
 }));
 
 const labelStyle = computed(() => {
-  const color = (props.labelHoverColor && state.value.hover)
-    ? props.labelHoverColor
-    : props.labelColor;
+  const color =
+    props.labelHoverColor && state.value.hover ? props.labelHoverColor : props.labelColor;
 
-  const strokeColor = (props.strokeHoverColor && state.value.hover)
-    ? props.strokeHoverColor
-    : props.strokeColor;
+  const strokeColor =
+    props.strokeHoverColor && state.value.hover ? props.strokeHoverColor : props.strokeColor;
 
   return {
     color,
     // 描邊畫在填色之後，呈現外框效果
     paintOrder: 'stroke fill',
     WebkitTextStroke: `${strokeWidth.value}px ${strokeColor}`,
-  }
+  };
 });
 
 function handleClick(showEffect = false) {
@@ -115,7 +110,7 @@ function handleMouseup() {
 
 defineExpose<ControllableElement>({
   click(effect = true) {
-    handleClick(effect)
+    handleClick(effect);
   },
   isHover: () => state.value.hover,
   hover: handleMouseenter,

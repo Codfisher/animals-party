@@ -1,9 +1,6 @@
 <template>
   <player-gamepad-container>
-    <gamepad-analog-stick
-      class="absolute bottom-5 left-8"
-      @trigger="handleAnalogStickTrigger"
-    />
+    <gamepad-analog-stick class="absolute bottom-5 left-8" @trigger="handleAnalogStickTrigger" />
 
     <gamepad-btn
       class="absolute bottom-10 right-10"
@@ -50,7 +47,7 @@ import { useMainStore } from '../../stores/main.store';
 import { useVibrate } from '@vueuse/core';
 
 const loading = useLoading();
-const { emitGamepadData, onConsoleData, } = useClientPlayer();
+const { emitGamepadData, onConsoleData } = useClientPlayer();
 const mainStore = useMainStore();
 const { vibrate, stop } = useVibrate();
 
@@ -60,13 +57,15 @@ function init() {
 init();
 
 function handleBtnTrigger(keyName: `${KeyName}`, status: boolean) {
-  emitGamepadData([{
-    name: keyName,
-    value: status,
-  }]);
+  emitGamepadData([
+    {
+      name: keyName,
+      value: status,
+    },
+  ]);
 }
 
-function handleAnalogStickTrigger(data: { x: number, y: number }) {
+function handleAnalogStickTrigger(data: { x: number; y: number }) {
   emitGamepadData([
     {
       name: 'x-axis',
@@ -75,7 +74,7 @@ function handleAnalogStickTrigger(data: { x: number, y: number }) {
     {
       name: 'y-axis',
       value: data.y,
-    }
+    },
   ]);
 }
 
@@ -118,10 +117,7 @@ watch(mouseSize, () => {
 onBeforeUnmount(stopFeedback);
 
 onConsoleData(({ targets, data }) => {
-  if (
-    !targets?.includes(mainStore.clientId) ||
-    data.name !== 'vibrate'
-  ) return;
+  if (!targets?.includes(mainStore.clientId) || data.name !== 'vibrate') return;
 
   mouseSize.value = data.value;
 });

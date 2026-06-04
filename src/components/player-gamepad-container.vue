@@ -1,7 +1,7 @@
 <template>
   <div
-    class="w-full h-full flex text-white select-none overflow-hidden"
-    :class="bgClass"
+    class="w-screen h-screen flex text-white select-none overflow-hidden"
+    :style="{ backgroundColor: bgColor }"
     @touchmove="(e) => e.preventDefault()"
   >
     <slot />
@@ -20,12 +20,8 @@
             name="material-symbols:progress-activity"
             class="animate-spin text-primary text-[10rem]"
           />
-          <div class="text-4xl">
-            請將手機轉為{{ targetOrientation }}
-          </div>
-          <div class="text-base">
-            轉為{{ targetOrientation }}後，此視窗會自動關閉
-          </div>
+          <div class="text-4xl">請將手機轉為{{ targetOrientation }}</div>
+          <div class="text-base">轉為{{ targetOrientation }}後，此視窗會自動關閉</div>
         </div>
       </template>
     </UModal>
@@ -36,7 +32,7 @@
 import { computed } from 'vue';
 
 import { useClientPlayer } from '../composables/use-client-player';
-import { getPlayerColorClass } from '../common/color';
+import { getPlayerColorHex } from '../common/color';
 import { useScreenOrientation } from '@vueuse/core';
 
 interface Props {
@@ -57,11 +53,9 @@ const isWrongOrientation = computed(() => {
 
   return orientation.value?.includes(props.orientation) ?? false;
 });
-const bgClass = computed(() => getPlayerColorClass(codeName.value));
+const bgColor = computed(() => getPlayerColorHex(codeName.value));
 
-const targetOrientation = computed(() =>
-  props.orientation === 'landscape' ? '直向' : '橫向'
-);
+const targetOrientation = computed(() => (props.orientation === 'landscape' ? '直向' : '橫向'));
 </script>
 
 <style scoped lang="sass">

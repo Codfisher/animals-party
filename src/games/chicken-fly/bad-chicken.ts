@@ -1,7 +1,20 @@
-import { Vector3, Color3, AbstractMesh, Scene, SceneLoader, MeshBuilder, PhysicsImpostor, Mesh, Tools, Quaternion, PBRMaterial, Scalar } from "@babylonjs/core";
+import {
+  Vector3,
+  Color3,
+  AbstractMesh,
+  Scene,
+  SceneLoader,
+  MeshBuilder,
+  PhysicsImpostor,
+  Mesh,
+  Tools,
+  Quaternion,
+  PBRMaterial,
+  Scalar,
+} from '@babylonjs/core';
 /** 引入 loaders，這樣才能載入 glb 檔案*/
 import '@babylonjs/loaders';
-import { clamp, defaultsDeep, throttle } from "lodash-es";
+import { clamp, defaultsDeep, throttle } from 'lodash-es';
 
 export interface Params {
   /** 起始位置 */
@@ -15,7 +28,7 @@ export interface Params {
   sceneBoundary?: {
     x: number;
     y: number;
-  }
+  };
 }
 
 export class BadChicken {
@@ -28,8 +41,8 @@ export class BadChicken {
     recycleStartPosition: -100,
     sceneBoundary: {
       x: 5,
-      y: 2
-    }
+      y: 2,
+    },
   };
 
   /** 速度基準值 */
@@ -53,7 +66,9 @@ export class BadChicken {
 
   private createHitBox() {
     const hitBox = MeshBuilder.CreateBox(`${this.name}-hit-box`, {
-      width: 1, depth: 1.8, height: 1.2
+      width: 1,
+      depth: 1.8,
+      height: 1.2,
     });
     hitBox.visibility = 0;
     hitBox.position = this.params.position.clone();
@@ -75,14 +90,17 @@ export class BadChicken {
   }
 
   async init() {
-    const result = await SceneLoader.ImportMeshAsync('', '/chicken-fly/', 'flying-chicken.glb', this.scene);
+    const result = await SceneLoader.ImportMeshAsync(
+      '',
+      '/chicken-fly/',
+      'flying-chicken.glb',
+      this.scene,
+    );
 
     const hitBox = this.createHitBox();
     this.mesh = hitBox;
 
-    const bodyMesh = result.meshes.find(
-      ({ name }) => name === 'body'
-    );
+    const bodyMesh = result.meshes.find(({ name }) => name === 'body');
     if (bodyMesh?.material instanceof PBRMaterial) {
       bodyMesh.material.albedoColor = Color3.Black();
     }
@@ -95,19 +113,11 @@ export class BadChicken {
 
     /** 移動人物 */
     this.scene.registerBeforeRender(() => {
-      const {
-        x: xMax, y: yMax
-      } = this.params.sceneBoundary;
+      const { x: xMax, y: yMax } = this.params.sceneBoundary;
 
       const {
-        phase: {
-          x: xPhase,
-          y: yPhase
-        },
-        circularFrequency: {
-          x: xCircularFrequency,
-          y: yCircularFrequency
-        },
+        phase: { x: xPhase, y: yPhase },
+        circularFrequency: { x: xCircularFrequency, y: yCircularFrequency },
       } = this;
 
       /** 計算位移 */
@@ -121,7 +131,7 @@ export class BadChicken {
       this.phase = {
         x: xPhase + xCircularFrequency,
         y: yPhase + yCircularFrequency,
-      }
+      };
 
       /** 檢查是否需要回收 */
       if (hitBox.position.z > this.params.recyclePosition) {

@@ -1,5 +1,5 @@
-import { TransformNode } from "@babylonjs/core";
-import { GameName } from "./game.type";
+import { TransformNode } from '@babylonjs/core';
+import { GameName } from './game.type';
 
 export enum ClientType {
   /** 遊戲主機 */

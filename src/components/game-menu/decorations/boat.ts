@@ -1,6 +1,12 @@
 import {
-  Scene, TransformNode, MeshBuilder, Mesh,
-  StandardMaterial, Vector3, Color3, Angle,
+  Scene,
+  TransformNode,
+  MeshBuilder,
+  Mesh,
+  StandardMaterial,
+  Vector3,
+  Color3,
+  Angle,
 } from '@babylonjs/core';
 import { random } from 'lodash-es';
 import { playCycleAnimation } from './utils';
@@ -28,9 +34,15 @@ export function createBoat(name: string, scene: Scene, param: Param) {
   hullMaterial.diffuseColor = Color3.FromHexString('#a86b3c');
   hullMaterial.specularColor = Color3.Black();
 
-  const hull = MeshBuilder.CreateBox(`${name}-hull`, {
-    width: 1.2, height: 0.6, depth: 2.4,
-  }, scene);
+  const hull = MeshBuilder.CreateBox(
+    `${name}-hull`,
+    {
+      width: 1.2,
+      height: 0.6,
+      depth: 2.4,
+    },
+    scene,
+  );
   hull.material = hullMaterial;
   hull.position.y = 0.2;
   hull.setParent(rootNode);
@@ -40,9 +52,14 @@ export function createBoat(name: string, scene: Scene, param: Param) {
   mastMaterial.diffuseColor = Color3.FromHexString('#6b4a2b');
   mastMaterial.specularColor = Color3.Black();
 
-  const mast = MeshBuilder.CreateCylinder(`${name}-mast`, {
-    height: 2.2, diameter: 0.1,
-  }, scene);
+  const mast = MeshBuilder.CreateCylinder(
+    `${name}-mast`,
+    {
+      height: 2.2,
+      diameter: 0.1,
+    },
+    scene,
+  );
   mast.material = mastMaterial;
   mast.position.y = 1.3;
   mast.setParent(rootNode);
@@ -54,11 +71,15 @@ export function createBoat(name: string, scene: Scene, param: Param) {
   sailMaterial.specularColor = Color3.Black();
   sailMaterial.backFaceCulling = false;
 
-  const sail = MeshBuilder.CreateDisc(`${name}-sail`, {
-    radius: 0.95,
-    tessellation: 3,
-    sideOrientation: Mesh.DOUBLESIDE,
-  }, scene);
+  const sail = MeshBuilder.CreateDisc(
+    `${name}-sail`,
+    {
+      radius: 0.95,
+      tessellation: 3,
+      sideOrientation: Mesh.DOUBLESIDE,
+    },
+    scene,
+  );
   sail.material = sailMaterial;
   /** 立起並轉向側面，貼著桅杆 */
   sail.rotation.y = Angle.FromDegrees(90).radians();

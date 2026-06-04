@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="flex flex-center overflow-hidden"
-    :style="backgroundStyle"
-  >
+  <div class="flex flex-center overflow-hidden" :style="backgroundStyle">
     <div class="flex gap-8 md:gap-20">
       <div
         v-for="(poly, i) in polygons"
@@ -31,7 +28,7 @@ import BasePolygon, { ShapeType } from './base-polygon.vue';
 
 const { width: windowWidth } = useWindowSize();
 /** 手機版（sm 斷點以下）縮小圖形，避免超出畫面 */
-const polygonSize = computed(() => windowWidth.value <= 600 ? '5rem' : '9rem');
+const polygonSize = computed(() => (windowWidth.value <= 600 ? '5rem' : '9rem'));
 
 interface Props {
   /** 背景顏色 */
@@ -44,7 +41,6 @@ const props = withDefaults(defineProps<Props>(), {
   polygonColors: () => ['#7c8f6d60', '#B1CC9D60', '#90A68060'],
 });
 
-
 const backgroundStyle = computed(() => {
   // 變亮
   const lightenColor = colord(props.backgroundColor).lighten(0.2).toHex();
@@ -53,8 +49,8 @@ const backgroundStyle = computed(() => {
   const offsetColor = colord(props.backgroundColor).darken(0.14).rotate(-15).toHex();
 
   return {
-    background: `linear-gradient(-30deg, ${offsetColor}, ${props.backgroundColor}, ${lightenColor}, ${props.backgroundColor}, ${offsetColor})`
-  }
+    background: `linear-gradient(-30deg, ${offsetColor}, ${props.backgroundColor}, ${lightenColor}, ${props.backgroundColor}, ${offsetColor})`,
+  };
 });
 
 const polygons = computed(() => [
@@ -71,14 +67,13 @@ const polygons = computed(() => [
     color: props.polygonColors[2],
   },
 ]);
-
 </script>
 
 <style scoped lang="sass">
 .box
   animation: jump 1.4s infinite ease-in-out
 
-.jelly-bounce 
+.jelly-bounce
   animation: jelly-bounce 1.4s infinite ease-in-out
   transform-origin: 50% 100%
 
