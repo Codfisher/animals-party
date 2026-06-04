@@ -36,6 +36,8 @@ export default defineConfig(() => {
     optimizeDeps: {
       include: [
         '@babylonjs/core',
+        '@babylonjs/core/Debug/debugLayer',
+        '@babylonjs/inspector',
         '@babylonjs/gui',
         '@babylonjs/loaders',
         '@babylonjs/materials',
