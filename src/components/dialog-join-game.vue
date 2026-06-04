@@ -77,6 +77,7 @@ import QrScanner from 'qr-scanner';
 import BasePolygon from './base-polygon.vue';
 
 import { useClientPlayer } from '../composables/use-client-player';
+import { parseRoomId } from '../common/room-url';
 
 const emit = defineEmits<{
   close: [joined: boolean];
@@ -123,8 +124,9 @@ onBeforeUnmount(() => {
   scanner = undefined;
 });
 
-function handleScan(hostId: string) {
-  joinRoom(hostId);
+function handleScan(scanned: string) {
+  // 掃描結果可能是純房號或完整加入網址，統一解析出房號
+  joinRoom(parseRoomId(scanned));
 }
 
 function handleSubmit() {

@@ -167,11 +167,14 @@ import GoogleAdsense from '../components/google-adsense.vue';
 import DialogJoinGame from '../components/dialog-join-game.vue';
 
 import { useLoading } from '../composables/use-loading';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useClientGameConsole } from '../composables/use-client-game-console';
+import { useClientPlayer } from '../composables/use-client-player';
 
 const gameConsole = useClientGameConsole();
+const player = useClientPlayer();
 const loading = useLoading();
+const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 const overlay = useOverlay();
@@ -223,8 +226,41 @@ async function joinGame() {
   });
 }
 
+/** 透過 QR Code 網址開啟時，依 roomId 參數自動加入房間 */
+async function autoJoinFromQuery() {
+  const { roomId } = route.query;
+  if (typeof roomId !== 'string' || !roomId) {
+    return;
+  }
+
+  // 清掉網址參數，避免返回首頁時重複觸發加入
+  router.replace({ name: '/home', query: {} });
+
+  await loading.show();
+
+  const [err] = await to(player.joinRoom(roomId));
+  if (err) {
+    console.error(`[ autoJoinFromQuery ] err : `, err);
+    toast.add({
+      color: 'error',
+      title: `加入房間失敗 (╥ω╥\`): ${err?.message ?? err}`,
+    });
+    loading.hide();
+    return;
+  }
+
+  toast.add({
+    color: 'success',
+    title: `成功加入派對！✧⁑｡٩(ˊᗜˋ*)و✧⁕｡`,
+  });
+  router.push({
+    name: '/player-gamepad',
+  });
+}
+
 onMounted(() => {
   loading.hide();
+  autoJoinFromQuery();
 });
 loading.hide();
 </script>

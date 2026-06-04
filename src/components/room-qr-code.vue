@@ -18,6 +18,7 @@ import QRCode from 'qrcode';
 import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useGameConsoleStore } from '../stores/game-console.store';
+import { buildRoomJoinUrl } from '../common/room-url';
 
 const gameConsoleStore = useGameConsoleStore();
 const { roomId } = storeToRefs(gameConsoleStore);
@@ -32,7 +33,8 @@ watch(
       return;
     }
 
-    dataUrl.value = await QRCode.toDataURL(id, {
+    // 編碼完整加入網址，玩家用手機相機掃描後即可直接開啟並自動加入
+    dataUrl.value = await QRCode.toDataURL(buildRoomJoinUrl(id), {
       // 房號疊在 QR 中央會遮住模組，需最高容錯等級維持可掃描
       errorCorrectionLevel: 'H',
       margin: 2,
