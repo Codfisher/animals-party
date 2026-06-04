@@ -47,14 +47,13 @@ const props = withDefaults(defineProps<Props>(), {
   /** 上限 42vw，與右側按鈕並排時不重疊 */
   size: 'min(13rem, 42vw)',
   /** 方向鍵縮小，避免在縮小的 d-pad 上互相擠壓 */
-  btnSize: '1.1rem'
+  btnSize: '1.1rem',
 });
 
 const emit = defineEmits<{
   (e: 'click', keyName: KeyName): void;
-  (e: 'trigger', data: { keyName: KeyName, status: boolean }): void;
+  (e: 'trigger', data: { keyName: KeyName; status: boolean }): void;
 }>();
-
 
 function handleBtnTrigger(keyName: KeyName, status: boolean) {
   if (!status) {
@@ -62,7 +61,8 @@ function handleBtnTrigger(keyName: KeyName, status: boolean) {
   }
 
   emit('trigger', {
-    keyName, status
+    keyName,
+    status,
   });
 }
 </script>

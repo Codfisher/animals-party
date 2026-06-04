@@ -18,10 +18,7 @@
       @click="openPermissionCard()"
     />
 
-    <UModal
-      v-model:open="permissionCardVisible"
-      class="bg-transparent shadow-none ring-0"
-    >
+    <UModal v-model:open="permissionCardVisible" class="bg-transparent shadow-none ring-0">
       <template #content>
         <permission-card @update="handlePermission" />
       </template>
@@ -48,15 +45,15 @@ import { useGameConsoleStore } from '../../stores/game-console.store';
 const loading = useLoading();
 const mainStore = useMainStore();
 const gameConsoleStore = useGameConsoleStore();
-const {
-  emitGamepadData, emitProfile
-} = useClientPlayer();
+const { emitGamepadData, emitProfile } = useClientPlayer();
 
 function handleBtnTrigger(keyName: `${KeyName}`, status: boolean) {
-  emitGamepadData([{
-    name: keyName,
-    value: status,
-  }]);
+  emitGamepadData([
+    {
+      name: keyName,
+      value: status,
+    },
+  ]);
 }
 
 const permissionCardVisible = ref(false);
@@ -67,8 +64,8 @@ function openPermissionCard() {
 /** 是否缺少權限：體感支援但尚未授權（prompt）或被拒（denied）。
  *  granted／not-support 不算缺少；震動權限無需顯式授權，故不納入判斷。 */
 const motionPermission = useMotionPermission();
-const permissionMissing = computed(
-  () => ['prompt', 'denied'].includes(motionPermission.state.value),
+const permissionMissing = computed(() =>
+  ['prompt', 'denied'].includes(motionPermission.state.value),
 );
 
 /** 最新權限狀態。權限卡掛載時即回報，但此時連線可能尚未 open。 */
@@ -85,9 +82,7 @@ function trySendProfile() {
   if (!permission) return;
 
   /** host 已記錄我目前的權限，視為已送達，不再重送 */
-  const me = gameConsoleStore.players.find(
-    (player) => player.clientId === mainStore.clientId
-  );
+  const me = gameConsoleStore.players.find((player) => player.clientId === mainStore.clientId);
   if (me?.permission && isEqual(me.permission, permission)) return;
 
   emitProfile({ permission }).catch(() => undefined);
@@ -100,11 +95,7 @@ function trySendProfile() {
  *  收到玩家清單即可證明連線通暢，是最可靠的補送時機；
  *  搭配 trySendProfile 內的去重判斷，host 一旦收到就會停止重送。 */
 watch(
-  () => [
-    mainStore.clientConnected,
-    latestPermission.value,
-    gameConsoleStore.players,
-  ] as const,
+  () => [mainStore.clientConnected, latestPermission.value, gameConsoleStore.players] as const,
   () => trySendProfile(),
   { immediate: true },
 );

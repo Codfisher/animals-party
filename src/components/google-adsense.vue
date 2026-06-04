@@ -47,8 +47,7 @@ onMounted(() => {
 
   try {
     (window.adsbygoogle ??= []).push({});
-  }
-  catch (err) {
+  } catch (err) {
     console.error('[ google-adsense ] err : ', err);
   }
 });

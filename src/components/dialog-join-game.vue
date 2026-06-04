@@ -6,13 +6,13 @@
     <template #content>
       <div class="card flex flex-col p-8 gap-8 md:p-20 md:gap-16 overflow-hidden">
         <base-polygon
-          class=" absolute -left-32 -top-40 -z-10"
+          class="absolute -left-32 -top-40 -z-10"
           size="20rem"
           rotate="30deg"
           opacity="0.6"
         />
         <base-polygon
-          class=" absolute -right-[14rem] -bottom-[20rem] -z-10"
+          class="absolute -right-[14rem] -bottom-[20rem] -z-10"
           size="30rem"
           shape="pentagon"
           fill="solid"
@@ -22,25 +22,15 @@
 
         <!-- 相機掃描區 -->
         <div class="scanner relative rounded-3xl overflow-hidden bg-black/80">
-          <video
-            ref="video"
-            class="w-full h-full object-cover"
-            muted
-            playsinline
-          />
+          <video ref="video" class="w-full h-full object-cover" muted playsinline />
 
           <!-- 相機無法使用時的提示 -->
           <div
             v-if="!cameraAvailable"
             class="absolute inset-0 flex flex-col flex-center gap-4 text-center text-white p-8"
           >
-            <UIcon
-              name="material-symbols:no-photography"
-              class="text-[4rem]"
-            />
-            <div class="text-xl">
-              無法使用相機，請改用下方輸入房號
-            </div>
+            <UIcon name="material-symbols:no-photography" class="text-[4rem]" />
+            <div class="text-xl">無法使用相機，請改用下方輸入房號</div>
           </div>
         </div>
 
@@ -63,13 +53,13 @@
           >
             加入
             <base-polygon
-              class=" absolute -left-10 -top-16"
+              class="absolute -left-10 -top-16"
               size="8rem"
               opacity="0.7"
               rotate="45deg"
             />
             <UIcon
-              class=" absolute -right-[0.5rem] -bottom-[1.5rem] -rotate-90 opacity-80 text-[4rem] md:text-[7.5rem]"
+              class="absolute -right-[0.5rem] -bottom-[1.5rem] -rotate-90 opacity-80 text-[4rem] md:text-[7.5rem]"
               name="material-symbols:celebration"
             />
           </UButton>
@@ -107,22 +97,25 @@ let joining = false;
  * video 在 UModal 內透過 Teleport 延遲掛載，onMounted 時可能尚未存在，
  * 因此改 watch ref，待元素就緒再啟動 scanner。
  */
-watch(video, async (element) => {
-  if (!element || scanner) return;
+watch(
+  video,
+  async (element) => {
+    if (!element || scanner) return;
 
-  const instance = new QrScanner(
-    element,
-    (result) => handleScan(result.data),
-    { preferredCamera: 'environment', highlightScanRegion: true }
-  );
-  scanner = instance;
+    const instance = new QrScanner(element, (result) => handleScan(result.data), {
+      preferredCamera: 'environment',
+      highlightScanRegion: true,
+    });
+    scanner = instance;
 
-  const [err] = await to(instance.start());
-  if (err) {
-    cameraAvailable.value = false;
-    console.error(`[ dialog-join-game ] 相機啟動失敗 : `, err);
-  }
-}, { immediate: true });
+    const [err] = await to(instance.start());
+    if (err) {
+      cameraAvailable.value = false;
+      console.error(`[ dialog-join-game ] 相機啟動失敗 : `, err);
+    }
+  },
+  { immediate: true },
+);
 
 onBeforeUnmount(() => {
   scanner?.stop();
@@ -139,7 +132,7 @@ function handleSubmit() {
   if (!hostId) {
     toast.add({
       color: 'error',
-      title: '請輸入房號 ლ(╹ε╹ლ)'
+      title: '請輸入房號 ლ(╹ε╹ლ)',
     });
     return;
   }
@@ -170,7 +163,7 @@ async function joinRoom(hostId: string) {
     joining = false;
     toast.add({
       color: 'error',
-      title: `加入房間失敗 (╥ω╥\`): ${err?.message ?? err}`
+      title: `加入房間失敗 (╥ω╥\`): ${err?.message ?? err}`,
     });
     console.error(`加入房間失敗 : `, err);
 
@@ -183,7 +176,7 @@ async function joinRoom(hostId: string) {
 
   toast.add({
     color: 'success',
-    title: `成功加入派對！✧⁑｡٩(ˊᗜˋ*)و✧⁕｡`
+    title: `成功加入派對！✧⁑｡٩(ˊᗜˋ*)و✧⁕｡`,
   });
   emit('close', true);
 }

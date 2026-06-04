@@ -1,21 +1,10 @@
 <template>
   <div class="qr-card flex flex-col items-center gap-5">
     <div class="qr-frame relative">
-      <img
-        v-if="dataUrl"
-        :src="dataUrl"
-        class="qr-image"
-        alt="房間 QR Code"
-      >
-      <div
-        v-else
-        class="qr-image qr-placeholder"
-      />
+      <img v-if="dataUrl" :src="dataUrl" class="qr-image" alt="房間 QR Code" />
+      <div v-else class="qr-image qr-placeholder" />
 
-      <div
-        v-if="roomId"
-        class="room-id absolute inset-0 flex items-center justify-center"
-      >
+      <div v-if="roomId" class="room-id absolute inset-0 flex items-center justify-center">
         <div class="room-id-badge">
           <span class="room-id-text">{{ roomId }}</span>
         </div>
@@ -35,23 +24,27 @@ const { roomId } = storeToRefs(gameConsoleStore);
 
 const dataUrl = ref('');
 
-watch(roomId, async (id) => {
-  if (!id) {
-    dataUrl.value = '';
-    return;
-  }
+watch(
+  roomId,
+  async (id) => {
+    if (!id) {
+      dataUrl.value = '';
+      return;
+    }
 
-  dataUrl.value = await QRCode.toDataURL(id, {
-    // 房號疊在 QR 中央會遮住模組，需最高容錯等級維持可掃描
-    errorCorrectionLevel: 'H',
-    margin: 2,
-    width: 320,
-    color: {
-      dark: '#2a3832',
-      light: '#ffffff',
-    },
-  });
-}, { immediate: true });
+    dataUrl.value = await QRCode.toDataURL(id, {
+      // 房號疊在 QR 中央會遮住模組，需最高容錯等級維持可掃描
+      errorCorrectionLevel: 'H',
+      margin: 2,
+      width: 320,
+      color: {
+        dark: '#2a3832',
+        light: '#ffffff',
+      },
+    });
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped lang="sass">

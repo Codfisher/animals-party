@@ -1,8 +1,5 @@
 import { defaults } from 'lodash-es';
-import {
-  ArcRotateCamera,
-  Engine, HemisphericLight, Scene, Vector3,
-} from '@babylonjs/core';
+import { ArcRotateCamera, Engine, HemisphericLight, Scene, Vector3 } from '@babylonjs/core';
 import { useEventListener } from '@vueuse/core';
 import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 
@@ -39,13 +36,13 @@ const defaultParams: Required<UseBabylonSceneParams> = {
       Math.PI / 4,
       34,
       new Vector3(0, 0, 2),
-      scene
+      scene,
     );
 
     return camera;
   },
   init: () => Promise.resolve(),
-}
+};
 
 export function useBabylonScene(params?: UseBabylonSceneParams) {
   const canvas = ref<HTMLCanvasElement>();
@@ -54,9 +51,7 @@ export function useBabylonScene(params?: UseBabylonSceneParams) {
   const scene = shallowRef<Scene>();
   const camera = shallowRef<ArcRotateCamera>();
 
-  const {
-    createEngine, createScene, createCamera, init
-  } = defaults(params, defaultParams);
+  const { createEngine, createScene, createCamera, init } = defaults(params, defaultParams);
 
   /** 於 setup 同步階段註冊，useEventListener 才能在元件卸載時自動清除 */
   useEventListener(window, 'resize', handleResize);
@@ -120,5 +115,5 @@ export function useBabylonScene(params?: UseBabylonSceneParams) {
     engine,
     scene,
     camera,
-  }
+  };
 }

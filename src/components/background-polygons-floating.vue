@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="overflow-hidden"
-    :style="backgroundStyle"
-  >
+  <div class="overflow-hidden" :style="backgroundStyle">
     <base-polygon
       v-for="[key, polygon] in polygonsMap"
       :key="key"
@@ -65,13 +62,13 @@ const backgroundStyle = computed(() => {
   const result = colord(props.backgroundColor).lighten(0.1).rotate(10).toHex();
 
   return {
-    background: `linear-gradient(-10deg, ${props.backgroundColor}, ${result})`
-  }
+    background: `linear-gradient(-10deg, ${props.backgroundColor}, ${result})`,
+  };
 });
 
 const { width: windowWidth } = useWindowSize();
 /** 手機版（sm 斷點以下）多邊形尺寸縮小 50% */
-const sizeScale = computed(() => windowWidth.value <= 600 ? 0.5 : 1);
+const sizeScale = computed(() => (windowWidth.value <= 600 ? 0.5 : 1));
 
 const polygonsMap = ref<Map<string, PolygonParams>>(new Map());
 
@@ -86,7 +83,7 @@ function createPolygonParams() {
     shape: sample(Object.values(ShapeType)) ?? 'round',
     fill: sample(Object.values(FillType)) ?? 'solid',
     animationDuration: `${random(5, 20)}s`,
-  }
+  };
   return params;
 }
 

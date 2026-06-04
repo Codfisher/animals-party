@@ -1,9 +1,6 @@
 <template>
   <div class="frame">
-    <div
-      class="polygon"
-      :style="style"
-    />
+    <div class="polygon" :style="style" />
   </div>
 </template>
 
@@ -12,7 +9,7 @@ export enum ShapeType {
   ROUND = 'round',
   TRIANGLE = 'triangle',
   SQUARE = 'square',
-  PENTAGON = 'pentagon'
+  PENTAGON = 'pentagon',
 }
 
 export enum FillType {
@@ -30,8 +27,8 @@ interface Props {
   color?: string;
   rotate?: string;
   opacity?: string | number;
-  shape?: `${ShapeType}`,
-  fill?: `${FillType}`
+  shape?: `${ShapeType}`;
+  fill?: `${FillType}`;
 }
 const props = withDefaults(defineProps<Props>(), {
   size: '10rem',
@@ -47,14 +44,14 @@ const clipPathMap = {
   [ShapeType.SQUARE]: `polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)`,
   [ShapeType.TRIANGLE]: `polygon(50% 0%, 0% 100%, 100% 100%)`,
   [ShapeType.PENTAGON]: `polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)`,
-}
+};
 const clipPath = computed(() => clipPathMap?.[props.shape] ?? clipPathMap[ShapeType.ROUND]);
 
 const fillMap = {
   [FillType.SOLID]: ``,
   [FillType.FENCE]: `url(/images/line.svg)`,
   [FillType.SPOT]: `url(/images/round.svg)`,
-}
+};
 const fill = computed(() => fillMap?.[props.fill] ?? fillMap[FillType.SPOT]);
 
 const style = computed(() => ({
@@ -69,5 +66,4 @@ const style = computed(() => ({
 }));
 </script>
 
-<style scoped lang="sass">
-</style>
+<style scoped lang="sass"></style>

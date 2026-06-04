@@ -1,11 +1,7 @@
 <template>
-  <transition-group
-    tag="div"
-    class=" overflow-hidden px-10 pointer-events-none"
-    name="avatar"
-  >
+  <transition-group tag="div" class="overflow-hidden px-10 pointer-events-none" name="avatar">
     <player-list-avatar
-      v-for="player, i in players"
+      v-for="(player, i) in players"
       ref="playerRefs"
       :key="player.clientId"
       :player="player"
@@ -40,5 +36,4 @@ gameConsole.onGamepadData((data) => {
 });
 </script>
 
-<style scoped lang="sass">
-</style>
+<style scoped lang="sass"></style>

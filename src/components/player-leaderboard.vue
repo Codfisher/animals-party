@@ -2,19 +2,19 @@
   <div class="bg-white !rounded-3xl min-w-[20rem] overflow-hidden">
     <slot name="title">
       <div
-        class=" relative overflow-hidden text-4xl bg-orange-400 text-white text-center p-6"
+        class="relative overflow-hidden text-4xl bg-orange-400 text-white text-center p-6"
         :class="props.titleClass"
       >
         {{ props.title }}
 
         <base-polygon
-          class=" absolute top-0 left-0 -translate-x-1/3 -translate-y-2/3"
+          class="absolute top-0 left-0 -translate-x-1/3 -translate-y-2/3"
           fill="spot"
           opacity="0.3"
         />
 
         <base-polygon
-          class=" absolute bottom-0 right-0 translate-x-1/3 translate-y-2/3"
+          class="absolute bottom-0 right-0 translate-x-1/3 translate-y-2/3"
           shape="pentagon"
           rotate="10deg"
           opacity="0.3"
@@ -23,27 +23,20 @@
     </slot>
 
     <slot name="board">
-      <div
-        class="bg-orange-100 py-8 px-10 flex flex-col gap-6"
-        :class="props.boardClass"
-      >
-        <div
-          v-for="item, i in playerList"
-          :key="i"
-          class="player-item flex gap-6 text-white"
-        >
+      <div class="bg-orange-100 py-8 px-10 flex flex-col gap-6" :class="props.boardClass">
+        <div v-for="(item, i) in playerList" :key="i" class="player-item flex gap-6 text-white">
           <div class="ranking flex items-center text-3xl font-black">
             {{ i + 1 }}
           </div>
 
           <div
-            class="code-name relative p-4  text-3xl rounded-full flex-1 text-center overflow-hidden"
+            class="code-name relative p-4 text-3xl rounded-full flex-1 text-center overflow-hidden"
             :class="item.class"
           >
             {{ item.codeName }}
 
             <base-polygon
-              class=" absolute top-0 right-0 translate-x-1/4"
+              class="absolute top-0 right-0 translate-x-1/4"
               opacity="0.2"
               v-bind="item.polygon"
             />
@@ -88,14 +81,14 @@ const playerList = computed(() =>
       fill: sample(Object.values(FillType)),
       shape: sample(Object.values(ShapeType)),
       rotate: `${random(0, 45)}deg`,
-    }
+    };
 
     return {
       codeName,
       class: getPlayerColorClass(codeName),
       polygon,
-    }
-  })
+    };
+  }),
 );
 </script>
 
@@ -176,5 +169,4 @@ $joy-bounce-timing: cubic-bezier(0.910, -0.010, 0.285, 1.350)
   50%
     transform: scale( 1.05, 0.9 )
     animation-timing-function: $joy-bounce-timing
-
 </style>

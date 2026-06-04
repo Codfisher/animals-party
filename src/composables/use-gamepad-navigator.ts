@@ -22,9 +22,7 @@ export function useGamepadNavigator<T extends ControllableElement>(elements: Ref
   }
 
   /** 目前 hover 元件的 index */
-  const currentIndex = computed(() =>
-    elements.value.findIndex(({ isHover }) => isHover())
-  );
+  const currentIndex = computed(() => elements.value.findIndex(({ isHover }) => isHover()));
 
   /** 上一個元件 */
   function prev() {
@@ -72,5 +70,5 @@ export function useGamepadNavigator<T extends ControllableElement>(elements: Ref
     next,
     prev,
     click,
-  }
+  };
 }

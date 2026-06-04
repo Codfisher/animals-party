@@ -2,13 +2,20 @@
   <canvas ref="canvas" />
 </template>
 
-
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import {
-  ArcRotateCamera, BackEase, BackgroundMaterial, BezierCurveEase, Color3,
+  ArcRotateCamera,
+  BackEase,
+  BackgroundMaterial,
+  BezierCurveEase,
+  Color3,
   EasingFunction,
-  Engine, HemisphericLight, MeshBuilder, Scene, Vector3,
+  Engine,
+  HemisphericLight,
+  MeshBuilder,
+  Scene,
+  Vector3,
 } from '@babylonjs/core';
 import '@babylonjs/loaders';
 
@@ -30,7 +37,7 @@ interface Shot {
     alpha: number;
     beta: number;
     radius: number;
-  }
+  };
 }
 
 interface Props {
@@ -65,12 +72,7 @@ const { canvas, camera } = useBabylonScene({
     return scene;
   },
   createCamera(scene) {
-    const camera = new ArcRotateCamera(
-      'camera',
-      1.5, 0, 360,
-      new Vector3(-28, 1.3, -0.5),
-      scene
-    );
+    const camera = new ArcRotateCamera('camera', 1.5, 0, 360, new Vector3(-28, 1.3, -0.5), scene);
 
     camera.attachControl(canvas.value, true);
     /** 調整滾輪縮放程度 */
@@ -87,7 +89,7 @@ const { canvas, camera } = useBabylonScene({
     emit('completed');
 
     moveCamera(camera);
-  }
+  },
 });
 
 const shots: Shot[] = [
@@ -98,7 +100,7 @@ const shots: Shot[] = [
       alpha: 4.339,
       beta: 1.034,
       radius: 13.046,
-    }
+    },
   },
   {
     name: 'chicken-fly',
@@ -107,7 +109,7 @@ const shots: Shot[] = [
       alpha: 0.5,
       beta: 1.2,
       radius: 31,
-    }
+    },
   },
   {
     name: 'fox-and-mouse',
@@ -116,7 +118,7 @@ const shots: Shot[] = [
       alpha: 2.5,
       beta: 1.1,
       radius: 24.2,
-    }
+    },
   },
 ];
 
@@ -129,9 +131,10 @@ const moveCameraDefaultParams: {
 } = {
   speed: 0.15,
   easingFunction: defaultEase,
-}
+};
 async function moveCamera(
-  camera: ArcRotateCamera, params?: Partial<typeof moveCameraDefaultParams>
+  camera: ArcRotateCamera,
+  params?: Partial<typeof moveCameraDefaultParams>,
 ) {
   const shot = shots.find(({ name }) => name === props.selectedGame);
   if (!shot) return;
@@ -143,7 +146,7 @@ async function moveCamera(
     createAnimation(camera, 'alpha', shot.camera.alpha, { easingFunction }),
     createAnimation(camera, 'beta', shot.camera.beta, { easingFunction }),
     createAnimation(camera, 'radius', shot.camera.radius),
-  ]
+  ];
 
   /** 直接覆蓋鏡頭動畫，以免再次呼叫 moveCamera 的新舊動畫互相影響 */
   camera.animations = results.map(({ animation }) => animation);
@@ -157,17 +160,19 @@ async function moveCamera(
   target?.setActive(true);
 }
 
+watch(
+  () => props.selectedGame,
+  () => {
+    const easingFunction = new BezierCurveEase(0.8, -0.155, 0.0, 1.0);
 
-watch(() => props.selectedGame, () => {
-  const easingFunction = new BezierCurveEase(0.800, -0.155, 0.000, 1.000);
-
-  if (camera.value) {
-    moveCamera(camera.value, {
-      speed: 0.3,
-      easingFunction,
-    });
-  }
-});
+    if (camera.value) {
+      moveCamera(camera.value, {
+        speed: 0.3,
+        easingFunction,
+      });
+    }
+  },
+);
 
 function createSea(scene: Scene) {
   const sea = MeshBuilder.CreateGround('sea', { height: 1000, width: 1000 });

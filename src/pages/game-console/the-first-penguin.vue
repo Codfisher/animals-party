@@ -1,17 +1,11 @@
 <template>
-  <game-console-scene-container
-    :scene-mode="sceneMode"
-    @all-ready="handleAllReady"
-  >
+  <game-console-scene-container :scene-mode="sceneMode" @all-ready="handleAllReady">
     <template #training-scene>
-      <transition
-        name="opacity"
-        mode="out-in"
-      >
+      <transition name="opacity" mode="out-in">
         <game-scene
           :key="gameId"
           mode="training"
-          class=" w-full h-full"
+          class="w-full h-full"
           @init="handleInit"
           @game-over="handleGameOver"
         />
@@ -59,7 +53,7 @@ function handleInit() {
 async function handleBackToLobby() {
   await loading.show();
   router.push({
-    name: '/game-console/lobby'
+    name: '/game-console/lobby',
   });
 }
 

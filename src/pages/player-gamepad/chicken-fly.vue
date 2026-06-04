@@ -29,10 +29,12 @@ const loading = useLoading();
 const { emitGamepadData } = useClientPlayer();
 
 function handleBtnTrigger(keyName: `${KeyName}`, status: boolean) {
-  emitGamepadData([{
-    name: keyName,
-    value: status,
-  }]);
+  emitGamepadData([
+    {
+      name: keyName,
+      value: status,
+    },
+  ]);
 }
 
 function handleDeviceMotion(angle: Angle) {

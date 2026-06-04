@@ -1,6 +1,11 @@
 import {
-  Scene, TransformNode, MeshBuilder, Mesh,
-  StandardMaterial, Vector3, Color3,
+  Scene,
+  TransformNode,
+  MeshBuilder,
+  Mesh,
+  StandardMaterial,
+  Vector3,
+  Color3,
 } from '@babylonjs/core';
 import { random, range } from 'lodash-es';
 
@@ -74,10 +79,14 @@ export function createBubbleEmitter(scene: Scene, param: BubbleEmitterParam = {}
   }
 
   const bubbleList: BubbleState[] = range(0, count).map((i) => {
-    const mesh = MeshBuilder.CreateSphere(`${name}-${i}`, {
-      diameter: 1,
-      segments: 6,
-    }, scene);
+    const mesh = MeshBuilder.CreateSphere(
+      `${name}-${i}`,
+      {
+        diameter: 1,
+        segments: 6,
+      },
+      scene,
+    );
     mesh.material = material;
     mesh.setParent(rootNode);
 

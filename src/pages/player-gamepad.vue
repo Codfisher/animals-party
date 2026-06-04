@@ -20,16 +20,22 @@ const router = useRouter();
 const player = useClientPlayer();
 
 /** 與主機連線中斷時（曾連上後斷線），跳回首頁 */
-watch(() => mainStore.clientConnected, (connected, previous) => {
-  if (previous && !connected) {
-    router.push({ name: '/home' });
-  }
-});
+watch(
+  () => mainStore.clientConnected,
+  (connected, previous) => {
+    if (previous && !connected) {
+      router.push({ name: '/home' });
+    }
+  },
+);
 
 /** 遊戲與搖桿頁面對應資料 */
-const gamepadMap: Record<GameName, {
-  routeName: keyof RouteNamedMap,
-}> = {
+const gamepadMap: Record<
+  GameName,
+  {
+    routeName: keyof RouteNamedMap;
+  }
+> = {
   'the-first-penguin': {
     routeName: '/player-gamepad/the-first-penguin',
   },
@@ -39,11 +45,11 @@ const gamepadMap: Record<GameName, {
   'fox-and-mouse': {
     routeName: '/player-gamepad/fox-and-mouse',
   },
-}
+};
 function init() {
   if (!gameConsoleStore.roomId) {
     router.push({
-      name: '/home'
+      name: '/home',
     });
     return;
   }
@@ -56,12 +62,12 @@ function init() {
 
     if (status === 'home') {
       router.push({
-        name: '/home'
+        name: '/home',
       });
     }
     if (status === 'lobby') {
       router.push({
-        name: '/player-gamepad/lobby'
+        name: '/player-gamepad/lobby',
       });
     }
 

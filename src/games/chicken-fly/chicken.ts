@@ -1,4 +1,17 @@
-import { Vector3, Color3, AbstractMesh, Scene, SceneLoader, MeshBuilder, PhysicsImpostor, Mesh, Tools, Quaternion, PBRMaterial, Scalar } from '@babylonjs/core';
+import {
+  Vector3,
+  Color3,
+  AbstractMesh,
+  Scene,
+  SceneLoader,
+  MeshBuilder,
+  PhysicsImpostor,
+  Mesh,
+  Tools,
+  Quaternion,
+  PBRMaterial,
+  Scalar,
+} from '@babylonjs/core';
 /** 引入 loaders，這樣才能載入 glb 檔案*/
 import '@babylonjs/loaders';
 import { clamp, defaultsDeep, throttle } from 'lodash-es';
@@ -67,7 +80,7 @@ export class Chicken {
                 },
                 {
                   target: State.DEAD,
-                }
+                },
               ],
             },
           },
@@ -103,7 +116,7 @@ export class Chicken {
             this.dead();
           },
         },
-      }
+      },
     );
 
     this.stateService = interpret(stateMachine);
@@ -116,14 +129,16 @@ export class Chicken {
 
     /** 建立 body、wing 的 hit box */
     const body = MeshBuilder.CreateBox(`${this.name}-body-hit-box`, {
-      width: 0.3, depth: 0.76, height: 0.48
+      width: 0.3,
+      depth: 0.76,
+      height: 0.48,
     });
     body.visibility = visibility;
 
     const wing = MeshBuilder.CreateBox(`${this.name}-wing-hit-box`, {
       width: 0.8,
       depth: 0.23,
-      height: 0.1
+      height: 0.1,
     });
     wing.position = new Vector3(0, -0.1, -0.02);
     wing.visibility = visibility;
@@ -139,7 +154,7 @@ export class Chicken {
       {
         mass: 0.1,
       },
-      this.scene
+      this.scene,
     );
     body.physicsImpostor = new PhysicsImpostor(
       body,
@@ -148,7 +163,7 @@ export class Chicken {
         mass: 1,
         restitution: 0.5,
       },
-      this.scene
+      this.scene,
     );
 
     return body;
@@ -184,7 +199,7 @@ export class Chicken {
 
     const force = new Vector3(xLift, yLift, 0);
     physicsImpostor.applyForce(force, Vector3.Zero());
-  }, 10)
+  }, 10);
   /** 限制小雞的移動範圍 */
   private limitPosition() {
     if (!this.mesh) return;
@@ -205,11 +220,7 @@ export class Chicken {
 
     /** 加入角速度，小雞就會開始旋轉了 */
     this.mesh.physicsImpostor.setAngularVelocity(
-      new Vector3(
-        Scalar.RandomRange(-10, 10),
-        10,
-        Scalar.RandomRange(-10, 10),
-      ),
+      new Vector3(Scalar.RandomRange(-10, 10), 10, Scalar.RandomRange(-10, 10)),
     );
   }
 
@@ -220,13 +231,11 @@ export class Chicken {
     this.diedAt = new Date().getTime();
 
     /** 移出畫面 */
-    const {
-      animation, frameRate
-    } = createAnimation(
+    const { animation, frameRate } = createAnimation(
       this.mesh,
       'position',
-      this.mesh.position.add(new Vector3(0, -5, 0))
-    )
+      this.mesh.position.add(new Vector3(0, -5, 0)),
+    );
 
     const animatable = this.scene.beginDirectAnimation(this.mesh, [animation], 0, frameRate);
     await animatable.waitAsync();
@@ -236,15 +245,18 @@ export class Chicken {
   }
 
   async init() {
-    const result = await SceneLoader.ImportMeshAsync('', '/chicken-fly/', 'flying-chicken.glb', this.scene);
+    const result = await SceneLoader.ImportMeshAsync(
+      '',
+      '/chicken-fly/',
+      'flying-chicken.glb',
+      this.scene,
+    );
 
     const hitBox = this.createHitBox();
     this.mesh = hitBox;
 
     /** 找到 body mesh 將材質改顏色 */
-    const bodyMesh = result.meshes.find(
-      ({ name }) => name === 'body'
-    );
+    const bodyMesh = result.meshes.find(({ name }) => name === 'body');
     /** 確認模型材質為 PBRMaterial */
     if (bodyMesh?.material instanceof PBRMaterial) {
       bodyMesh.material.albedoColor = this.params.color;
@@ -266,7 +278,7 @@ export class Chicken {
   }
 
   /** 設定飛行姿態
-   * 
+   *
    * @param pitch 俯仰角
    * @param roll 翻滾角
    */
@@ -288,10 +300,8 @@ export class Chicken {
     const quaternion = Quaternion.RotationYawPitchRoll(yaw, newPitch, newRoll);
 
     /** 產生動畫 */
-    const {
-      animation, frameRate
-    } = createAnimation(this.mesh, 'rotationQuaternion', quaternion, {
-      speedRatio: 3
+    const { animation, frameRate } = createAnimation(this.mesh, 'rotationQuaternion', quaternion, {
+      speedRatio: 3,
     });
 
     this.scene.beginDirectAnimation(this.mesh, [animation], 0, frameRate);

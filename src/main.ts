@@ -12,10 +12,4 @@ import './index.css';
 import './style/animate.sass';
 import './style/global.sass';
 
-
-createApp(App)
-  .use(ui)
-  .use(createPinia())
-  .use(router)
-  .mount('#app')
-
+createApp(App).use(ui).use(createPinia()).use(router).mount('#app');

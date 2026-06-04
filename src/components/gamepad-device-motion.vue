@@ -9,10 +9,7 @@
     >
       <div class="pad-ring top-0 left-0 absolute border w-full h-full rounded-full" />
 
-      <div
-        class="thumb"
-        :style="thumbStyle"
-      />
+      <div class="thumb" :style="thumbStyle" />
     </div>
 
     <!-- 尚未授權體感前，先請使用者點擊啟用（iOS 需使用者手勢觸發系統提示） -->
@@ -24,10 +21,7 @@
       :style="{ width: props.size, height: props.size }"
       @click="enableMotion"
     >
-      <UIcon
-        name="material-symbols:screen-rotation-alt"
-        class="text-[2rem]"
-      />
+      <UIcon name="material-symbols:screen-rotation-alt" class="text-[2rem]" />
       <span class="text-sm px-2">
         {{ motionDenied ? '體感被拒絕，請至瀏覽器設定開啟' : '點我啟用體感' }}
       </span>
@@ -46,7 +40,7 @@ import { useMotionPermission } from '../composables/use-motion-permission';
 export interface Angle {
   x: number;
   y: number;
-  z: number
+  z: number;
 }
 
 /** 體感權限把關：未授權前顯示啟用按鈕，授權後才顯示控制盤 */
@@ -82,7 +76,7 @@ const padStyle = computed(() => {
     width: props.size,
     height: props.size,
     transform,
-  }
+  };
 });
 
 const deviceMotion = useDeviceMotion();
@@ -97,18 +91,16 @@ const rotationRate = computed(() => {
       alpha: 0,
       beta: 0,
       gamma: 0,
-    }
+    };
   }
 
-  const {
-    alpha, beta, gamma
-  } = deviceMotion.rotationRate.value;
+  const { alpha, beta, gamma } = deviceMotion.rotationRate.value;
 
   return {
     alpha: toFixed(alpha ?? 0),
     beta: toFixed(beta ?? 0),
     gamma: toFixed(gamma ?? 0),
-  }
+  };
 });
 
 const angle = ref<Angle>({
@@ -123,18 +115,16 @@ const integrateRotationRate: Parameters<typeof requestAnimationFrame>[0] = (time
   if (previousTimestamp) {
     const deltaTime = timestamp - previousTimestamp;
 
-    const {
-      alpha, beta, gamma,
-    } = rotationRate.value;
+    const { alpha, beta, gamma } = rotationRate.value;
 
     /** 積分就是目前值加上速度乘以時間變化量
-     * 
+     *
      * 除以 1000 是因為角速度單位是 degree/s，而 requestAnimationFrame 提供的時間是毫秒（ms），
      * 所以要除以 1000
      */
-    angle.value.z += alpha * deltaTime / 1000;
-    angle.value.x += beta * deltaTime / 1000;
-    angle.value.y += gamma * deltaTime / 1000;
+    angle.value.z += (alpha * deltaTime) / 1000;
+    angle.value.x += (beta * deltaTime) / 1000;
+    angle.value.y += (gamma * deltaTime) / 1000;
 
     angle.value.x = toFixed(angle.value.x);
     angle.value.y = toFixed(angle.value.y);
@@ -143,15 +133,15 @@ const integrateRotationRate: Parameters<typeof requestAnimationFrame>[0] = (time
 
   previousTimestamp = timestamp;
   requestAnimationFrame(integrateRotationRate);
-}
+};
 requestAnimationFrame(integrateRotationRate);
 
 function resetAngle() {
   angle.value = {
     x: 0,
     y: 0,
-    z: 0
-  }
+    z: 0,
+  };
 }
 
 const pad = ref<HTMLElement>();
@@ -161,31 +151,28 @@ const thumbStyle = ref({
   transform: `translate3d(0px, 0px, 10px)`,
 });
 
-watch(angle, (newAngle) => {
-  const maxAngle = props.maxAngle;
-  const maxX = width.value / 2;
-  const maxY = height.value / 2;
+watch(
+  angle,
+  (newAngle) => {
+    const maxAngle = props.maxAngle;
+    const maxX = width.value / 2;
+    const maxY = height.value / 2;
 
-  /** 螢幕的 x 方向對應 x 軸旋轉量 */
-  const x = mapRange(
-    clamp(newAngle.x, -maxAngle, maxAngle),
-    -maxAngle, maxAngle, -maxX, maxX,
-  );
-  /** 螢幕的 y 方向對應 z 軸旋轉量 */
-  const y = mapRange(
-    clamp(newAngle.z, -maxAngle, maxAngle),
-    -maxAngle, maxAngle, -maxY, maxY
-  );
+    /** 螢幕的 x 方向對應 x 軸旋轉量 */
+    const x = mapRange(clamp(newAngle.x, -maxAngle, maxAngle), -maxAngle, maxAngle, -maxX, maxX);
+    /** 螢幕的 y 方向對應 z 軸旋轉量 */
+    const y = mapRange(clamp(newAngle.z, -maxAngle, maxAngle), -maxAngle, maxAngle, -maxY, maxY);
 
-  thumbStyle.value = {
-    transform: `translate3d(${x}px, ${y}px, 10px)`,
-  }
+    thumbStyle.value = {
+      transform: `translate3d(${x}px, ${y}px, 10px)`,
+    };
 
-  emitAngle(newAngle);
-}, {
-  deep: true
-});
-
+    emitAngle(newAngle);
+  },
+  {
+    deep: true,
+  },
+);
 
 const emitAngle = throttle((angle: Angle) => {
   emit('angle', angle);

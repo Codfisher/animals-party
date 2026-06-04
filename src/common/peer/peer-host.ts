@@ -170,14 +170,14 @@ export class PeerHost {
 
   on<Event extends keyof HostListenEventMap>(
     event: Event,
-    handler: (data: HostListenEventMap[Event]) => void
+    handler: (data: HostListenEventMap[Event]) => void,
   ) {
     this.bus.on(event, handler);
   }
 
   off<Event extends keyof HostListenEventMap>(
     event: Event,
-    handler: (data: HostListenEventMap[Event]) => void
+    handler: (data: HostListenEventMap[Event]) => void,
   ) {
     this.bus.off(event, handler);
   }

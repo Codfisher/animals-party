@@ -1,9 +1,6 @@
 <template>
   <player-gamepad-container>
-    <gamepad-analog-stick
-      class="absolute bottom-5 left-8"
-      @trigger="handleAnalogStickTrigger"
-    />
+    <gamepad-analog-stick class="absolute bottom-5 left-8" @trigger="handleAnalogStickTrigger" />
 
     <gamepad-btn
       class="absolute bottom-10 right-10"
@@ -31,7 +28,6 @@ import GamepadBtn from '../../components/gamepad-btn.vue';
 import GamepadAnalogStick from '../../components/gamepad-analog-stick.vue';
 import PlayerGamepadContainer from '../../components/player-gamepad-container.vue';
 
-
 import { useLoading } from '../../composables/use-loading';
 import { useClientPlayer } from '../../composables/use-client-player';
 
@@ -46,13 +42,15 @@ init();
 function handleBtnTrigger(keyName: `${KeyName}`, status: boolean) {
   console.log(`[ handleBtnTrigger ] : `, { keyName, status });
 
-  emitGamepadData([{
-    name: keyName,
-    value: status,
-  }]);
+  emitGamepadData([
+    {
+      name: keyName,
+      value: status,
+    },
+  ]);
 }
 
-function handleAnalogStickTrigger(data: { x: number, y: number }) {
+function handleAnalogStickTrigger(data: { x: number; y: number }) {
   console.log(`[ handleAnalogStickTrigger ] : `, data);
 
   emitGamepadData([
@@ -63,7 +61,7 @@ function handleAnalogStickTrigger(data: { x: number, y: number }) {
     {
       name: 'y-axis',
       value: data.y,
-    }
+    },
   ]);
 }
 </script>

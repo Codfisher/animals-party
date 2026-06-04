@@ -40,7 +40,7 @@
         >
           <div
             class="btn-content absolute inset-0"
-            :class="{ 'hover': hover }"
+            :class="{ hover: hover }"
           >
             <base-polygon
               class="absolute btn-polygon-lt"
@@ -68,7 +68,7 @@
         >
           <div
             class="btn-content absolute inset-0"
-            :class="{ 'hover': hover }"
+            :class="{ hover: hover }"
           >
             <base-polygon
               class="absolute btn-polygon-lt"
@@ -186,7 +186,7 @@ async function startParty() {
     toast.add({
       color: 'warning',
       title: '畫面太窄囉 ԅ( ˘ω˘ԅ)',
-      description: '建立派對需要更寬的畫面，請改用電腦或平板'
+      description: '建立派對需要更寬的畫面，請改用電腦或平板',
     });
     return;
   }
@@ -198,7 +198,7 @@ async function startParty() {
     console.error(`[ startParty ] err : `, err);
     toast.add({
       color: 'error',
-      title: '建立派對失敗，請吸嗨後再度嘗試 (;´༎ຶД༎ຶ`)'
+      title: '建立派對失敗，請吸嗨後再度嘗試 (;´༎ຶД༎ຶ`)',
     });
     loading.hide();
     return;
@@ -207,7 +207,7 @@ async function startParty() {
   console.log(`roomId : `, room.id);
 
   router.push({
-    name: '/game-console'
+    name: '/game-console',
   });
 }
 async function joinGame() {
@@ -219,7 +219,7 @@ async function joinGame() {
   await loading.show();
 
   router.push({
-    name: '/player-gamepad'
+    name: '/player-gamepad',
   });
 }
 

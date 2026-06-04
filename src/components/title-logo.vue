@@ -1,22 +1,12 @@
 <template>
-  <div class=" relative leading-none">
-    <div
-      class=" flex flex-col flex-center text-white"
-      :style="titleStyle"
-    >
-      <div
-        class="flex flex-col flex-center jelly-bounce"
-        :style="enTitleStyle"
-      >
-        <div class="text-7xl sm:text-8xl lg:text-9xl font-game">
-          ANIMALS
-        </div>
-        <div class="text-8xl sm:text-9xl lg:text-[12rem] font-game">
-          PARTY
-        </div>
+  <div class="relative leading-none">
+    <div class="flex flex-col flex-center text-white" :style="titleStyle">
+      <div class="flex flex-col flex-center jelly-bounce" :style="enTitleStyle">
+        <div class="text-7xl sm:text-8xl lg:text-9xl font-game">ANIMALS</div>
+        <div class="text-8xl sm:text-9xl lg:text-[12rem] font-game">PARTY</div>
       </div>
 
-      <div class=" text-3xl sm:text-4xl lg:text-6xl font-black mt-3 flex gap-2 joy-bounce">
+      <div class="text-3xl sm:text-4xl lg:text-6xl font-black mt-3 flex gap-2 joy-bounce">
         <span class="text-red-400">動</span>
         <span class="text-lime-400">物</span>
         <span class="text-sky-400">派</span>
@@ -37,8 +27,7 @@ import { computed } from 'vue';
 const { width: windowWidth } = useWindowSize();
 
 /** 小螢幕用較細的描邊 */
-const strokeWidth = computed(() => windowWidth.value <= 600 ? 10 : 14);
-
+const strokeWidth = computed(() => (windowWidth.value <= 600 ? 10 : 14));
 
 const enTitleStyle = computed(() => ({
   // 描邊畫在填色之後，呈現外框效果
@@ -85,5 +74,4 @@ const titleStyle = computed(() => ({
   50%
     transform: scale( 1.05, 0.9 )
     animation-timing-function: cubic-bezier(0.165, 0.840, 0.440, 1.000)
-
 </style>

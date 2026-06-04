@@ -13,7 +13,7 @@ export enum KeyName {
 }
 
 /** 數位訊號
- * 
+ *
  * 只有開和關兩種狀態
  */
 export interface DigitalData {
@@ -22,7 +22,7 @@ export interface DigitalData {
 }
 
 /** 類比訊號
- * 
+ *
  * 連續數字組成的訊號，例如：類比搖桿、姿態感測器訊號等等
  */
 export interface AnalogData {

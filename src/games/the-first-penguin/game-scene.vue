@@ -1,9 +1,6 @@
 <template>
   <div class="overflow-hidden">
-    <canvas
-      ref="canvas"
-      class="outline-none w-full h-full"
-    />
+    <canvas ref="canvas" class="outline-none w-full h-full" />
 
     <UModal
       :open="isGameOver && props.mode === 'normal'"
@@ -26,8 +23,17 @@
 import * as CANNON from 'cannon-es';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import {
-  ArcRotateCamera, BackgroundMaterial, CannonJSPlugin, Color3,
-  Engine, KeyboardEventTypes, MeshBuilder, PhysicsImpostor, Scene, StandardMaterial, Vector3
+  ArcRotateCamera,
+  BackgroundMaterial,
+  CannonJSPlugin,
+  Color3,
+  Engine,
+  KeyboardEventTypes,
+  MeshBuilder,
+  PhysicsImpostor,
+  Scene,
+  StandardMaterial,
+  Vector3,
 } from '@babylonjs/core';
 import { Penguin } from './penguin';
 import { curry } from 'lodash-es';
@@ -66,7 +72,7 @@ const { canvas } = useBabylonScene({
       Math.PI / 4,
       34,
       new Vector3(0, 0, 2),
-      scene
+      scene,
     );
 
     return camera;
@@ -80,15 +86,13 @@ const { canvas } = useBabylonScene({
     createIce(scene);
 
     const players = gameConsole.players.value;
-    const positions = getSquareMatrixPositions(
-      5, players.length, new Vector3(0.1, 10, 0)
-    );
+    const positions = getSquareMatrixPositions(5, players.length, new Vector3(0.1, 10, 0));
     const tasks = players.map(({ clientId }, index) =>
       createPenguin(clientId, index, scene, {
         position: positions[index],
-      })
+      }),
     );
-    const result = await Promise.allSettled(tasks)
+    const result = await Promise.allSettled(tasks);
     result.forEach((data) => {
       if (data.status !== 'fulfilled') return;
       penguins.push(data.value);
@@ -110,9 +114,9 @@ const { canvas } = useBabylonScene({
 function createSea(scene: Scene) {
   const sea = MeshBuilder.CreateGround('sea', { height: 1000, width: 1000 });
 
-  const material = new BackgroundMaterial("seaMaterial", scene);
+  const material = new BackgroundMaterial('seaMaterial', scene);
   material.useRGBColor = false;
-  material.primaryColor = new Color3(0.57, 0.70, 0.83);
+  material.primaryColor = new Color3(0.57, 0.7, 0.83);
 
   sea.material = material;
 
@@ -127,13 +131,15 @@ function createIce(scene: Scene) {
   });
   ice.material = new StandardMaterial('iceMaterial', scene);
   // mass 設為 0，就可以固定在原地不動
-  ice.physicsImpostor = new PhysicsImpostor(ice, PhysicsImpostor.BoxImpostor,
-    { mass: 0, friction: 0, restitution: 0 }, scene
+  ice.physicsImpostor = new PhysicsImpostor(
+    ice,
+    PhysicsImpostor.BoxImpostor,
+    { mass: 0, friction: 0, restitution: 0 },
+    scene,
   );
 
   /** 建立動畫 */
-  const { animation, frameRate } = createAnimation(
-    ice, 'scaling', new Vector3(0.1, 1, 0.1), {
+  const { animation, frameRate } = createAnimation(ice, 'scaling', new Vector3(0.1, 1, 0.1), {
     speedRatio: 0.05,
   });
 
@@ -266,7 +272,7 @@ function initGamepadEvent() {
 
 /** 根據 key 取得資料 */
 const findSingleData = curry((keys: SignalData[], name: `${KeyName}`): SignalData | undefined =>
-  keys.find((key) => key.name === name)
+  keys.find((key) => key.name === name),
 );
 
 /** 控制指定企鵝 */
@@ -300,7 +306,6 @@ function ctrlPenguin(penguin: Penguin, data: GamepadData) {
     /** 搖桿向左時 x 為負值，而企鵝往左是螢幕的 +x 方向，所以要反轉 */
     penguin.walk(new Vector3(-x * 50, 0, y * 50));
   }
-
 }
 
 async function backToLobby() {

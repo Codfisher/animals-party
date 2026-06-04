@@ -1,5 +1,13 @@
 import {
-  Scene, Vector3, AbstractMesh, SceneLoader, AnimationGroup, MeshBuilder, PhysicsImpostor, PBRMaterial, Color3,
+  Scene,
+  Vector3,
+  AbstractMesh,
+  SceneLoader,
+  AnimationGroup,
+  MeshBuilder,
+  PhysicsImpostor,
+  PBRMaterial,
+  Color3,
 } from '@babylonjs/core';
 
 import { defaultsDeep, flow } from 'lodash-es';
@@ -19,10 +27,10 @@ enum State {
 }
 
 interface AnimationMap {
-  idle?: AnimationGroup,
-  walk?: AnimationGroup,
-  pounce?: AnimationGroup,
-  dive?: AnimationGroup,
+  idle?: AnimationGroup;
+  walk?: AnimationGroup;
+  pounce?: AnimationGroup;
+  dive?: AnimationGroup;
 }
 
 export interface FoxParam {
@@ -59,48 +67,46 @@ export class Fox {
     this.scene = scene;
     this.param = defaultsDeep(param, this.param);
 
-    const stateMachine = createMachine(
-      {
-        id: 'fox',
-        initial: State.IDLE,
-        states: {
-          [State.IDLE]: {
-            on: {
-              [State.WALK]: State.WALK,
-              [State.POUNCE]: State.POUNCE,
-            },
+    const stateMachine = createMachine({
+      id: 'fox',
+      initial: State.IDLE,
+      states: {
+        [State.IDLE]: {
+          on: {
+            [State.WALK]: State.WALK,
+            [State.POUNCE]: State.POUNCE,
           },
-          [State.WALK]: {
-            after: [
+        },
+        [State.WALK]: {
+          after: [
+            {
+              delay: 500,
+              target: State.IDLE,
+            },
+          ],
+          on: {
+            [State.IDLE]: State.IDLE,
+            [State.WALK]: State.WALK,
+            [State.POUNCE]: State.POUNCE,
+          },
+        },
+        [State.POUNCE]: {
+          on: {
+            [State.DIVE]: [
               {
-                delay: 500,
+                cond: () => this.mouseSize > 0,
+                target: State.DIVE,
+              },
+              {
                 target: State.IDLE,
               },
             ],
-            on: {
-              [State.IDLE]: State.IDLE,
-              [State.WALK]: State.WALK,
-              [State.POUNCE]: State.POUNCE,
-            },
           },
-          [State.POUNCE]: {
-            on: {
-              [State.DIVE]: [
-                {
-                  cond: () => this.mouseSize > 0,
-                  target: State.DIVE,
-                },
-                {
-                  target: State.IDLE,
-                },
-              ]
-            },
-          },
-          [State.DIVE]: {}
         },
-        predictableActionArguments: true,
-      }
-    );
+        [State.DIVE]: {},
+      },
+      predictableActionArguments: true,
+    });
 
     this.stateService = interpret(stateMachine);
     this.stateService.onTransition((state) => {
@@ -124,21 +130,20 @@ export class Fox {
   private initAnimation(animationGroups: AnimationGroup[]) {
     animationGroups.forEach((group) => group.stop());
 
-    const findAnimation = (name: keyof AnimationMap) => animationGroups.find(
-      (group) => group.name === name
-    );
+    const findAnimation = (name: keyof AnimationMap) =>
+      animationGroups.find((group) => group.name === name);
 
     this.animation = {
       idle: findAnimation('idle'),
       walk: findAnimation('walk'),
       pounce: findAnimation('pounce'),
       dive: findAnimation('dive'),
-    }
+    };
 
     this.animation.idle?.play(true);
   }
   /** 處理狀態動畫
-   * 
+   *
    * 利用 [runCoroutineAsync API](https://doc.babylonjs.com/features/featuresDeepDive/events/coroutines) 實現
    */
   private processStateAnimation(newState: `${State}`) {
@@ -158,14 +163,16 @@ export class Fox {
     const loop = ['idle', 'walk', 'dive'].includes(newState);
 
     this.scene.onBeforeRenderObservable.runCoroutineAsync(
-      animationBlending(playingAnimation, targetAnimation, loop)
+      animationBlending(playingAnimation, targetAnimation, loop),
     );
 
     return targetAnimation;
   }
   private createHitBox() {
     const hitBox = MeshBuilder.CreateBox(`${this.name}-hit-box`, {
-      width: 3, depth: 1.5, height: 2
+      width: 3,
+      depth: 1.5,
+      height: 2,
     });
     hitBox.position = new Vector3(0, 1, 0);
     // 設為半透明方便觀察
@@ -176,7 +183,7 @@ export class Fox {
       hitBox,
       PhysicsImpostor.BoxImpostor,
       { mass: 1, friction: 0.7, restitution: 0.7 },
-      this.scene
+      this.scene,
     );
 
     hitBox.physicsImpostor = hitBoxImpostor;
@@ -217,9 +224,14 @@ export class Fox {
       }
     }
 
-    const { animation, frameRate } = createAnimation(this.mesh, 'rotation', new Vector3(0, angle, 0), {
-      speedRatio: 3,
-    });
+    const { animation, frameRate } = createAnimation(
+      this.mesh,
+      'rotation',
+      new Vector3(0, angle, 0),
+      {
+        speedRatio: 3,
+      },
+    );
 
     this.scene.beginDirectAnimation(this.mesh, [animation], 0, frameRate);
   }
@@ -233,9 +245,7 @@ export class Fox {
     this.mesh = hitBox;
 
     /** 找到 body mesh 將材質改顏色 */
-    const bodyMesh = result.meshes.find(
-      ({ name }) => name === 'body_primitive2'
-    );
+    const bodyMesh = result.meshes.find(({ name }) => name === 'body_primitive2');
     /** 確認模型材質為 PBRMaterial */
     if (bodyMesh?.material instanceof PBRMaterial) {
       bodyMesh.material.albedoColor = this.param.color;
@@ -250,14 +260,10 @@ export class Fox {
 
     // 持續在每個 frame render 之前呼叫
     this.scene.registerBeforeRender(() => {
-      hitBox.physicsImpostor?.setAngularVelocity(
-        new Vector3(0, 0, 0)
-      );
+      hitBox.physicsImpostor?.setAngularVelocity(new Vector3(0, 0, 0));
 
       if (['idle', 'pounce', 'dive'].includes(this.getState())) {
-        hitBox.physicsImpostor?.setLinearVelocity(
-          new Vector3(0, 0, 0)
-        );
+        hitBox.physicsImpostor?.setLinearVelocity(new Vector3(0, 0, 0));
       }
     });
 

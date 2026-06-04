@@ -1,6 +1,11 @@
 import {
-  Animation, IAnimationKey, EasingFunction, SineEase,
-  Vector3, Node, Scene,
+  Animation,
+  IAnimationKey,
+  EasingFunction,
+  SineEase,
+  Vector3,
+  Node,
+  Scene,
 } from '@babylonjs/core';
 
 interface CycleAnimationParam {
@@ -23,17 +28,12 @@ interface CycleAnimationParam {
  * 與 common/utils 的 createAnimation 不同，此函數產生持續循環的動畫，
  * 適合裝飾物的呼吸、漂浮等氛圍效果。
  */
-export function playCycleAnimation(
-  target: Node,
-  scene: Scene,
-  param: CycleAnimationParam,
-) {
+export function playCycleAnimation(target: Node, scene: Scene, param: CycleAnimationParam) {
   const { property, keyList, frameRate = 30, speedRatio = 1 } = param;
 
   const sample = keyList[0]?.value;
-  const animationType = sample instanceof Vector3
-    ? Animation.ANIMATIONTYPE_VECTOR3
-    : Animation.ANIMATIONTYPE_FLOAT;
+  const animationType =
+    sample instanceof Vector3 ? Animation.ANIMATIONTYPE_VECTOR3 : Animation.ANIMATIONTYPE_FLOAT;
 
   const animation = new Animation(
     `${property}-cycle`,

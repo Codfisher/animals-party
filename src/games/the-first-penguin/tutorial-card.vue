@@ -1,15 +1,15 @@
 <template>
   <div class="flex flex-col rounded-[2rem] shadow-sm overflow-hidden text-sky-900 bg-white">
-    <div class=" relative text-white text-4xl text-center bg-sky-600 p-7">
+    <div class="relative text-white text-4xl text-center bg-sky-600 p-7">
       遊戲說明
 
       <base-polygon
-        class=" absolute top-0 left-0 -translate-x-1/4 -translate-y-1/2"
+        class="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/2"
         opacity="0.2"
         rotate="30deg"
       />
       <base-polygon
-        class=" absolute bottom-0 right-0 translate-x-1/4 translate-y-1/2"
+        class="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/2"
         opacity="0.2"
         fill="spot"
         shape="pentagon"
@@ -17,39 +17,30 @@
       />
     </div>
 
-    <div class=" text-xl p-10 text-center">
-      誰都不想第一個下水，努力把別人撞下海中吧！
-    </div>
+    <div class="text-xl p-10 text-center">誰都不想第一個下水，努力把別人撞下海中吧！</div>
 
     <div class="section">
-      <div class=" w-1/3 flex flex-center">
-        <div class="pad ">
+      <div class="w-1/3 flex flex-center">
+        <div class="pad">
           <div class="thumb thumb-action" />
         </div>
       </div>
 
-      <p class=" text-center flex-1">
-        移動類比搖桿控制企鵝移動
-      </p>
+      <p class="text-center flex-1">移動類比搖桿控制企鵝移動</p>
     </div>
 
     <div class="section">
-      <div class=" w-1/3 flex flex-center">
+      <div class="w-1/3 flex flex-center">
         <div class="button click">
-          <div class=" text-white text-5xl">
-            A
-          </div>
+          <div class="text-white text-5xl">A</div>
         </div>
       </div>
 
-
-      <p class=" text-center flex-1">
-        按下 A 發動旋轉攻擊，可以全方位擊退其他企鵝
-      </p>
+      <p class="text-center flex-1">按下 A 發動旋轉攻擊，可以全方位擊退其他企鵝</p>
     </div>
 
     <div class="section justify-center flex-1">
-      <p class=" flex items-center gap-1.5 flex-nowrap">
+      <p class="flex items-center gap-1.5 flex-nowrap">
         練習完成後，按下
         <UIcon
           name="material-symbols:done"
@@ -133,5 +124,4 @@ import BasePolygon from '../../components/base-polygon.vue';
   40%
     transform: scale(0.98)
     opacity: 0.8
-
 </style>

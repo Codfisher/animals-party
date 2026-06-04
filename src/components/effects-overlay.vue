@@ -1,18 +1,13 @@
 <template>
   <teleport to="body">
-    <canvas
-      ref="canvas"
-      class="effects-overlay"
-    />
+    <canvas ref="canvas" class="effects-overlay" />
   </teleport>
 </template>
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
 import { useEventListener } from '@vueuse/core';
-import {
-  Engine, WebGPUEngine, Scene, FreeCamera, Vector3, Color4,
-} from '@babylonjs/core';
+import { Engine, WebGPUEngine, Scene, FreeCamera, Vector3, Color4 } from '@babylonjs/core';
 import { createConfettiCannons } from './effects/confetti-cannon';
 import { useEffects } from '../composables/use-effects';
 

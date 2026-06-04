@@ -1,6 +1,12 @@
 import {
-  Scene, TransformNode, MeshBuilder, Mesh,
-  StandardMaterial, Vector3, Color3, Angle,
+  Scene,
+  TransformNode,
+  MeshBuilder,
+  Mesh,
+  StandardMaterial,
+  Vector3,
+  Color3,
+  Angle,
 } from '@babylonjs/core';
 import { random, range } from 'lodash-es';
 import { playCycleAnimation } from './utils';
@@ -36,10 +42,14 @@ export function createKite(name: string, scene: Scene, param: Param) {
   sailMaterial.backFaceCulling = false;
 
   /** 菱形風箏面，由方形平面旋轉 45 度而成 */
-  const sail = MeshBuilder.CreatePlane(`${name}-sail`, {
-    size: 2,
-    sideOrientation: Mesh.DOUBLESIDE,
-  }, scene);
+  const sail = MeshBuilder.CreatePlane(
+    `${name}-sail`,
+    {
+      size: 2,
+      sideOrientation: Mesh.DOUBLESIDE,
+    },
+    scene,
+  );
   sail.material = sailMaterial;
   sail.rotation.z = Angle.FromDegrees(45).radians();
   sail.parent = body;
@@ -50,15 +60,27 @@ export function createKite(name: string, scene: Scene, param: Param) {
   sparMaterial.specularColor = Color3.Black();
 
   const sparLength = 2.7;
-  const verticalSpar = MeshBuilder.CreateBox(`${name}-spar-vertical`, {
-    width: 0.06, height: sparLength, depth: 0.06,
-  }, scene);
+  const verticalSpar = MeshBuilder.CreateBox(
+    `${name}-spar-vertical`,
+    {
+      width: 0.06,
+      height: sparLength,
+      depth: 0.06,
+    },
+    scene,
+  );
   verticalSpar.material = sparMaterial;
   verticalSpar.parent = body;
 
-  const horizontalSpar = MeshBuilder.CreateBox(`${name}-spar-horizontal`, {
-    width: sparLength, height: 0.06, depth: 0.06,
-  }, scene);
+  const horizontalSpar = MeshBuilder.CreateBox(
+    `${name}-spar-horizontal`,
+    {
+      width: sparLength,
+      height: 0.06,
+      depth: 0.06,
+    },
+    scene,
+  );
   horizontalSpar.material = sparMaterial;
   horizontalSpar.parent = body;
 
@@ -66,9 +88,15 @@ export function createKite(name: string, scene: Scene, param: Param) {
   const bowColorList = ['#ffd93d', '#6bcbef', '#ff6b6b', '#a0e57e'];
   const bowBaseRotationZ = Angle.FromDegrees(45).radians();
   const bowList = range(0, 5).map((i) => {
-    const bow = MeshBuilder.CreateBox(`${name}-bow-${i}`, {
-      width: 0.4, height: 0.18, depth: 0.02,
-    }, scene);
+    const bow = MeshBuilder.CreateBox(
+      `${name}-bow-${i}`,
+      {
+        width: 0.4,
+        height: 0.18,
+        depth: 0.02,
+      },
+      scene,
+    );
 
     const bowMaterial = new StandardMaterial(`${name}-bow-material-${i}`, scene);
     const bowColor = Color3.FromHexString(bowColorList[i % bowColorList.length]);

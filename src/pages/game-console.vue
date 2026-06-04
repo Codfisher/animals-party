@@ -17,7 +17,7 @@ function init() {
   // 房間 ID 不存在，跳回首頁
   if (!gameConsoleStore.roomId) {
     router.push({
-      name: '/home'
+      name: '/home',
     });
     loading.hide();
     return;
@@ -32,11 +32,10 @@ function init() {
 
   // 跳轉至遊戲大廳
   router.push({
-    name: '/game-console/lobby'
+    name: '/game-console/lobby',
   });
 }
 init();
 </script>
 
-<style scoped lang="sass">
-</style>
+<style scoped lang="sass"></style>

@@ -1,15 +1,15 @@
 <template>
   <div class="flex flex-col rounded-[2rem] shadow-sm overflow-hidden text-sky-900 bg-white">
-    <div class=" relative text-white text-4xl text-center bg-sky-600 p-7">
+    <div class="relative text-white text-4xl text-center bg-sky-600 p-7">
       遊戲說明
 
       <base-polygon
-        class=" absolute top-0 left-0 -translate-x-1/4 -translate-y-1/2"
+        class="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/2"
         opacity="0.2"
         rotate="30deg"
       />
       <base-polygon
-        class=" absolute bottom-0 right-0 translate-x-1/4 translate-y-1/2"
+        class="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/2"
         opacity="0.2"
         fill="spot"
         shape="pentagon"
@@ -17,30 +17,24 @@
       />
     </div>
 
-    <div class=" text-xl p-10 text-center">
-      躲避黑色壞壞雞，碰撞 3 次會墜雞喔！
-    </div>
+    <div class="text-xl p-10 text-center">躲避黑色壞壞雞，碰撞 3 次會墜雞喔！</div>
 
     <div class="section">
-      <div class="pad ">
+      <div class="pad">
         <div class="thumb thumb-action" />
       </div>
-      <p class=" text-center flex-1">
-        旋轉手機即可控制小雞姿態<br>（建議關閉手機自動旋轉）
-      </p>
+      <p class="text-center flex-1">旋轉手機即可控制小雞姿態<br />（建議關閉手機自動旋轉）</p>
     </div>
 
     <div class="section">
       <div class="pad click-pad">
         <div class="thumb" />
       </div>
-      <p class=" text-center flex-1">
-        按下圓圈即可將姿態歸零
-      </p>
+      <p class="text-center flex-1">按下圓圈即可將姿態歸零</p>
     </div>
 
     <div class="section justify-center flex-1">
-      <p class=" flex items-center gap-1.5 flex-nowrap">
+      <p class="flex items-center gap-1.5 flex-nowrap">
         練習完成後，按下
         <UIcon
           name="material-symbols:done"
@@ -104,5 +98,4 @@ import BasePolygon from '../../components/base-polygon.vue';
   40%
     transform: scale(0.98)
     opacity: 0.8
-
 </style>

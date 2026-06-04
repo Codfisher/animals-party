@@ -32,16 +32,19 @@ export interface PlayerPermission {
   vibrate: PlayerPermissionState;
 }
 
-export const permissionInfoMap: Record<keyof PlayerPermission, {
-  label: string;
-}> = {
-  'gyroscope': {
+export const permissionInfoMap: Record<
+  keyof PlayerPermission,
+  {
+    label: string;
+  }
+> = {
+  gyroscope: {
     label: '陀螺儀',
   },
-  'vibrate': {
+  vibrate: {
     label: '震動回饋',
   },
-}
+};
 
 /** 玩家 */
 export interface Player {

@@ -35,11 +35,13 @@ export const useMainStore = defineStore('main', () => {
     client.value?.disconnect();
     clientConnected.value = false;
 
-    const peerClient = markRaw(new PeerClient(clientId, {
-      onConnectionChange: (connected) => {
-        clientConnected.value = connected;
-      },
-    }));
+    const peerClient = markRaw(
+      new PeerClient(clientId, {
+        onConnectionChange: (connected) => {
+          clientConnected.value = connected;
+        },
+      }),
+    );
     client.value = peerClient;
     type.value = 'player';
 
@@ -64,5 +66,5 @@ export const useMainStore = defineStore('main', () => {
     createHost,
     joinHost,
     disconnect,
-  }
-})
+  };
+});

@@ -5,11 +5,10 @@ interface RequestableDeviceMotionEvent {
   requestPermission?: () => Promise<PermissionState>;
 }
 
-const motionEvent = (
+const motionEvent =
   typeof window !== 'undefined' && 'DeviceMotionEvent' in window
     ? (window.DeviceMotionEvent as unknown as RequestableDeviceMotionEvent)
-    : undefined
-);
+    : undefined;
 
 /** iOS 13+ 需以使用者手勢呼叫 requestPermission 才能取得體感權限 */
 const needsRequest = typeof motionEvent?.requestPermission === 'function';
@@ -23,7 +22,7 @@ const needsRequest = typeof motionEvent?.requestPermission === 'function';
  */
 export function useMotionPermission() {
   const state = ref<PlayerPermissionState>(
-    !motionEvent ? 'not-support' : needsRequest ? 'prompt' : 'granted'
+    !motionEvent ? 'not-support' : needsRequest ? 'prompt' : 'granted',
   );
 
   /** 請求體感權限，必須由使用者手勢（點擊）觸發 */

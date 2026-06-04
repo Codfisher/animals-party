@@ -10,22 +10,15 @@
       {{ codeName }}
     </div>
 
-    <UModal
-      :open="isWrongOrientation"
-      :dismissible="false"
-    >
+    <UModal :open="isWrongOrientation" :dismissible="false">
       <template #content>
         <div class="p-8 flex flex-col items-center gap-6">
           <UIcon
             name="material-symbols:progress-activity"
             class="animate-spin text-primary text-[10rem]"
           />
-          <div class="text-4xl">
-            請將手機轉為{{ targetOrientation }}
-          </div>
-          <div class="text-base">
-            轉為{{ targetOrientation }}後，此視窗會自動關閉
-          </div>
+          <div class="text-4xl">請將手機轉為{{ targetOrientation }}</div>
+          <div class="text-base">轉為{{ targetOrientation }}後，此視窗會自動關閉</div>
         </div>
       </template>
     </UModal>
@@ -59,9 +52,7 @@ const isWrongOrientation = computed(() => {
 });
 const bgClass = computed(() => getPlayerColorClass(codeName.value));
 
-const targetOrientation = computed(() =>
-  props.orientation === 'landscape' ? '直向' : '橫向'
-);
+const targetOrientation = computed(() => (props.orientation === 'landscape' ? '直向' : '橫向'));
 </script>
 
 <style scoped lang="sass">

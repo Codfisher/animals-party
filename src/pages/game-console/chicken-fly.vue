@@ -1,25 +1,15 @@
 <template>
   <div class="w-full h-full bg-white">
-    <transition
-      name="opacity"
-      mode="out-in"
-    >
+    <transition name="opacity" mode="out-in">
       <!-- 練習 -->
-      <div
-        v-if="sceneMode === 'training'"
-        class="w-full h-full flex bg-sky-100"
-      >
-        <div class=" relative flex flex-col flex-nowrap w-[70%]">
-          <game-scene
-            mode="training"
-            class=" w-full h-[90%] rounded-br-3xl"
-            @init="handleInit"
-          />
+      <div v-if="sceneMode === 'training'" class="w-full h-full flex bg-sky-100">
+        <div class="relative flex flex-col flex-nowrap w-[70%]">
+          <game-scene mode="training" class="w-full h-[90%] rounded-br-3xl" @init="handleInit" />
 
           <!-- 玩家頭像 -->
           <transition-group
             tag="div"
-            class=" absolute bottom-0 w-full overflow-hidden px-10 pointer-events-none"
+            class="absolute bottom-0 w-full overflow-hidden px-10 pointer-events-none"
             name="avatar"
           >
             <player-list-avatar
@@ -28,25 +18,22 @@
               :player="player"
               :code-name="player.codeName"
               class="player"
-              :class="{ 'ready': player.ok }"
+              :class="{ ready: player.ok }"
             />
           </transition-group>
         </div>
 
         <!-- 遊戲說明 -->
-        <div class="p-4 flex-1 ">
+        <div class="p-4 flex-1">
           <tutorial-card class="w-full h-full" />
         </div>
       </div>
 
       <!-- 正式 -->
-      <div
-        v-else
-        class=" w-full h-full"
-      >
+      <div v-else class="w-full h-full">
         <game-scene
           :mode="sceneMode"
-          class=" absolute w-full h-full"
+          class="absolute w-full h-full"
           @back-to-lobby="handleBackToLobby"
         />
 
@@ -83,7 +70,7 @@ function handleInit() {
 async function handleBackToLobby() {
   await loading.show();
   router.push({
-    name: '/game-console/lobby'
+    name: '/game-console/lobby',
   });
 }
 
@@ -103,7 +90,7 @@ const players = computed(() => {
       ...player,
       codeName,
       ok,
-    }
+    };
   });
 });
 
@@ -111,7 +98,7 @@ whenever(
   () => players.value.every(({ ok }) => ok),
   () => {
     sceneMode.value = 'showcase';
-  }
+  },
 );
 
 gameConsole.onGamepadData((data) => {
@@ -139,4 +126,3 @@ gameConsole.onGamepadData((data) => {
       font-size: 2rem
       transform: translateX(-50%)
 </style>
-

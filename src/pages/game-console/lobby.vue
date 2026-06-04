@@ -1,12 +1,12 @@
 <template>
   <game-menu
     ref="menu"
-    class=" w-full h-full absolute"
+    class="w-full h-full absolute"
     @completed="handleCompleted()"
     @error="handleError"
   />
 
-  <player-list class=" absolute w-full left-0 bottom-0 z-0" />
+  <player-list class="absolute w-full left-0 bottom-0 z-0" />
 </template>
 
 <script setup lang="ts">
@@ -40,12 +40,12 @@ type GamepadEventMap = {
   [K in KeyName]?: () => void;
 };
 const gamepadEventMap: GamepadEventMap = {
-  'up': () => menu.value?.prev(),
-  'down': () => menu.value?.next(),
-  'left': () => menu.value?.prevGame(),
-  'right': () => menu.value?.nextGame(),
-  'confirm': () => menu.value?.click(),
-}
+  up: () => menu.value?.prev(),
+  down: () => menu.value?.next(),
+  left: () => menu.value?.prevGame(),
+  right: () => menu.value?.nextGame(),
+  confirm: () => menu.value?.click(),
+};
 
 function init() {
   gameConsole.setStatus('lobby');
@@ -61,8 +61,6 @@ function init() {
     gamepadEventMap[name]?.();
   });
 }
-
 </script>
 
-<style scoped lang="sass">
-</style>
+<style scoped lang="sass"></style>
