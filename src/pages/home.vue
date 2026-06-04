@@ -2,19 +2,31 @@
   <div class="home-page relative h-dvh w-full overflow-y-auto">
     <background-polygons-floating class="fixed inset-0 -z-10" />
 
-    <UButton
-      to="https://codlin.me"
-      target="_blank"
-      icon="ph:fish-simple-bold"
-      label="關於我"
-      size="lg"
-      class="fixed top-4 right-8 z-20 rounded-full bg-white/80 text-[#856639] shadow-md backdrop-blur transition-colors hover:bg-white"
-    />
-
     <section
-      class="hero relative min-h-[95dvh] flex flex-col md:flex-row justify-center items-center content-center gap-16 md:gap-32"
+      class="hero relative min-h-[95dvh] flex flex-col md:flex-row justify-center items-center content-center gap-10 md:gap-32"
     >
-      <title-logo />
+      <div class="flex flex-col flex-center gap-8 md:gap-10">
+        <title-logo />
+
+        <div class="flex gap-3">
+          <UButton
+            to="https://codlin.me"
+            target="_blank"
+            icon="ph:fish-simple-bold"
+            label="關於我"
+            size="lg"
+            class="rounded-full bg-white/80 text-[#856639] shadow-md backdrop-blur transition-colors hover:bg-white"
+          />
+          <UButton
+            to="https://portaly.cc/codfish/support"
+            target="_blank"
+            icon="material-symbols:coffee-rounded"
+            label="賞杯咖啡"
+            size="lg"
+            class="rounded-full bg-white/80 text-[#856639] shadow-md backdrop-blur transition-colors hover:bg-white"
+          />
+        </div>
+      </div>
 
       <div class="flex flex-col flex-center gap-10 md:gap-20">
         <base-btn
