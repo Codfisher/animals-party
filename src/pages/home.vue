@@ -66,10 +66,16 @@
     </section>
 
     <section class="ad-section relative w-full flex justify-center px-4 py-8 bg-white/10">
+      <p
+        class="ad-placeholder absolute inset-0 flex flex-center text-center px-4 text-white/80 pointer-events-none"
+      >
+        順手開廣告，支持好內容 (*´∀`)~♥
+      </p>
+
       <google-adsense
         client="ca-pub-6608581811170481"
         slot="9242930193"
-        class="w-full max-w-3xl"
+        class="relative w-full max-w-3xl"
       />
     </section>
   </div>
