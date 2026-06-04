@@ -32,7 +32,6 @@ import {
   Vector3,
   CannonJSPlugin,
   PhysicsImpostor,
-  Engine,
 } from '@babylonjs/core';
 import { Fox } from './fox';
 import { Mouse } from './mouse';
@@ -43,7 +42,7 @@ import { getPlayerColorRgb } from '../../common/color';
 
 import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 
-import { useBabylonScene } from '../../composables/use-babylon-scene';
+import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
 import { promiseTimeout } from '@vueuse/core';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { useEffects } from '../../composables/use-effects';
@@ -287,7 +286,7 @@ function detectCollideEvent(foxes: Fox[], mice: Mouse[]) {
 }
 
 /** 偵測遊戲是否結束 */
-async function detectGameOver(foxes: Fox[], engine: Engine) {
+async function detectGameOver(foxes: Fox[], engine: BabylonEngine) {
   const anyEmptyHanded = foxes.some(({ mouseSize }) => mouseSize === 0);
 
   /** 有人還沒抓到老鼠，遊戲尚未結束 */

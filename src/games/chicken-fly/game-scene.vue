@@ -26,7 +26,6 @@ import {
   CannonJSPlugin,
   Color3,
   Color4,
-  Engine,
   GlowLayer,
   MeshBuilder,
   PhysicsImpostor,
@@ -50,7 +49,7 @@ import { Chicken } from './chicken';
 import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 
 import { useClientGameConsole } from '../../composables/use-client-game-console';
-import { useBabylonScene } from '../../composables/use-babylon-scene';
+import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
 import { useEffects } from '../../composables/use-effects';
 import { useInterval, whenever } from '@vueuse/core';
 
@@ -407,7 +406,7 @@ function detectCollideEvents(chickens: Chicken[], badChickens: BadChicken[]) {
   });
 }
 /** 偵測遊戲是否結束 */
-function detectGameOver(chickens: Chicken[], engine: Engine) {
+function detectGameOver(chickens: Chicken[], engine: BabylonEngine) {
   const theLivingList = chickens.filter(({ mesh }) => !mesh?.isDisposed());
 
   /** 2 人以上表示遊戲還沒結束 */

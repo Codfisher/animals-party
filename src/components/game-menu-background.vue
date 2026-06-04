@@ -11,7 +11,6 @@ import {
   BezierCurveEase,
   Color3,
   EasingFunction,
-  Engine,
   HemisphericLight,
   MeshBuilder,
   Scene,
@@ -52,7 +51,7 @@ const emit = defineEmits<{
 }>();
 
 const { canvas, camera } = useBabylonScene({
-  createScene(engine: Engine) {
+  createScene(engine) {
     const scene = new Scene(engine);
     /** 使用預設光源 */
     scene.createDefaultLight();

@@ -27,7 +27,6 @@ import {
   BackgroundMaterial,
   CannonJSPlugin,
   Color3,
-  Engine,
   KeyboardEventTypes,
   MeshBuilder,
   PhysicsImpostor,
@@ -46,7 +45,7 @@ import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { useRouter } from 'vue-router';
 import { useLoading } from '../../composables/use-loading';
-import { useBabylonScene } from '../../composables/use-babylon-scene';
+import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
 import { useEffects } from '../../composables/use-effects';
 
 interface Props {
@@ -243,7 +242,7 @@ function getRankedIdList(penguins: Penguin[]) {
 }
 
 /** 偵測是否有贏家 */
-function detectWinner(penguins: Penguin[], engine: Engine) {
+function detectWinner(penguins: Penguin[], engine: BabylonEngine) {
   const alivePenguins = penguins.filter(({ mesh }) => !mesh?.isDisposed());
 
   if (alivePenguins.length > 1) return;
