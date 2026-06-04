@@ -2,6 +2,15 @@
   <div class="home-page relative h-dvh w-full overflow-y-auto">
     <background-polygons-floating class="fixed inset-0 -z-10" />
 
+    <UButton
+      to="https://codlin.me"
+      target="_blank"
+      icon="ph:fish-simple-bold"
+      label="關於我"
+      size="lg"
+      class="fixed top-4 right-8 z-20 rounded-full bg-white/80 text-[#856639] shadow-md backdrop-blur transition-colors hover:bg-white"
+    />
+
     <section
       class="hero relative min-h-[95dvh] flex flex-col md:flex-row justify-center items-center content-center gap-16 md:gap-32"
     >
