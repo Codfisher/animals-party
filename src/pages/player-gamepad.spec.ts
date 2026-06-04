@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { GameConsoleState } from '../types';
 import { useGameConsoleStore } from '../stores/game-console.store';
+import { useMainStore } from '../stores/main.store';
 
 const pushMock = vi.fn();
 // 保留真實 vue-router（router.ts 於模組載入時即呼叫 createRouter），只覆寫 useRouter
@@ -20,6 +21,7 @@ vi.mock('../composables/use-client-player', () => ({
     },
     onPlayerUpdate: () => undefined,
     requestGameConsoleState: () => undefined,
+    joinRoom: () => Promise.resolve(),
   }),
 }));
 
@@ -39,6 +41,8 @@ describe('the-player-gamepad 跳轉', () => {
     stateUpdateCallback = undefined;
     // 設定 roomId，避免 init 直接導回首頁
     useGameConsoleStore().setRoomId('123456');
+    // 視為已連線，跳過自動重連，直接同步註冊 state 監聽
+    useMainStore().clientConnected = true;
   });
 
   it('收到原子 playing 狀態時跳轉到對應遊戲搖桿頁', () => {

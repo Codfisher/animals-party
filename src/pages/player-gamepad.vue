@@ -6,24 +6,28 @@
 
 <script setup lang="ts">
 import { watch } from 'vue';
+import to from 'await-to-js';
 import type { RouteNamedMap } from 'vue-router/auto-routes';
 
 import { useRouter } from 'vue-router';
 import { useGameConsoleStore } from '../stores/game-console.store';
 import { useMainStore } from '../stores/main.store';
 import { useClientPlayer } from '../composables/use-client-player';
+import { useLoading } from '../composables/use-loading';
 import { GameName } from '../types';
 
 const gameConsoleStore = useGameConsoleStore();
 const mainStore = useMainStore();
 const router = useRouter();
 const player = useClientPlayer();
+const loading = useLoading();
 
-/** 與主機連線中斷時（曾連上後斷線），跳回首頁 */
+/** 與主機連線中斷時（曾連上後斷線），清除房號並跳回首頁 */
 watch(
   () => mainStore.clientConnected,
   (connected, previous) => {
     if (previous && !connected) {
+      gameConsoleStore.clearRoomId();
       router.push({ name: '/home' });
     }
   },
@@ -46,12 +50,28 @@ const gamepadMap: Record<
     routeName: '/player-gamepad/fox-and-mouse',
   },
 };
-function init() {
-  if (!gameConsoleStore.roomId) {
+async function init() {
+  const { roomId } = gameConsoleStore;
+  if (!roomId) {
     router.push({
       name: '/home',
     });
     return;
+  }
+
+  /** 重新整理後記憶體連線已消失，但 sessionStorage 仍保有房號，
+   *  此時主動重連。host 以 clientId 辨識玩家，會自動補回原本的位置。 */
+  if (!mainStore.clientConnected) {
+    await loading.show();
+
+    const [err] = await to(player.joinRoom(roomId));
+    if (err) {
+      console.error(`[ player-gamepad init ] 自動重連失敗 : `, err);
+      gameConsoleStore.clearRoomId();
+      loading.hide();
+      router.push({ name: '/home' });
+      return;
+    }
   }
 
   player.onGameConsoleStateUpdate((state) => {

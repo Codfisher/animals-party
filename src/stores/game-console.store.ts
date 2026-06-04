@@ -1,14 +1,21 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useSessionStorage } from '@vueuse/core';
 import { GameConsoleState, GameConsoleStatus, GameName, Player } from '../types';
 
 export type UpdateStateParams = Partial<GameConsoleState>;
 
 export const useGameConsoleStore = defineStore('game-console', () => {
-  const roomId = ref<string>();
+  /** 房號持久化於 sessionStorage：玩家不慎重新整理後仍可據此自動重連，
+   *  關閉分頁即自動清除，避免下次又連上早已結束的房間。 */
+  const roomId = useSessionStorage('animals-party:roomId', '');
 
   function setRoomId(id: string) {
     roomId.value = id;
+  }
+
+  function clearRoomId() {
+    roomId.value = '';
   }
 
   const status = ref<`${GameConsoleStatus}`>('home');
@@ -54,6 +61,7 @@ export const useGameConsoleStore = defineStore('game-console', () => {
     players,
 
     setRoomId,
+    clearRoomId,
     updateState,
     updateProfile,
   };

@@ -1,6 +1,6 @@
 {
   "name": "animals-party-web",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "scripts": {
     "dev": "vp dev --host",
     "build": "vp build && vue-tsc --noEmit --skipLibCheck",
