@@ -52,6 +52,7 @@ export default defineConfig(() => {
         'mitt',
         'nanoid',
         'xstate',
+        'await-to-js',
       ],
     },
     test: {

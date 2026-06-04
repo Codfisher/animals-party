@@ -2,68 +2,70 @@
   <div class="home-page relative h-dvh w-full overflow-y-auto">
     <background-polygons-floating class="fixed inset-0 -z-10" />
 
-    <section class="hero relative min-h-dvh flex flex-col md:flex-row justify-center items-center content-center gap-16 md:gap-32">
+    <section
+      class="hero relative min-h-[95dvh] flex flex-col md:flex-row justify-center items-center content-center gap-16 md:gap-32"
+    >
       <title-logo />
 
-    <div class="flex flex-col flex-center gap-10 md:gap-20">
-      <base-btn
-        v-slot="{ hover }"
-        label="建立派對"
-        label-hover-color="#ff9a1f"
-        stroke-color="#856639"
-        stroke-hover-color="white"
-        class="w-72 sm:w-80 md:w-[28rem]"
-        @click="startParty"
-      >
-        <div
-          class="btn-content absolute inset-0"
-          :class="{ 'hover': hover }"
+      <div class="flex flex-col flex-center gap-10 md:gap-20">
+        <base-btn
+          v-slot="{ hover }"
+          label="建立派對"
+          label-hover-color="#ff9a1f"
+          stroke-color="#856639"
+          stroke-hover-color="white"
+          class="w-72 sm:w-80 md:w-[28rem]"
+          @click="startParty"
         >
-          <base-polygon
-            class="absolute btn-polygon-lt"
-            size="13rem"
-            shape="round"
-            fill="spot"
-            opacity="0.6"
-          />
+          <div
+            class="btn-content absolute inset-0"
+            :class="{ 'hover': hover }"
+          >
+            <base-polygon
+              class="absolute btn-polygon-lt"
+              size="13rem"
+              shape="round"
+              fill="spot"
+              opacity="0.6"
+            />
 
-          <UIcon
-            name="material-symbols:sports-esports"
-            class="absolute game-icon text-white text-[5rem] md:text-[8rem]"
-          />
-        </div>
-      </base-btn>
+            <UIcon
+              name="material-symbols:sports-esports"
+              class="absolute game-icon text-white text-[5rem] md:text-[8rem]"
+            />
+          </div>
+        </base-btn>
 
-      <base-btn
-        v-slot="{ hover }"
-        label="加入遊戲"
-        label-hover-color="#ff9a1f"
-        stroke-color="#856639"
-        stroke-hover-color="white"
-        class="w-72 sm:w-80 md:w-[28rem]"
-        @click="joinGame"
-      >
-        <div
-          class="btn-content absolute inset-0"
-          :class="{ 'hover': hover }"
+        <base-btn
+          v-slot="{ hover }"
+          label="加入遊戲"
+          label-hover-color="#ff9a1f"
+          stroke-color="#856639"
+          stroke-hover-color="white"
+          class="w-72 sm:w-80 md:w-[28rem]"
+          @click="joinGame"
         >
-          <base-polygon
-            class="absolute btn-polygon-lt"
-            size="13rem"
-            rotate="144deg"
-            shape="pentagon"
-            opacity="0.6"
-          />
-          <UIcon
-            name="material-symbols:person-add"
-            class="absolute join-icon text-white text-[5rem] md:text-[7.8rem]"
-          />
-        </div>
-      </base-btn>
+          <div
+            class="btn-content absolute inset-0"
+            :class="{ 'hover': hover }"
+          >
+            <base-polygon
+              class="absolute btn-polygon-lt"
+              size="13rem"
+              rotate="144deg"
+              shape="pentagon"
+              opacity="0.6"
+            />
+            <UIcon
+              name="material-symbols:person-add"
+              class="absolute join-icon text-white text-[5rem] md:text-[7.8rem]"
+            />
+          </div>
+        </base-btn>
       </div>
     </section>
 
-    <section class="ad-section relative w-full flex justify-center px-4 py-8">
+    <section class="ad-section relative w-full flex justify-center px-4 py-8 bg-white/10">
       <google-adsense
         client="ca-pub-6608581811170481"
         slot="9242930193"

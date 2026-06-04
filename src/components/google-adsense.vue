@@ -2,6 +2,7 @@
   <ins
     ref="insRef"
     class="adsbygoogle block w-full"
+    :style="{ minHeight: `${minHeight}px` }"
     :data-ad-client="client"
     :data-ad-slot="slot"
     :data-ad-format="format"
@@ -27,10 +28,13 @@ interface Props {
   format?: string;
   /** 是否啟用全寬度響應式 */
   fullWidthResponsive?: boolean;
+  /** 最小高度（px），避免未填充時版面塌陷 */
+  minHeight?: number;
 }
 withDefaults(defineProps<Props>(), {
   format: 'auto',
   fullWidthResponsive: true,
+  minHeight: 100,
 });
 
 const insRef = useTemplateRef<HTMLElement>('insRef');
