@@ -1,7 +1,7 @@
 <template>
   <div
-    class="w-full h-full flex text-white select-none overflow-hidden"
-    :class="bgClass"
+    class="w-screen h-screen flex text-white select-none overflow-hidden"
+    :style="{ backgroundColor: bgColor }"
     @touchmove="(e) => e.preventDefault()"
   >
     <slot />
@@ -10,7 +10,10 @@
       {{ codeName }}
     </div>
 
-    <UModal :open="isWrongOrientation" :dismissible="false">
+    <UModal
+      :open="isWrongOrientation"
+      :dismissible="false"
+    >
       <template #content>
         <div class="p-8 flex flex-col items-center gap-6">
           <UIcon
@@ -29,7 +32,7 @@
 import { computed } from 'vue';
 
 import { useClientPlayer } from '../composables/use-client-player';
-import { getPlayerColorClass } from '../common/color';
+import { getPlayerColorHex } from '../common/color';
 import { useScreenOrientation } from '@vueuse/core';
 
 interface Props {
@@ -50,7 +53,7 @@ const isWrongOrientation = computed(() => {
 
   return orientation.value?.includes(props.orientation) ?? false;
 });
-const bgClass = computed(() => getPlayerColorClass(codeName.value));
+const bgColor = computed(() => getPlayerColorHex(codeName.value));
 
 const targetOrientation = computed(() => (props.orientation === 'landscape' ? '直向' : '橫向'));
 </script>
