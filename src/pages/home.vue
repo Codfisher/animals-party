@@ -65,17 +65,69 @@
       </div>
     </section>
 
-    <section class="ad-section relative w-full flex justify-center px-4 py-8 bg-white/10">
+    <section class="support-section relative w-full flex justify-center px-4 py-8 min-h-48 overflow-hidden bg-white/10">
+      <base-polygon
+        class="absolute support-polygon-lt z-0"
+        size="10rem"
+        shape="round"
+        fill="spot"
+        color="white"
+        :opacity="0.25"
+      />
+      <base-polygon
+        class="absolute support-polygon-rb z-0"
+        size="14rem"
+        rotate="30deg"
+        shape="pentagon"
+        fill="fence"
+        color="white"
+        :opacity="0.22"
+      />
+      <base-polygon
+        class="absolute support-polygon-lb z-0"
+        size="7rem"
+        rotate="18deg"
+        shape="triangle"
+        fill="fence"
+        color="white"
+        :opacity="0.22"
+      />
+      <base-polygon
+        class="absolute support-polygon-rt z-0"
+        size="8rem"
+        rotate="-12deg"
+        shape="square"
+        fill="spot"
+        color="white"
+        :opacity="0.23"
+      />
+      <base-polygon
+        class="absolute support-polygon-ml z-0"
+        size="5rem"
+        shape="round"
+        fill="fence"
+        color="white"
+        :opacity="0.2"
+      />
+      <base-polygon
+        class="absolute support-polygon-mr z-0"
+        size="6rem"
+        rotate="40deg"
+        shape="pentagon"
+        fill="spot"
+        color="white"
+        :opacity="0.2"
+      />
+
       <p
-        class="ad-placeholder absolute inset-0 flex flex-center text-center px-4 text-white/80 pointer-events-none"
-      >
+        class="support-message absolute inset-0 z-10 flex flex-center text-center px-4 text-white font-medium drop-shadow text-xl pointer-events-none">
         順手開廣告，支持好內容 (*´∀`)~♥
       </p>
 
       <google-adsense
         client="ca-pub-6608581811170481"
         slot="9242930193"
-        class="relative w-full max-w-3xl"
+        class="relative z-20 w-full max-w-3xl"
       />
     </section>
   </div>
@@ -172,6 +224,31 @@ loading.hide();
   bottom: 0
   transform: translate(6%, 20%) rotate(-10deg)
   opacity: 0.6
+
+.support-polygon-lt
+  left: 0
+  top: 0
+  transform: translate(-30%, -45%)
+.support-polygon-rb
+  right: 0
+  bottom: 0
+  transform: translate(30%, 45%)
+.support-polygon-lb
+  left: 12%
+  bottom: 0
+  transform: translate(0, 50%)
+.support-polygon-rt
+  right: 14%
+  top: 0
+  transform: translate(0, -50%)
+.support-polygon-ml
+  left: 28%
+  top: 50%
+  transform: translate(-50%, -50%)
+.support-polygon-mr
+  right: 26%
+  top: 45%
+  transform: translate(50%, -50%)
 
 .btn-content
   transform: scale(1)
