@@ -67,7 +67,7 @@
 - **加入流程**：控制端開相機掃 QR Code 即可加入，也保留手動輸入房號的退路。
 - **身分識別**：控制端的 `clientId` 存於 localStorage，連線時透過 peer metadata 帶給遊戲端，支援同一玩家重連。
 
-## 🛠️ 技術棧
+## 🛠️ 技術堆疊
 
 - **Vue 3** — Composition API、`<script setup>`
 - **Babylon.js** — 3D 場景與渲染，搭配 `cannon-es` 物理引擎

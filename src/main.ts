@@ -1,7 +1,6 @@
 import { createApp } from 'vue';
 import router from './router/router';
 import { createPinia } from 'pinia';
-import { createHead } from '@unhead/vue/client';
 import ui from '@nuxt/ui/vue-plugin';
 
 import App from './App.vue';
@@ -15,7 +14,6 @@ import './style/global.sass';
 
 
 createApp(App)
-  .use(createHead())
   .use(ui)
   .use(createPinia())
   .use(router)
