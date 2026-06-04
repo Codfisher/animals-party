@@ -74,7 +74,7 @@
 - **WebRTC（PeerJS）** — 遊戲端與控制端 P2P 直連
 - **Pinia** — 狀態管理
 - **XState** — 遊戲流程狀態機
-- **Vue Router**（`unplugin-vue-router`）— 以 [src/pages/](src/pages/) 為來源的檔案路由
+- **Vue Router**（內建檔案路由）— 以 [src/pages/](src/pages/) 為來源的檔案路由
 - **Nuxt UI** + **Tailwind CSS** — UI 元件與樣式
 - **qrcode** / **qr-scanner** — 房號 QR Code 產生與掃描
 - **Vite** — 建置工具

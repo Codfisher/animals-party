@@ -1,6 +1,6 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
-import VueRouter from 'unplugin-vue-router/vite';
+import VueRouter from 'vue-router/vite';
 import vue from '@vitejs/plugin-vue';
 import ui from '@nuxt/ui/vite';
 
