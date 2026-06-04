@@ -1,8 +1,9 @@
 <template>
-  <background-polygons-floating class="absolute inset-0" />
+  <div class="home-page relative h-dvh w-full overflow-y-auto">
+    <background-polygons-floating class="fixed inset-0 -z-10" />
 
-  <div class="absolute inset-0 flex flex-col md:flex-row justify-center items-center content-center gap-16 md:gap-32">
-    <title-logo />
+    <section class="hero relative min-h-dvh flex flex-col md:flex-row justify-center items-center content-center gap-16 md:gap-32">
+      <title-logo />
 
     <div class="flex flex-col flex-center gap-10 md:gap-20">
       <base-btn
@@ -59,7 +60,16 @@
           />
         </div>
       </base-btn>
-    </div>
+      </div>
+    </section>
+
+    <section class="ad-section relative w-full flex justify-center px-4 py-8">
+      <google-adsense
+        client="ca-pub-6608581811170481"
+        slot="9242930193"
+        class="w-full max-w-3xl"
+      />
+    </section>
   </div>
 </template>
 
@@ -72,6 +82,7 @@ import BackgroundPolygonsFloating from '../components/background-polygons-floati
 import BaseBtn from '../components/base-btn.vue';
 import BasePolygon from '../components/base-polygon.vue';
 import TitleLogo from '../components/title-logo.vue';
+import GoogleAdsense from '../components/google-adsense.vue';
 import DialogJoinGame from '../components/dialog-join-game.vue';
 
 import { useLoading } from '../composables/use-loading';

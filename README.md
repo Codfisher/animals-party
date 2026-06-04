@@ -67,7 +67,7 @@
 - **加入流程**：控制端開相機掃 QR Code 即可加入，也保留手動輸入房號的退路。
 - **身分識別**：控制端的 `clientId` 存於 localStorage，連線時透過 peer metadata 帶給遊戲端，支援同一玩家重連。
 
-## 🛠️ 技術棧
+## 🛠️ 技術堆疊
 
 - **Vue 3** — Composition API、`<script setup>`
 - **Babylon.js** — 3D 場景與渲染，搭配 `cannon-es` 物理引擎
@@ -133,7 +133,7 @@ pnpm test:ui
 ### 本機遊玩流程
 
 1. 於電腦瀏覽器開啟遊戲端，建立派對取得房號 QR Code。
-2. 手機連上**同一網路**，開啟控制端掃描 QR Code（或手動輸入房號）加入。
+2. 手機開啟網頁並按下「加入派對」，掃描 QR Code（或手動輸入房號）加入。
 3. 手機即化為搖桿，開玩！
 
 > WebRTC 需透過 HTTPS 或 localhost 才能存取相機與感測器。`pnpm dev` 已帶 `--host`，手機可直接連入區網位址測試。

@@ -11,14 +11,9 @@
 </template>
 
 <script setup lang="ts">
-import { useHead } from '@unhead/vue';
 import LoadingOverlay from './components/loading-overlay.vue';
 import EffectsOverlay from './components/effects-overlay.vue';
 import { version } from './../package.json';
-
-useHead({
-  title: `Animals Party`,
-});
 </script>
 
 <style lang="sass">
