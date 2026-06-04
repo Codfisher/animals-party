@@ -33,6 +33,7 @@ const gameConsoleStore = useGameConsoleStore();
 const mainStore = useMainStore();
 const router = useRouter();
 const player = useClientPlayer();
+const toast = useToast();
 
 /** 重連蓋板是否顯示 */
 const reconnecting = ref(false);
@@ -61,13 +62,17 @@ watch(
 
 onBeforeUnmount(finishReconnect);
 
-/** 與主機連線中斷時（曾連上後斷線），清除房號並跳回首頁 */
+/** 與主機連線中斷時（曾連上後斷線），清除房號、提示並跳回首頁 */
 watch(
   () => mainStore.clientConnected,
   (connected, previous) => {
     if (previous && !connected) {
       gameConsoleStore.clearRoomId();
       router.push({ name: '/home' });
+      toast.add({
+        color: 'error',
+        title: '歪歪，主機失去連線惹 (´；ω；`) ',
+      });
     }
   },
 );
