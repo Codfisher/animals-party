@@ -1,8 +1,14 @@
 <template>
-  <div class="w-full h-full bg-white">
-    <transition name="opacity" mode="out-in">
+  <div class="w-screen h-screen bg-white">
+    <transition
+      name="opacity"
+      mode="out-in"
+    >
       <!-- 練習 -->
-      <div v-if="props.sceneMode === 'training'" class="w-full h-full flex bg-sky-100">
+      <div
+        v-if="props.sceneMode === 'training'"
+        class="w-full h-full flex bg-sky-100"
+      >
         <div class="relative flex flex-col flex-nowrap w-[70%]">
           <div class="bg-black w-full h-[90%] rounded-br-3xl overflow-hidden">
             <slot name="training-scene" />
@@ -31,7 +37,10 @@
       </div>
 
       <!-- 正式 -->
-      <div v-else class="w-full h-full">
+      <div
+        v-else
+        class="w-full h-full"
+      >
         <slot name="normal-scene" />
       </div>
     </transition>
@@ -77,7 +86,11 @@ const players = computed(() => {
 });
 
 whenever(
-  () => players.value.every(({ ok }) => ok),
+  () => {
+    // 排除 NPC：NPC 不會按確認，只要真人玩家全部 OK 就開始
+    const realPlayerList = players.value.filter((player) => !player.isNpc);
+    return realPlayerList.length > 0 && realPlayerList.every(({ ok }) => ok);
+  },
   () => emit('all-ready'),
 );
 

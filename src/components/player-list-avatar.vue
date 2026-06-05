@@ -4,13 +4,9 @@
       class="avatar relative rounded-full flex justify-center p-2 overflow-hidden"
       :class="avatarClass"
     >
-      {{ props.codeName }}
+      {{ displayName }}
 
       <base-polygon v-bind="polygonParams" class="absolute -top-4 -left-4" />
-    </div>
-
-    <div v-if="isNpc" class="flex justify-center mt-1">
-      <UIcon name="material-symbols:smart-toy" class="text-[1.4rem] text-white/60" />
     </div>
 
     <div class="balloon-box">
@@ -43,6 +39,8 @@ const props = withDefaults(defineProps<Props>(), {});
 
 const avatarClass = computed(() => getPlayerColorClass(props.codeName));
 const isNpc = computed(() => props.player.isNpc === true);
+/** NPC 統一顯示「NPC」，真人玩家顯示代號（如 1P） */
+const displayName = computed(() => (isNpc.value ? 'NPC' : props.codeName));
 
 const polygonParams = computed<InstanceType<typeof BasePolygon>['$props']>(() => {
   const shape = sample(Object.values(ShapeType)) ?? 'round';

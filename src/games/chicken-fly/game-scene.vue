@@ -49,6 +49,7 @@ import { Chicken } from './chicken';
 import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 
 import { useClientGameConsole } from '../../composables/use-client-game-console';
+import { useNpcPlayer } from '../../composables/use-npc-player';
 import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
 import { useEffects } from '../../composables/use-effects';
 import { useInterval, whenever } from '@vueuse/core';
@@ -88,6 +89,7 @@ watch(
 );
 
 const gameConsole = useClientGameConsole();
+const npcPlayer = useNpcPlayer();
 
 const isGameOver = ref(false);
 
@@ -158,10 +160,27 @@ const { canvas } = useBabylonScene({
 
     const badChickens = await createBadChickens(scene);
 
+    /** 找出 NPC 小雞 */
+    const npcChickenList = chickens.filter((chicken) => {
+      const player = gameConsole.players.value.find(
+        ({ clientId }) => clientId === chicken.params.ownerId,
+      );
+      return player && npcPlayer.isNpcPlayer(player);
+    });
+    let npcFrameCount = 0;
+
     scene.registerBeforeRender(() => {
       detectCollideEvents(chickens, badChickens);
       detectGameOver(chickens, engine);
       detectOutOfBounds(chickens);
+
+      if (npcChickenList.length > 0 && props.mode === 'normal') {
+        npcFrameCount++;
+        // 約每 6 幀更新一次，保留反應延遲讓玩家有機可乘
+        if (npcFrameCount % 6 === 0) {
+          npcChickenList.forEach((npcChicken) => runChickenNpcStep(npcChicken, badChickens));
+        }
+      }
     });
 
     emit('init');
@@ -501,5 +520,52 @@ function ctrlChicken(chicken: Chicken, data: GamepadData) {
      */
     chicken.setAttitude(Tools.ToRadians(-z), Tools.ToRadians(-x));
   }
+}
+
+/** 將數值限制在 [-1, 1] */
+function clampUnit(value: number) {
+  return Math.max(-1, Math.min(1, value));
+}
+
+/** NPC 小雞 AI：閃避逼近的壞雞，無威脅時回到畫面中央 */
+function runChickenNpcStep(npcChicken: Chicken, badChickens: BadChicken[]) {
+  const mesh = npcChicken.mesh;
+  if (!mesh || mesh.isDisposed()) return;
+
+  const { x, y } = mesh.position;
+
+  /** 找出 z 軸正逼近碰撞平面、且 xy 最接近的壞雞 */
+  let nearestThreat: BadChicken | undefined;
+  let nearestDistance = Infinity;
+  badChickens.forEach((badChicken) => {
+    const badMesh = badChicken.mesh;
+    if (!badMesh) return;
+    // 只在意正逼近碰撞平面（z 約 0）的壞雞
+    if (badMesh.position.z < -18 || badMesh.position.z > 1.5) return;
+
+    const distance = Math.hypot(badMesh.position.x - x, badMesh.position.y - y);
+    if (distance < nearestDistance) {
+      nearestDistance = distance;
+      nearestThreat = badChicken;
+    }
+  });
+
+  let moveX = 0;
+  let moveY = 0;
+  if (nearestThreat?.mesh && nearestDistance < 2) {
+    // 往遠離威脅的方向閃避
+    moveX = x - nearestThreat.mesh.position.x;
+    moveY = y - nearestThreat.mesh.position.y;
+  } else {
+    // 無立即威脅，略為置中並回到中央高度，避免貼邊卡死
+    moveX = -x * 0.3;
+    moveY = -y;
+  }
+
+  const maxAngle = Tools.ToRadians(45);
+  // 依 chicken.ts processLift：force.x 與 roll 同向、force.y 與 -pitch 同向
+  const roll = clampUnit(moveX) * maxAngle;
+  const pitch = -clampUnit(moveY) * maxAngle;
+  npcChicken.setAttitude(pitch, roll);
 }
 </script>

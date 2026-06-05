@@ -44,7 +44,6 @@ import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 
 import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { useNpcPlayer } from '../../composables/use-npc-player';
-import { useGameConsoleStore } from '../../stores/game-console.store';
 import { useRouter } from 'vue-router';
 import { useLoading } from '../../composables/use-loading';
 import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
@@ -64,7 +63,6 @@ const emit = defineEmits<{
 }>();
 
 const gameConsole = useClientGameConsole();
-const gameConsoleStore = useGameConsoleStore();
 const npcPlayer = useNpcPlayer();
 
 const { canvas } = useBabylonScene({
@@ -360,7 +358,7 @@ function runNpcAiStep(npcPenguin: Penguin) {
 
 async function backToLobby() {
   isGameOver.value = false;
-  gameConsoleStore.removeNpcPlayers();
+  // NPC 不在此移除，避免結算排行榜瞬間查無 NPC 而顯示 unknown；改由大廳進場時清除
   emit('back-to-lobby');
 }
 </script>

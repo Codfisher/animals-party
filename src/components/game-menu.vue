@@ -231,8 +231,10 @@ function checkGameCondition(condition: GameInfo['condition'], players: Player[])
     return `太多人啦，不能超過 ${maxPlayers} 個人，請狠下心減少人數。`;
   }
 
-  /** 檢查是否有玩家不符合資格 */
+  /** 檢查是否有玩家不符合資格（NPC 無裝置權限，略過不檢查） */
   for (const player of players) {
+    if (player.isNpc) continue;
+
     for (const name of requiredPermissions) {
       if (player.permission?.[name] === 'granted') continue;
 
@@ -249,13 +251,14 @@ const startGame = debounce(
   async () => {
     const game = selectedGame.value;
 
-    // 企鵝遊戲：真實玩家不足時自動補 NPC
-    if (game.name === 'the-first-penguin') {
-      const realPlayers = gameConsole.players.value.filter(({ isNpc }) => !isNpc);
-      const npcPlayerList = npcPlayer.createNpcPlayerList(realPlayers.length, game.condition.minPlayers);
-      if (npcPlayerList.length > 0) {
-        gameConsoleStore.addNpcPlayerList(npcPlayerList);
-      }
+    // 真實玩家不足 minPlayers 時自動補 NPC（三款遊戲皆適用）
+    const realPlayerList = gameConsole.players.value.filter(({ isNpc }) => !isNpc);
+    const npcPlayerList = npcPlayer.createNpcPlayerList(
+      realPlayerList.length,
+      game.condition.minPlayers,
+    );
+    if (npcPlayerList.length > 0) {
+      gameConsoleStore.addNpcPlayerList(npcPlayerList);
     }
 
     const players = gameConsole.players.value;

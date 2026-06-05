@@ -45,6 +45,7 @@ import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
 import { promiseTimeout } from '@vueuse/core';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
+import { useNpcPlayer } from '../../composables/use-npc-player';
 import { useEffects } from '../../composables/use-effects';
 
 interface Props {
@@ -61,6 +62,7 @@ const emit = defineEmits<{
 }>();
 
 const gameConsole = useClientGameConsole();
+const npcPlayer = useNpcPlayer();
 
 const isGameOver = ref(false);
 
@@ -101,11 +103,26 @@ const { canvas } = useBabylonScene({
     players.push(...foxes);
     initGamepadEvent(foxes);
 
+    /** 找出 NPC 狐狸 */
+    const npcFoxList = foxes.filter((fox) => {
+      const player = gameConsole.players.value.find(({ clientId }) => clientId === fox.param.ownerId);
+      return player && npcPlayer.isNpcPlayer(player);
+    });
+    let npcFrameCount = 0;
+
     scene.registerBeforeRender(() => {
       if (isGameOver.value) return;
 
       detectCollideEvent(foxes, mice);
       detectGameOver(foxes, engine);
+
+      if (npcFoxList.length > 0 && props.mode === 'normal') {
+        npcFrameCount++;
+        // 約每 10 幀更新一次，保留反應延遲讓玩家有機可乘
+        if (npcFrameCount % 10 === 0) {
+          npcFoxList.forEach((npcFox) => runFoxNpcStep(npcFox, mice));
+        }
+      }
     });
 
     emit('init');
@@ -353,5 +370,39 @@ function ctrlFox(fox: Fox, data: GamepadData) {
     /** 搖桿向左時 x 為負值，而往左是螢幕的 +x 方向，所以要反轉 */
     fox.walk(new Vector3(-x, 0, y));
   }
+}
+
+/** NPC 狐狸 AI：走向最近且未被抓的老鼠，靠近就撲 */
+function runFoxNpcStep(npcFox: Fox, mice: Mouse[]) {
+  const mesh = npcFox.mesh;
+  if (!mesh) return;
+  // 已抓到老鼠就收手
+  if (npcFox.mouseSize > 0) return;
+  // 撲擊／落地動作中不打斷
+  if (['pounce', 'dive'].includes(npcFox.getState())) return;
+
+  const huntableList = mice.filter((mouse) => !mouse.isCaught && mouse.mesh);
+  if (huntableList.length === 0) return;
+
+  let nearestMouse: Mouse | undefined;
+  let nearestDistance = Infinity;
+  huntableList.forEach((mouse) => {
+    const distance = Vector3.Distance(mesh.position, mouse.mesh!.position);
+    if (distance < nearestDistance) {
+      nearestDistance = distance;
+      nearestMouse = mouse;
+    }
+  });
+  if (!nearestMouse?.mesh) return;
+
+  // 夠近就撲，否則朝目標前進
+  if (nearestDistance < 2.5) {
+    npcFox.pounce();
+    return;
+  }
+
+  const direction = nearestMouse.mesh.position.subtract(mesh.position);
+  direction.y = 0;
+  npcFox.walk(direction);
 }
 </script>
