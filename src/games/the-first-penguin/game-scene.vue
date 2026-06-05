@@ -43,6 +43,7 @@ import { getPlayerColorRgb } from '../../common/color';
 import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 
 import { useClientGameConsole } from '../../composables/use-client-game-console';
+import { useNpcPlayer } from '../../composables/use-npc-player';
 import { useRouter } from 'vue-router';
 import { useLoading } from '../../composables/use-loading';
 import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
@@ -62,6 +63,7 @@ const emit = defineEmits<{
 }>();
 
 const gameConsole = useClientGameConsole();
+const npcPlayer = useNpcPlayer();
 
 const { canvas } = useBabylonScene({
   createCamera(scene: Scene) {
@@ -99,11 +101,29 @@ const { canvas } = useBabylonScene({
 
     initGamepadEvent();
 
+    const npcPenguinList = penguins.filter((p) => {
+      const player = gameConsole.players.value.find(({ clientId }) => clientId === p.params.ownerId);
+      return player && npcPlayer.isNpcPlayer(player);
+    });
+
+    let npcFrameCount = 0;
+
     /** 持續運行指定事件 */
     scene.registerAfterRender(() => {
       detectCollideEvents(penguins);
       detectOutOfBounds(penguins);
       detectWinner(penguins, engine);
+
+      if (npcPenguinList.length > 0 && props.mode === 'normal') {
+        npcFrameCount++;
+        // 約每 10 幀更新一次，降低 NPC 反應速度讓玩家有機可乘
+        if (npcFrameCount % 10 === 0) {
+          npcPenguinList.forEach((npcPenguin) => {
+            if (!npcPenguin.mesh || npcPenguin.mesh.isDisposed()) return;
+            runNpcAiStep(npcPenguin);
+          });
+        }
+      }
     });
 
     emit('init');
@@ -307,9 +327,38 @@ function ctrlPenguin(penguin: Penguin, data: GamepadData) {
   }
 }
 
+/** NPC AI：朝最近的存活企鵝移動，距離夠近時發動攻擊 */
+function runNpcAiStep(npcPenguin: Penguin) {
+  const otherPenguins = penguins.filter(
+    (p) => p !== npcPenguin && p.mesh && !p.mesh.isDisposed(),
+  );
+  if (otherPenguins.length === 0) return;
+
+  const target = otherPenguins.reduce((nearest, p) => {
+    const dist = Vector3.Distance(npcPenguin.mesh!.position, p.mesh!.position);
+    const nearestDist = Vector3.Distance(npcPenguin.mesh!.position, nearest.mesh!.position);
+    return dist < nearestDist ? p : nearest;
+  });
+
+  if (!target.mesh) return;
+
+  const direction = target.mesh.position.subtract(npcPenguin.mesh!.position);
+  const distance = direction.length();
+
+  if (distance < 2.5) {
+    npcPenguin.attack();
+  } else {
+    // 加入輕微擾動避免 NPC 移動過於死板
+    const normalized = direction.normalize();
+    const jitter = (Math.random() - 0.5) * 0.4;
+    const angle = Math.atan2(normalized.x, normalized.z) + jitter;
+    npcPenguin.walk(new Vector3(Math.sin(angle) * 35, 0, Math.cos(angle) * 35));
+  }
+}
+
 async function backToLobby() {
   isGameOver.value = false;
-
+  // NPC 不在此移除，避免結算排行榜瞬間查無 NPC 而顯示 unknown；改由大廳進場時清除
   emit('back-to-lobby');
 }
 </script>

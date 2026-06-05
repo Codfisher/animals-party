@@ -54,6 +54,14 @@ export const useGameConsoleStore = defineStore('game-console', () => {
     players.value[index] = data;
   }
 
+  function addNpcPlayerList(npcList: Player[]) {
+    players.value = [...players.value, ...npcList];
+  }
+
+  function removeNpcPlayers() {
+    players.value = players.value.filter(({ isNpc }) => !isNpc);
+  }
+
   return {
     status,
     gameName,
@@ -64,5 +72,7 @@ export const useGameConsoleStore = defineStore('game-console', () => {
     clearRoomId,
     updateState,
     updateProfile,
+    addNpcPlayerList,
+    removeNpcPlayers,
   };
 });

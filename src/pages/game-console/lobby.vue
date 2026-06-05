@@ -17,11 +17,13 @@ import PlayerList from '../../components/player-list.vue';
 
 import { useLoading } from '../../composables/use-loading';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
+import { useGameConsoleStore } from '../../stores/game-console.store';
 import { KeyName } from '../../types';
 
 const loading = useLoading();
 const toast = useToast();
 const gameConsole = useClientGameConsole();
+const gameConsoleStore = useGameConsoleStore();
 
 function handleCompleted() {
   init();
@@ -48,6 +50,8 @@ const gamepadEventMap: GamepadEventMap = {
 };
 
 function init() {
+  // 回到大廳才清除上一場的 NPC（此時仍由 loading 蓋板覆蓋），避免結算排行榜閃成 unknown
+  gameConsoleStore.removeNpcPlayers();
   gameConsole.setStatus('lobby');
   loading.hide();
 
