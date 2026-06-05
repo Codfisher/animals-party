@@ -184,8 +184,13 @@ const nextGame = throttle(
   },
 );
 
-let menuTween: ReturnType<typeof gsap.fromTo>;
+let menuTween: ReturnType<typeof gsap.fromTo> | undefined;
 onMounted(() => {
+  // 已播放過入場動畫（回大廳）就讓選單直接顯示，不建立入場 tween
+  if (gameConsoleStore.isLobbyIntroPlayed) {
+    return;
+  }
+
   menuTween = gsap.fromTo(
     '.menu-item',
     {
@@ -207,7 +212,7 @@ onMounted(() => {
 });
 
 function showMenu() {
-  menuTween.play();
+  menuTween?.play();
 }
 function handleCompleted() {
   emit('completed');
@@ -287,6 +292,8 @@ const startGame = debounce(
 const endParty = debounce(
   async () => {
     gameConsole.setStatus('home');
+    // 派對結束，重置入場動畫旗標，下一場新派對第一次進大廳會重新播放
+    gameConsoleStore.resetLobbyIntro();
     await loading.show();
     gameConsole.endParty();
 
