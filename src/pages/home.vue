@@ -84,9 +84,22 @@
           </div>
         </base-btn>
       </div>
+      <button
+        type="button"
+        class="scroll-hint absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col flex-center gap-1 text-white/90 drop-shadow"
+        @click="scrollToSupport"
+      >
+        <UIcon
+          name="material-symbols:keyboard-double-arrow-down-rounded"
+          class="scroll-hint-arrow text-3xl"
+        />
+      </button>
     </section>
 
-    <section class="support-section relative w-full flex justify-center px-4 py-8 min-h-48 overflow-hidden bg-white/10">
+    <section
+      ref="supportSectionRef"
+      class="support-section relative w-full flex justify-center px-4 py-8 min-h-48 overflow-hidden bg-white/10"
+    >
       <base-polygon
         class="absolute support-polygon-lt z-0"
         size="10rem"
@@ -156,7 +169,7 @@
 
 <script setup lang="ts">
 import to from 'await-to-js';
-import { onMounted } from 'vue';
+import { onMounted, useTemplateRef } from 'vue';
 import { useWindowSize } from '@vueuse/core';
 
 import BackgroundPolygonsFloating from '../components/background-polygons-floating.vue';
@@ -183,6 +196,13 @@ const joinGameModal = overlay.create(DialogJoinGame);
 const { width: windowWidth } = useWindowSize();
 /** 主機畫面需要足夠寬度，低於此值禁止建立派對（md 斷點） */
 const MIN_PARTY_WIDTH = 768;
+
+const supportSectionRef = useTemplateRef<HTMLElement>('supportSectionRef');
+
+/** 平滑捲動到廣告區，引導使用者順手支持 */
+function scrollToSupport() {
+  supportSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 
 async function startParty() {
   if (windowWidth.value < MIN_PARTY_WIDTH) {
@@ -306,6 +326,20 @@ loading.hide();
   right: 26%
   top: 45%
   transform: translate(50%, -50%)
+
+.scroll-hint
+  cursor: pointer
+  transition: opacity 0.3s
+  &:hover
+    opacity: 0.7
+.scroll-hint-arrow
+  animation: scroll-hint-bounce 1.6s ease-in-out infinite
+
+@keyframes scroll-hint-bounce
+  0%, 100%
+    transform: translateY(0)
+  50%
+    transform: translateY(6px)
 
 .btn-content
   transform: scale(1)
