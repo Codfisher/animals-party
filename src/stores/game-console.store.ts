@@ -22,6 +22,19 @@ export const useGameConsoleStore = defineStore('game-console', () => {
   const gameName = ref<`${GameName}`>('the-first-penguin');
   const players = ref<Player[]>([]);
 
+  /** 大廳入場動畫（鏡頭運鏡 + 選單出現）是否已播放過。
+   *  同一場派對只在第一次進大廳播放，之後回大廳直接定位、略過動畫。 */
+  const isLobbyIntroPlayed = ref(false);
+
+  function markLobbyIntroPlayed() {
+    isLobbyIntroPlayed.value = true;
+  }
+
+  /** 結束派對時重置，讓下一場新派對的第一次進大廳仍會播放入場動畫 */
+  function resetLobbyIntro() {
+    isLobbyIntroPlayed.value = false;
+  }
+
   function updateState(state: UpdateStateParams) {
     status.value = state.status ?? status.value;
     gameName.value = state.gameName ?? gameName.value;
@@ -67,7 +80,10 @@ export const useGameConsoleStore = defineStore('game-console', () => {
     gameName,
     roomId,
     players,
+    isLobbyIntroPlayed,
 
+    markLobbyIntroPlayed,
+    resetLobbyIntro,
     setRoomId,
     clearRoomId,
     updateState,

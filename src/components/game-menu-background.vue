@@ -28,6 +28,9 @@ import { createFoxAndMouseIsland } from './game-menu/fox-and-mouse';
 import { createDecorations } from './game-menu/decorations';
 
 import { useBabylonScene } from '../composables/use-babylon-scene';
+import { useGameConsoleStore } from '../stores/game-console.store';
+
+const gameConsoleStore = useGameConsoleStore();
 
 interface Shot {
   name: `${GameName}`;
@@ -87,7 +90,14 @@ const { canvas, camera } = useBabylonScene({
     /** 發出完成事件，表示畫面初始化完成 */
     emit('completed');
 
-    moveCamera(camera);
+    /** 同一場派對只在第一次進大廳播放鏡頭運鏡，之後回大廳直接定位 */
+    if (gameConsoleStore.isLobbyIntroPlayed) {
+      moveCamera(camera, { instant: true });
+      return;
+    }
+
+    await moveCamera(camera);
+    gameConsoleStore.markLobbyIntroPlayed();
   },
 });
 
@@ -127,9 +137,12 @@ defaultEase.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
 const moveCameraDefaultParams: {
   speed: number;
   easingFunction: EasingFunction;
+  /** 略過運鏡動畫，直接把鏡頭定位至取景處 */
+  instant: boolean;
 } = {
   speed: 0.15,
   easingFunction: defaultEase,
+  instant: false,
 };
 async function moveCamera(
   camera: ArcRotateCamera,
@@ -138,7 +151,21 @@ async function moveCamera(
   const shot = shots.find(({ name }) => name === props.selectedGame);
   if (!shot) return;
 
-  const { speed, easingFunction } = defaults(params, moveCameraDefaultParams);
+  const { speed, easingFunction, instant } = defaults(params, moveCameraDefaultParams);
+
+  /** 略過運鏡：鏡頭直接定位，仍發出 end 事件讓選單顯示 */
+  if (instant) {
+    camera.target = shot.camera.target.clone();
+    camera.alpha = shot.camera.alpha;
+    camera.beta = shot.camera.beta;
+    camera.radius = shot.camera.radius;
+
+    emit('camera-movement-end');
+
+    const target = islands.find(({ name }) => name === props.selectedGame);
+    target?.setActive(true);
+    return;
+  }
 
   const results = [
     createAnimation(camera, 'target', shot.camera.target, { easingFunction }),
