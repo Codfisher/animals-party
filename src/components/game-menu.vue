@@ -96,6 +96,8 @@ import GameMenuBackground from './game-menu-background.vue';
 
 import { useGamepadNavigator } from '../composables/use-gamepad-navigator';
 import { useClientGameConsole } from '../composables/use-client-game-console';
+import { useNpcPlayer } from '../composables/use-npc-player';
+import { useGameConsoleStore } from '../stores/game-console.store';
 import { useRouter } from 'vue-router';
 import { useLoading } from '../composables/use-loading';
 
@@ -148,6 +150,8 @@ const games: GameInfo[] = [
 ];
 
 const gameConsole = useClientGameConsole();
+const gameConsoleStore = useGameConsoleStore();
+const npcPlayer = useNpcPlayer();
 const router = useRouter();
 const loading = useLoading();
 
@@ -244,10 +248,20 @@ function checkGameCondition(condition: GameInfo['condition'], players: Player[])
 const startGame = debounce(
   async () => {
     const game = selectedGame.value;
-    const players = gameConsole.players.value;
 
+    // 企鵝遊戲：真實玩家不足時自動補 NPC
+    if (game.name === 'the-first-penguin') {
+      const realPlayers = gameConsole.players.value.filter(({ isNpc }) => !isNpc);
+      const npcPlayerList = npcPlayer.createNpcPlayerList(realPlayers.length, game.condition.minPlayers);
+      if (npcPlayerList.length > 0) {
+        gameConsoleStore.addNpcPlayerList(npcPlayerList);
+      }
+    }
+
+    const players = gameConsole.players.value;
     const error = checkGameCondition(game.condition, players);
     if (error) {
+      gameConsoleStore.removeNpcPlayers();
       emit('error', error);
       return;
     }

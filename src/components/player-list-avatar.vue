@@ -9,6 +9,10 @@
       <base-polygon v-bind="polygonParams" class="absolute -top-4 -left-4" />
     </div>
 
+    <div v-if="isNpc" class="flex justify-center mt-1">
+      <UIcon name="material-symbols:smart-toy" class="text-[1.4rem] text-white/60" />
+    </div>
+
     <div class="balloon-box">
       <transition name="balloon">
         <div v-if="messageInfo.text" :key="messageInfo.id" class="balloon">
@@ -38,6 +42,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {});
 
 const avatarClass = computed(() => getPlayerColorClass(props.codeName));
+const isNpc = computed(() => props.player.isNpc === true);
 
 const polygonParams = computed<InstanceType<typeof BasePolygon>['$props']>(() => {
   const shape = sample(Object.values(ShapeType)) ?? 'round';
