@@ -7,7 +7,9 @@
       @completed="handleCompleted()"
     />
 
-    <game-menu-control-hint class="menu-item absolute top-8 right-8 z-10" />
+    <div class="menu-item absolute top-8 right-8 z-10">
+      <game-menu-control-hint />
+    </div>
 
     <div class="w-1/2 h-full flex flex-col items-center justify-center gap-12 pr-24 pb-10 z-0">
       <room-qr-code class="menu-item" />
