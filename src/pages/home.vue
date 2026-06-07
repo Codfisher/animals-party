@@ -98,7 +98,7 @@
 
     <section
       ref="supportSectionRef"
-      class="support-section relative w-full flex justify-center px-4 py-8 min-h-48 overflow-hidden bg-white/10"
+      class="support-section relative w-full flex justify-center min-h-48 overflow-hidden bg-white/10"
     >
       <base-polygon
         class="absolute support-polygon-lt z-0"
@@ -161,7 +161,7 @@
       <google-adsense
         client="ca-pub-6608581811170481"
         slot="9242930193"
-        class="relative z-20 w-full max-w-3xl"
+        class="relative z-20 w-full"
       />
     </section>
   </div>
