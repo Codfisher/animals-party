@@ -161,7 +161,7 @@
       <google-adsense
         client="ca-pub-6608581811170481"
         slot="9242930193"
-        class="relative z-20 w-full"
+        class="relative z-20 w-full max-w-3xl"
       />
     </section>
   </div>
