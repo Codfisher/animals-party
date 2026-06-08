@@ -183,10 +183,12 @@ import { useLoading } from '../composables/use-loading';
 import { useRoute, useRouter } from 'vue-router';
 import { useClientGameConsole } from '../composables/use-client-game-console';
 import { useClientPlayer } from '../composables/use-client-player';
+import { useAudio } from '../composables/use-audio';
 
 const gameConsole = useClientGameConsole();
 const player = useClientPlayer();
 const loading = useLoading();
+const audio = useAudio();
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
@@ -280,6 +282,8 @@ async function autoJoinFromQuery() {
 
 onMounted(() => {
   loading.hide();
+  // 首頁不播背景音樂，離開大廳／遊戲返回時將仍在循環的 BGM 漸出停止
+  audio.stopBgm();
   autoJoinFromQuery();
 });
 loading.hide();

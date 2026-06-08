@@ -66,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { GameSceneMode } from '../../types';
 import { nanoid } from 'nanoid';
 
@@ -78,11 +78,16 @@ import CountdownOverlay from '../../components/countdown-overlay.vue';
 import { useLoading } from '../../composables/use-loading';
 import { useRouter } from 'vue-router';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
+import { useAudio } from '../../composables/use-audio';
 import { promiseTimeout, whenever } from '@vueuse/core';
 
 const gameConsole = useClientGameConsole();
 const loading = useLoading();
 const router = useRouter();
+const audio = useAudio();
+
+/** 進入遊戲播放本遊戲背景音樂 */
+onMounted(() => audio.playBgm('fox-and-mouse'));
 
 const sceneMode = ref<`${GameSceneMode}`>('training');
 

@@ -35,7 +35,7 @@ import {
   Vector3,
 } from '@babylonjs/core';
 import { Penguin } from './penguin';
-import { curry } from 'lodash-es';
+import { curry, throttle } from 'lodash-es';
 import { GamepadData, GameSceneMode, KeyName, SignalData } from '../../types';
 import { createAnimation, getSquareMatrixPositions } from '../../common/utils';
 import { getPlayerColorRgb } from '../../common/color';
@@ -48,6 +48,7 @@ import { useRouter } from 'vue-router';
 import { useLoading } from '../../composables/use-loading';
 import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
 import { useEffects } from '../../composables/use-effects';
+import { useAudio } from '../../composables/use-audio';
 
 interface Props {
   mode?: `${GameSceneMode}`;
@@ -224,6 +225,27 @@ function handleCollideEvent(aPenguin: Penguin, bPenguin: Penguin) {
   } else {
     aPenguin.assaulted(direction.multiply(new Vector3(-1, -1, -1)));
   }
+
+  playCollide();
+}
+
+/** 撞擊每幀都可能觸發，節流避免音效疊放 */
+const playCollide = throttle(() => audio.play('the-first-penguin/collide'), 300, {
+  trailing: false,
+});
+
+/** 攻擊音效，依玩家分別節流以對齊企鵝 2 秒攻擊冷卻 */
+const attackSoundMap = new Map<string, () => void>();
+function playAttack(ownerId: string) {
+  let player = attackSoundMap.get(ownerId);
+  if (!player) {
+    player = throttle(() => audio.play('the-first-penguin/attack'), 2000, {
+      leading: true,
+      trailing: false,
+    });
+    attackSoundMap.set(ownerId, player);
+  }
+  player();
 }
 
 /** 處理出界的企鵝
@@ -237,6 +259,7 @@ function detectOutOfBounds(penguins: Penguin[]) {
       /** 紀錄落水時間以供結算排名 */
       penguin.diedAt = new Date().getTime();
       penguin.mesh.dispose();
+      audio.play('the-first-penguin/splash');
     }
   });
 }
@@ -244,9 +267,13 @@ function detectOutOfBounds(penguins: Penguin[]) {
 const isGameOver = ref(false);
 
 const effects = useEffects();
-/** 遊戲結束時兩側噴發慶祝彩帶 */
+const audio = useAudio();
+/** 遊戲結束時兩側噴發慶祝彩帶並播放勝利音效 */
 watch(isGameOver, (value) => {
-  if (value) effects.fireConfetti();
+  if (value) {
+    effects.fireConfetti();
+    audio.play('win');
+  }
 });
 
 /** 依落水時間排名，存活者（diedAt 為 0）為第一名，其餘越晚落水排名越前 */
@@ -303,6 +330,7 @@ function ctrlPenguin(penguin: Penguin, data: GamepadData) {
   const attackData = findData('a');
   if (attackData) {
     penguin.attack();
+    playAttack(penguin.params.ownerId);
     return;
   }
 
