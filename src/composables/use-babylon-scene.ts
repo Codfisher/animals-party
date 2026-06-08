@@ -25,20 +25,8 @@ interface UseBabylonSceneParams {
   }) => Promise<void>;
 }
 const defaultParams: Required<UseBabylonSceneParams> = {
-  /** 優先建立 WebGPU engine，不支援或初始化失敗時退回 WebGL */
-  async createEngine(canvas) {
-    if (await WebGPUEngine.IsSupportedAsync) {
-      let webgpuEngine: WebGPUEngine | undefined;
-      try {
-        webgpuEngine = new WebGPUEngine(canvas, { antialias: true });
-        await webgpuEngine.initAsync();
-        return webgpuEngine;
-      } catch (error) {
-        console.warn('[useBabylonScene] WebGPU 初始化失敗，改用 WebGL', error);
-        /** 釋放半初始化的 WebGPU engine，避免殘留錯誤 */
-        webgpuEngine?.dispose();
-      }
-    }
+  /** 場景簡單且 WebGPU 在部分顯卡／驅動上會於渲染期崩潰，統一使用穩定的 WebGL */
+  createEngine(canvas) {
     return new Engine(canvas, true);
   },
   createScene(engine) {

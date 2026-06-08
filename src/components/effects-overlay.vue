@@ -7,24 +7,12 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
 import { useEventListener } from '@vueuse/core';
-import { Engine, WebGPUEngine, Scene, FreeCamera, Vector3, Color4 } from '@babylonjs/core';
+import { Engine, Scene, FreeCamera, Vector3, Color4 } from '@babylonjs/core';
 import { createConfettiCannons } from './effects/confetti-cannon';
 import { useEffects } from '../composables/use-effects';
 
-/** 優先建立 WebGPU engine，不支援或初始化失敗時退回 WebGL */
-async function createEngine(canvas: HTMLCanvasElement) {
-  if (await WebGPUEngine.IsSupportedAsync) {
-    let webgpuEngine: WebGPUEngine | undefined;
-    try {
-      webgpuEngine = new WebGPUEngine(canvas, { antialias: true });
-      await webgpuEngine.initAsync();
-      return webgpuEngine;
-    } catch (error) {
-      console.warn('[effects-overlay] WebGPU 初始化失敗，改用 WebGL', error);
-      /** 釋放半初始化的 WebGPU engine，避免殘留錯誤 */
-      webgpuEngine?.dispose();
-    }
-  }
+/** 場景簡單且 WebGPU 在部分顯卡／驅動上會於渲染期崩潰，統一使用穩定的 WebGL */
+function createEngine(canvas: HTMLCanvasElement) {
   return new Engine(canvas, true);
 }
 
@@ -35,10 +23,10 @@ async function createEngine(canvas: HTMLCanvasElement) {
 const canvas = useTemplateRef<HTMLCanvasElement>('canvas');
 const effects = useEffects();
 
-let engine: Engine | WebGPUEngine | undefined;
+let engine: Engine | undefined;
 let confettiHandler: (() => void) | undefined;
 let stopTimer: ReturnType<typeof setTimeout> | undefined;
-/** 標記元件是否已卸載，避免 WebGPU 非同步初始化完成時元件已不存在 */
+/** 標記元件是否已卸載，避免非同步流程完成時元件已不存在 */
 let disposed = false;
 
 /** 噴發後持續渲染的時間（毫秒），需大於粒子最長生命週期 */
