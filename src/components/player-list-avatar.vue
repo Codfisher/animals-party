@@ -38,9 +38,9 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {});
 
 const avatarClass = computed(() => getPlayerColorClass(props.codeName));
-const isNpc = computed(() => props.player.isNpc === true);
-/** NPC 統一顯示「NPC」，真人玩家顯示代號（如 1P） */
-const displayName = computed(() => (isNpc.value ? 'NPC' : props.codeName));
+const isCpu = computed(() => props.player.isCpu === true);
+/** CPU 統一顯示「CPU」，真人玩家顯示代號（如 1P） */
+const displayName = computed(() => (isCpu.value ? 'CPU' : props.codeName));
 
 const polygonParams = computed<InstanceType<typeof BasePolygon>['$props']>(() => {
   const shape = sample(Object.values(ShapeType)) ?? 'round';

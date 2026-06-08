@@ -50,8 +50,8 @@ const gamepadEventMap: GamepadEventMap = {
 };
 
 function init() {
-  // 回到大廳才清除上一場的 NPC（此時仍由 loading 蓋板覆蓋），避免結算排行榜閃成 unknown
-  gameConsoleStore.removeNpcPlayers();
+  // 回到大廳才清除上一場的 CPU（此時仍由 loading 蓋板覆蓋），避免結算排行榜閃成 unknown
+  gameConsoleStore.removeCpuPlayers();
   gameConsole.setStatus('lobby');
   loading.hide();
 

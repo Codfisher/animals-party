@@ -101,7 +101,7 @@ import GameMenuControlHint from './game-menu-control-hint.vue';
 
 import { useGamepadNavigator } from '../composables/use-gamepad-navigator';
 import { useClientGameConsole } from '../composables/use-client-game-console';
-import { useNpcPlayer } from '../composables/use-npc-player';
+import { useCpuPlayer } from '../composables/use-cpu-player';
 import { useGameConsoleStore } from '../stores/game-console.store';
 import { useRouter } from 'vue-router';
 import { useLoading } from '../composables/use-loading';
@@ -156,7 +156,7 @@ const games: GameInfo[] = [
 
 const gameConsole = useClientGameConsole();
 const gameConsoleStore = useGameConsoleStore();
-const npcPlayer = useNpcPlayer();
+const cpuPlayer = useCpuPlayer();
 const router = useRouter();
 const loading = useLoading();
 
@@ -241,9 +241,9 @@ function checkGameCondition(condition: GameInfo['condition'], players: Player[])
     return `太多人啦，不能超過 ${maxPlayers} 個人，請狠下心減少人數。`;
   }
 
-  /** 檢查是否有玩家不符合資格（NPC 無裝置權限，略過不檢查） */
+  /** 檢查是否有玩家不符合資格（CPU 無裝置權限，略過不檢查） */
   for (const player of players) {
-    if (player.isNpc) continue;
+    if (player.isCpu) continue;
 
     for (const name of requiredPermissions) {
       if (player.permission?.[name] === 'granted') continue;
@@ -261,20 +261,20 @@ const startGame = debounce(
   async () => {
     const game = selectedGame.value;
 
-    // 真實玩家不足 minPlayers 時自動補 NPC（三款遊戲皆適用）
-    const realPlayerList = gameConsole.players.value.filter(({ isNpc }) => !isNpc);
-    const npcPlayerList = npcPlayer.createNpcPlayerList(
+    // 真實玩家不足 minPlayers 時自動補 CPU（三款遊戲皆適用）
+    const realPlayerList = gameConsole.players.value.filter(({ isCpu }) => !isCpu);
+    const cpuPlayerList = cpuPlayer.createCpuPlayerList(
       realPlayerList.length,
       game.condition.minPlayers,
     );
-    if (npcPlayerList.length > 0) {
-      gameConsoleStore.addNpcPlayerList(npcPlayerList);
+    if (cpuPlayerList.length > 0) {
+      gameConsoleStore.addCpuPlayerList(cpuPlayerList);
     }
 
     const players = gameConsole.players.value;
     const error = checkGameCondition(game.condition, players);
     if (error) {
-      gameConsoleStore.removeNpcPlayers();
+      gameConsoleStore.removeCpuPlayers();
       emit('error', error);
       return;
     }

@@ -52,8 +52,8 @@ export interface Player {
   readonly clientId: string;
   /** 表示玩家手機端允許的 API 清單 */
   permission?: PlayerPermission;
-  /** 是否為 NPC（電腦自動控制） */
-  isNpc?: boolean;
+  /** 是否為 CPU（電腦自動控制） */
+  isCpu?: boolean;
 }
 
 export interface GameConsoleState {

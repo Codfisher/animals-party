@@ -4,51 +4,59 @@
     @update:open="(value: boolean) => !value && emit('close', false)"
   >
     <template #content>
-      <div class="card flex flex-col p-8 gap-8 md:p-20 md:gap-16 overflow-hidden">
+      <div class="card flex flex-col p-6 px-12 gap-8 md:p-14 md:px-24 md:gap-16 overflow-hidden">
         <base-polygon
           class="absolute -left-32 -top-40 -z-10"
           size="20rem"
+          color="#FFE2A8"
           rotate="30deg"
-          opacity="0.6"
+          opacity="0.5"
         />
         <base-polygon
-          class="absolute -right-[14rem] -bottom-[20rem] -z-10"
+          class="absolute -right-56 -bottom-80 -z-10"
           size="30rem"
           shape="pentagon"
           fill="solid"
+          color="#FFD9A0"
           rotate="-30deg"
-          opacity="0.5"
+          opacity="0.25"
         />
 
         <!-- 相機掃描區 -->
         <div class="scanner relative rounded-3xl overflow-hidden bg-black/80">
-          <video ref="video" class="w-full h-full object-cover" muted playsinline />
+          <video
+            ref="video"
+            class="w-full h-full object-cover"
+            muted
+            playsinline
+          />
 
           <!-- 相機無法使用時的提示 -->
           <div
             v-if="!cameraAvailable"
             class="absolute inset-0 flex flex-col flex-center gap-4 text-center text-white p-8"
           >
-            <UIcon name="material-symbols:no-photography" class="text-[4rem]" />
+            <UIcon
+              name="material-symbols:no-photography"
+              class="text-[4rem]"
+            />
             <div class="text-xl">無法使用相機，請改用下方輸入房號</div>
           </div>
         </div>
 
         <!-- 手動輸入房號退路 -->
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-8">
           <UInput
             v-model="targetRoomId"
-            color="secondary"
             size="xl"
             placeholder="直接掃描或手動輸入房號 (｢･ω･)｢"
-            :ui="{ base: 'rounded-full text-center' }"
+            :ui="{ base: 'rounded-full text-center focus-visible:ring-[#FF744F]!' }"
             @keyup.enter="handleSubmit"
           />
           <UButton
             block
-            color="secondary"
             size="xl"
-            class="relative p-4 md:p-7 rounded-full overflow-hidden justify-center"
+            class="relative p-4 md:p-7 rounded-full overflow-hidden justify-center bg-[#FF744F]! hover:bg-[#FF8A66]! active:bg-[#F25B36]! text-white!"
             @click="handleSubmit"
           >
             加入

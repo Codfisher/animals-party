@@ -87,8 +87,8 @@ const players = computed(() => {
 
 whenever(
   () => {
-    // 排除 NPC：NPC 不會按確認，只要真人玩家全部 OK 就開始
-    const realPlayerList = players.value.filter((player) => !player.isNpc);
+    // 排除 CPU：CPU 不會按確認，只要真人玩家全部 OK 就開始
+    const realPlayerList = players.value.filter((player) => !player.isCpu);
     return realPlayerList.length > 0 && realPlayerList.every(({ ok }) => ok);
   },
   () => emit('all-ready'),

@@ -45,7 +45,7 @@ import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
 import { promiseTimeout } from '@vueuse/core';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
-import { useNpcPlayer } from '../../composables/use-npc-player';
+import { useCpuPlayer } from '../../composables/use-cpu-player';
 import { useEffects } from '../../composables/use-effects';
 
 interface Props {
@@ -62,7 +62,7 @@ const emit = defineEmits<{
 }>();
 
 const gameConsole = useClientGameConsole();
-const npcPlayer = useNpcPlayer();
+const cpuPlayer = useCpuPlayer();
 
 const isGameOver = ref(false);
 
@@ -103,12 +103,12 @@ const { canvas } = useBabylonScene({
     players.push(...foxes);
     initGamepadEvent(foxes);
 
-    /** 找出 NPC 狐狸 */
-    const npcFoxList = foxes.filter((fox) => {
+    /** 找出 CPU 狐狸 */
+    const cpuFoxList = foxes.filter((fox) => {
       const player = gameConsole.players.value.find(({ clientId }) => clientId === fox.param.ownerId);
-      return player && npcPlayer.isNpcPlayer(player);
+      return player && cpuPlayer.isCpuPlayer(player);
     });
-    let npcFrameCount = 0;
+    let cpuFrameCount = 0;
 
     scene.registerBeforeRender(() => {
       if (isGameOver.value) return;
@@ -116,11 +116,11 @@ const { canvas } = useBabylonScene({
       detectCollideEvent(foxes, mice);
       detectGameOver(foxes, engine);
 
-      if (npcFoxList.length > 0 && props.mode === 'normal') {
-        npcFrameCount++;
+      if (cpuFoxList.length > 0 && props.mode === 'normal') {
+        cpuFrameCount++;
         // 約每 10 幀更新一次，保留反應延遲讓玩家有機可乘
-        if (npcFrameCount % 10 === 0) {
-          npcFoxList.forEach((npcFox) => runFoxNpcStep(npcFox, mice));
+        if (cpuFrameCount % 10 === 0) {
+          cpuFoxList.forEach((cpuFox) => runFoxCpuStep(cpuFox, mice));
         }
       }
     });
@@ -372,14 +372,14 @@ function ctrlFox(fox: Fox, data: GamepadData) {
   }
 }
 
-/** NPC 狐狸 AI：走向最近且未被抓的老鼠，靠近就撲 */
-function runFoxNpcStep(npcFox: Fox, mice: Mouse[]) {
-  const mesh = npcFox.mesh;
+/** CPU 狐狸 AI：走向最近且未被抓的老鼠，靠近就撲 */
+function runFoxCpuStep(cpuFox: Fox, mice: Mouse[]) {
+  const mesh = cpuFox.mesh;
   if (!mesh) return;
   // 已抓到老鼠就收手
-  if (npcFox.mouseSize > 0) return;
+  if (cpuFox.mouseSize > 0) return;
   // 撲擊／落地動作中不打斷
-  if (['pounce', 'dive'].includes(npcFox.getState())) return;
+  if (['pounce', 'dive'].includes(cpuFox.getState())) return;
 
   const huntableList = mice.filter((mouse) => !mouse.isCaught && mouse.mesh);
   if (huntableList.length === 0) return;
@@ -397,12 +397,12 @@ function runFoxNpcStep(npcFox: Fox, mice: Mouse[]) {
 
   // 夠近就撲，否則朝目標前進
   if (nearestDistance < 2.5) {
-    npcFox.pounce();
+    cpuFox.pounce();
     return;
   }
 
   const direction = nearestMouse.mesh.position.subtract(mesh.position);
   direction.y = 0;
-  npcFox.walk(direction);
+  cpuFox.walk(direction);
 }
 </script>

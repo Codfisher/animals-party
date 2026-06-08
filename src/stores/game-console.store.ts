@@ -67,12 +67,12 @@ export const useGameConsoleStore = defineStore('game-console', () => {
     players.value[index] = data;
   }
 
-  function addNpcPlayerList(npcList: Player[]) {
-    players.value = [...players.value, ...npcList];
+  function addCpuPlayerList(cpuList: Player[]) {
+    players.value = [...players.value, ...cpuList];
   }
 
-  function removeNpcPlayers() {
-    players.value = players.value.filter(({ isNpc }) => !isNpc);
+  function removeCpuPlayers() {
+    players.value = players.value.filter(({ isCpu }) => !isCpu);
   }
 
   return {
@@ -88,7 +88,7 @@ export const useGameConsoleStore = defineStore('game-console', () => {
     clearRoomId,
     updateState,
     updateProfile,
-    addNpcPlayerList,
-    removeNpcPlayers,
+    addCpuPlayerList,
+    removeCpuPlayers,
   };
 });
