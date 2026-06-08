@@ -49,7 +49,7 @@ import { Chicken } from './chicken';
 import PlayerLeaderboard from '../../components/player-leaderboard.vue';
 
 import { useClientGameConsole } from '../../composables/use-client-game-console';
-import { useNpcPlayer } from '../../composables/use-npc-player';
+import { useCpuPlayer } from '../../composables/use-cpu-player';
 import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
 import { useEffects } from '../../composables/use-effects';
 import { useInterval, whenever } from '@vueuse/core';
@@ -89,7 +89,7 @@ watch(
 );
 
 const gameConsole = useClientGameConsole();
-const npcPlayer = useNpcPlayer();
+const cpuPlayer = useCpuPlayer();
 
 const isGameOver = ref(false);
 
@@ -160,25 +160,25 @@ const { canvas } = useBabylonScene({
 
     const badChickens = await createBadChickens(scene);
 
-    /** 找出 NPC 小雞 */
-    const npcChickenList = chickens.filter((chicken) => {
+    /** 找出 CPU 小雞 */
+    const cpuChickenList = chickens.filter((chicken) => {
       const player = gameConsole.players.value.find(
         ({ clientId }) => clientId === chicken.params.ownerId,
       );
-      return player && npcPlayer.isNpcPlayer(player);
+      return player && cpuPlayer.isCpuPlayer(player);
     });
-    let npcFrameCount = 0;
+    let cpuFrameCount = 0;
 
     scene.registerBeforeRender(() => {
       detectCollideEvents(chickens, badChickens);
       detectGameOver(chickens, engine);
       detectOutOfBounds(chickens);
 
-      if (npcChickenList.length > 0 && props.mode === 'normal') {
-        npcFrameCount++;
+      if (cpuChickenList.length > 0 && props.mode === 'normal') {
+        cpuFrameCount++;
         // 約每 6 幀更新一次，保留反應延遲讓玩家有機可乘
-        if (npcFrameCount % 6 === 0) {
-          npcChickenList.forEach((npcChicken) => runChickenNpcStep(npcChicken, badChickens));
+        if (cpuFrameCount % 6 === 0) {
+          cpuChickenList.forEach((cpuChicken) => runChickenCpuStep(cpuChicken, badChickens));
         }
       }
     });
@@ -527,9 +527,9 @@ function clampUnit(value: number) {
   return Math.max(-1, Math.min(1, value));
 }
 
-/** NPC 小雞 AI：閃避逼近的壞雞，無威脅時回到畫面中央 */
-function runChickenNpcStep(npcChicken: Chicken, badChickens: BadChicken[]) {
-  const mesh = npcChicken.mesh;
+/** CPU 小雞 AI：閃避逼近的壞雞，無威脅時回到畫面中央 */
+function runChickenCpuStep(cpuChicken: Chicken, badChickens: BadChicken[]) {
+  const mesh = cpuChicken.mesh;
   if (!mesh || mesh.isDisposed()) return;
 
   const { x, y } = mesh.position;
@@ -566,6 +566,6 @@ function runChickenNpcStep(npcChicken: Chicken, badChickens: BadChicken[]) {
   // 依 chicken.ts processLift：force.x 與 roll 同向、force.y 與 -pitch 同向
   const roll = clampUnit(moveX) * maxAngle;
   const pitch = -clampUnit(moveY) * maxAngle;
-  npcChicken.setAttitude(pitch, roll);
+  cpuChicken.setAttitude(pitch, roll);
 }
 </script>
