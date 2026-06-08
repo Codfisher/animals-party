@@ -261,8 +261,14 @@ const startGame = debounce(
   async () => {
     const game = selectedGame.value;
 
-    // 真實玩家不足 minPlayers 時自動補 CPU（三款遊戲皆適用）
+    // 至少要有一名真實玩家才能開始，避免全是 CPU 的空房開局
     const realPlayerList = gameConsole.players.value.filter(({ isCpu }) => !isCpu);
+    if (realPlayerList.length === 0) {
+      emit('error', '還沒有玩家加入，快掃描 QR Code 一起玩吧！');
+      return;
+    }
+
+    // 真實玩家不足 minPlayers 時自動補 CPU（三款遊戲皆適用）
     const cpuPlayerList = cpuPlayer.createCpuPlayerList(
       realPlayerList.length,
       game.condition.minPlayers,
