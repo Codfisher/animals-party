@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { isEqual } from 'lodash-es';
 import { useVibrate } from '@vueuse/core';
 import { KeyName, PlayerPermission } from '../../types';
@@ -79,29 +79,50 @@ const permissionMissing = computed(() =>
   ['prompt', 'denied'].includes(motionPermission.state.value),
 );
 
-/** 嘗試送出 profile：host 端尚未有相同權限時才送。
- *  以 host 廣播的玩家清單作為「是否已送達」依據，避免廣播回流造成無限重送。 */
-function trySendProfile() {
-  const permission = playerPermission.value;
+/** profile 重送間隔與最長重試時間（毫秒） */
+const PROFILE_RETRY_INTERVAL = 600;
+const PROFILE_RETRY_DURATION = 8000;
 
-  /** host 已記錄我目前的權限，視為已送達，不再重送 */
+let profileRetryTimer: ReturnType<typeof setTimeout> | undefined;
+let profileRetryUntil = 0;
+
+/** host 廣播的玩家清單已含我目前權限，視為已送達 */
+function profileDelivered() {
   const me = gameConsoleStore.players.find((player) => player.clientId === mainStore.clientId);
-  if (me?.permission && isEqual(me.permission, permission)) return;
-
-  emitProfile({ permission }).catch(() => undefined);
+  return !!me?.permission && isEqual(me.permission, playerPermission.value);
 }
 
-/** 多重來源驅動送出，確保 profile 可靠送達 host：
- *  - clientConnected：連線真正 open 時
- *  - playerPermission：取得或變更權限時（例如使用者於權限卡授權體感）
- *  - players：收到 host 廣播的玩家清單（代表連線確實可用）時
- *  收到玩家清單即可證明連線通暢，是最可靠的補送時機；
- *  搭配 trySendProfile 內的去重判斷，host 一旦收到就會停止重送。 */
+function stopProfileRetry() {
+  if (!profileRetryTimer) return;
+  clearTimeout(profileRetryTimer);
+  profileRetryTimer = undefined;
+}
+
+/** 持續送出 profile 直到 host 回傳的玩家清單確認收到。
+ *  data channel 剛 open 時單次送出可能遺失（過去靠除錯 log 的同步延遲意外閃避），
+ *  改以「重送至確認」確保權限可靠送達，host 收到後會回流玩家清單而自動停止。 */
+function pumpProfile() {
+  stopProfileRetry();
+
+  if (!mainStore.clientConnected) return; // 等連線 open，clientConnected 變動會再觸發
+  if (profileDelivered()) return; // host 已確認收到
+  if (Date.now() > profileRetryUntil) return; // 超過時限放棄，避免極端情況無限重送
+
+  emitProfile({ permission: playerPermission.value }).catch(() => undefined);
+  profileRetryTimer = setTimeout(pumpProfile, PROFILE_RETRY_INTERVAL);
+}
+
+/** 連線狀態、權限或玩家清單變動時重置重試時限並嘗試送達 */
 watch(
   () => [mainStore.clientConnected, playerPermission.value, gameConsoleStore.players] as const,
-  () => trySendProfile(),
+  () => {
+    profileRetryUntil = Date.now() + PROFILE_RETRY_DURATION;
+    pumpProfile();
+  },
   { immediate: true },
 );
+
+onBeforeUnmount(stopProfileRetry);
 
 onMounted(() => {
   loading.hide();
