@@ -1,10 +1,21 @@
 <template>
-  <div class="qr-card flex flex-col items-center gap-5">
+  <div class="qr-card flex flex-col items-center">
     <div class="qr-frame relative">
-      <img v-if="dataUrl" :src="dataUrl" class="qr-image" alt="房間 QR Code" />
-      <div v-else class="qr-image qr-placeholder" />
+      <img
+        v-if="dataUrl"
+        :src="dataUrl"
+        class="qr-image"
+        alt="房間 QR Code"
+      />
+      <div
+        v-else
+        class="qr-image qr-placeholder"
+      />
 
-      <div v-if="roomId" class="room-id absolute inset-0 flex items-center justify-center">
+      <div
+        v-if="roomId"
+        class="room-id absolute inset-0 flex items-center justify-center"
+      >
         <div class="room-id-badge">
           <span class="room-id-text">{{ roomId }}</span>
         </div>
@@ -53,10 +64,13 @@ watch(
 @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch&display=swap')
 
 .qr-card
-  padding: 1.4rem
+  padding: 0.75rem
   border-radius: 2rem
   background: white
   box-shadow: 0 8px 24px rgba(#1d3e57, 0.25)
+
+.qr-frame
+  border-radius: 1rem
 
 .qr-image
   display: block
