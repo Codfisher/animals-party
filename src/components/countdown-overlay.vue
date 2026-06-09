@@ -2,7 +2,13 @@
   <transition name="opacity">
     <!-- 小於 0 後元件自動消失 -->
     <div v-if="counter >= 0" class="absolute w-full h-full flex justify-center items-center">
-      <transition name="countdown" mode="out-in" appear>
+      <transition
+        name="countdown"
+        mode="out-in"
+        appear
+        @after-enter="handleNumberEntered"
+        @after-appear="handleStartAppeared"
+      >
         <div :key="text">
           <!-- 文字 -->
           <div class="text" :class="getClass()" :style="textStyle">
@@ -50,11 +56,17 @@ watch(counter, (value) => {
     return;
   }
 
-  /** 0 為開始號角，其餘為倒數提示音 */
-  audio.play(value === 0 ? 'start' : 'countdown');
-
   emit('count', value);
 });
+
+/** 起始數字以 appear 進場，刻意不發提示音，維持原本只在 2、1、Start 發聲的節奏 */
+function handleStartAppeared() {}
+
+/** 數字彈入完成才發聲，對齊 out-in 動畫；放在 counter 變動會早約一次離場動畫的時間 */
+function handleNumberEntered() {
+  /** 0 為開始號角，其餘為倒數提示音 */
+  audio.play(counter.value === 0 ? 'start' : 'countdown');
+}
 
 /** 0 之前顯示數字，0 的時候顯示 startText */
 const text = computed(() => {
