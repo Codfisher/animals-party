@@ -4,7 +4,7 @@
          用 min-h 而非 h：AdSense 腳本會對廣告容器與祖先注入 height:auto !important，
          min-height 不受其覆蓋，廣告被擋或未填充時仍維持帶高 -->
     <div
-      class="ad-band relative shrink-0 min-h-14 flex flex-center overflow-hidden bg-black/30 border-b border-white/10"
+      class="ad-band relative shrink-0 min-h-14 max-h-28 flex flex-center overflow-hidden bg-black/30 border-b border-white/10"
     >
       <!-- adblock fallback：廣告被攔截移除時，露出裝飾與文字（呼應首頁支持區）。
            細帶空間有限，多邊形自上下緣與四角探入、低透明度點綴，避免置中被裁成橫條 -->
@@ -49,12 +49,14 @@
         順手開廣告，支持好內容 (*´∀`)~♥
       </p>
 
+      <!-- 固定高度模式：滿寬、固定 100px，對應 320×100「大型行動橫幅」標準尺寸，
+           小高度裡手機填充率最佳。responsive 廣告會沿祖先鏈注入 height:auto／max-height:none
+           清掉高度限制而撐爆版位；固定高度模式不帶 data-ad-format／full-width-responsive，
+           AdSense 不動祖先，高度壓得住、不超框（100px 仍遠低於螢幕 1/4） -->
       <google-adsense
         client="ca-pub-6608581811170481"
         slot="9242930193"
-        format="horizontal"
-        :full-width-responsive="false"
-        :min-height="50"
+        :height="100"
         class="relative z-20 w-full max-w-2xl"
       />
     </div>
