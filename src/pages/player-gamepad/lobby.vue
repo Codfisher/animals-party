@@ -40,6 +40,7 @@ import PermissionCard from '../../components/permission-card.vue';
 import { useLoading } from '../../composables/use-loading';
 import { useClientPlayer } from '../../composables/use-client-player';
 import { useMotionPermission } from '../../composables/use-motion-permission';
+import { useRemoteLog } from '../../composables/use-remote-log';
 import { useMainStore } from '../../stores/main.store';
 import { useGameConsoleStore } from '../../stores/game-console.store';
 
@@ -64,6 +65,7 @@ function openPermissionCard() {
 
 const motionPermission = useMotionPermission();
 const { isSupported: vibrateSupported } = useVibrate();
+const remoteLog = useRemoteLog('[ lobby ]');
 
 /** 本機完整權限狀態（體感 + 震動）。
  *  直接由權限來源計算，不依賴權限卡是否掛載，
@@ -104,10 +106,20 @@ function stopProfileRetry() {
 function pumpProfile() {
   stopProfileRetry();
 
-  if (!mainStore.clientConnected) return; // 等連線 open，clientConnected 變動會再觸發
-  if (profileDelivered()) return; // host 已確認收到
-  if (Date.now() > profileRetryUntil) return; // 超過時限放棄，避免極端情況無限重送
+  if (!mainStore.clientConnected) {
+    remoteLog.log('pumpProfile：尚未連線，等待 open');
+    return; // 等連線 open，clientConnected 變動會再觸發
+  }
+  if (profileDelivered()) {
+    remoteLog.log('pumpProfile：host 已確認收到，停止重送', playerPermission.value);
+    return; // host 已確認收到
+  }
+  if (Date.now() > profileRetryUntil) {
+    remoteLog.warn('pumpProfile：逾時放棄', playerPermission.value);
+    return; // 超過時限放棄，避免極端情況無限重送
+  }
 
+  remoteLog.log('pumpProfile：送出 profile', playerPermission.value);
   emitProfile({ permission: playerPermission.value }).catch(() => undefined);
   profileRetryTimer = setTimeout(pumpProfile, PROFILE_RETRY_INTERVAL);
 }

@@ -8,9 +8,11 @@ import {
   PeerConnectionMetadata,
   PeerMessage,
   Player,
+  RemoteLogPayload,
   Room,
 } from '../../types';
 import { UpdateStateParams } from '../../stores/game-console.store';
+import { remoteLogEnabled } from '../remote-log';
 import { generateRoomCode, toPeerId } from './room-id';
 
 /** id 撞號時重新產生的最大次數 */
@@ -139,6 +141,13 @@ export class PeerHost {
       case 'player:profile': {
         const profile: Player = { ...(message.data as Player), clientId };
         const entry = this.playerMap.get(clientId);
+        if (remoteLogEnabled()) {
+          // 驗證「profile 早於連線 open」的競態：entry 不存在代表 profile 會被丟棄
+          console.log(`[ host ] 收到 player:profile`, this.getCodeName(clientId), {
+            entryExists: !!entry,
+            permission: profile.permission,
+          });
+        }
         if (entry) {
           entry.profile = profile;
         }
@@ -151,9 +160,22 @@ export class PeerHost {
         this.sendTo(clientId, 'game-console:state-update', this.buildState());
         break;
 
+      case 'player:log': {
+        const payload = message.data as RemoteLogPayload;
+        // 玩家端有開啟遠端 log 才會送來，主機端一律輸出，附上對應代號（1P／2P…）
+        console[payload.level](`[ player-log ][${this.getCodeName(clientId)}]`, ...payload.parts);
+        break;
+      }
+
       default:
         break;
     }
+  }
+
+  /** 依 playerMap 加入順序回傳玩家代號（1P／2P…），與玩家端顯示一致 */
+  private getCodeName(clientId: string): string {
+    const index = [...this.playerMap.keys()].indexOf(clientId);
+    return index < 0 ? 'unknown' : `${index + 1}P`;
   }
 
   /** 廣播給玩家的事件（state-update / console-data） */

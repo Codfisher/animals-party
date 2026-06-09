@@ -27,12 +27,14 @@ import { useRouter } from 'vue-router';
 import { useGameConsoleStore } from '../stores/game-console.store';
 import { useMainStore } from '../stores/main.store';
 import { useClientPlayer } from '../composables/use-client-player';
+import { useRemoteLog } from '../composables/use-remote-log';
 import { GameName } from '../types';
 
 const gameConsoleStore = useGameConsoleStore();
 const mainStore = useMainStore();
 const router = useRouter();
 const player = useClientPlayer();
+const remoteLog = useRemoteLog('[ player-gamepad ]');
 const toast = useToast();
 
 /** 重連蓋板是否顯示 */
@@ -147,7 +149,8 @@ async function init() {
   });
 
   player.onPlayerUpdate((players) => {
-    console.log(`[ onPlayerUpdate ] players : `, players);
+    const me = players.find((item) => item.clientId === mainStore.clientId);
+    remoteLog.log('onPlayerUpdate：我方權限', me?.permission);
 
     gameConsoleStore.updateState({ players });
   });
