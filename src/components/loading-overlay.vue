@@ -1,5 +1,5 @@
 <template>
-  <transition-mask v-model="isLoading" class="absolute inset-0" @update="handleUpdate">
+  <transition-mask v-model="isLoading" class="absolute inset-0 z-9999" @update="handleUpdate">
     <background-loading-jumping-polygon class="absolute inset-0" />
   </transition-mask>
 </template>
