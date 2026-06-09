@@ -89,7 +89,13 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import gsap from 'gsap';
-import { GameName, permissionInfoMap, Player, PlayerPermission } from '../types';
+import {
+  GameName,
+  permissionInfoMap,
+  Player,
+  PlayerPermission,
+  PlayerPermissionState,
+} from '../types';
 import type { RouteNamedMap } from 'vue-router/auto-routes';
 import { debounce, throttle } from 'lodash-es';
 
@@ -105,6 +111,7 @@ import { useCpuPlayer } from '../composables/use-cpu-player';
 import { useGameConsoleStore } from '../stores/game-console.store';
 import { useRouter } from 'vue-router';
 import { useLoading } from '../composables/use-loading';
+import { useAudio } from '../composables/use-audio';
 
 interface GameInfo {
   name: `${GameName}`;
@@ -159,6 +166,7 @@ const gameConsoleStore = useGameConsoleStore();
 const cpuPlayer = useCpuPlayer();
 const router = useRouter();
 const loading = useLoading();
+const audio = useAudio();
 
 const currentIndex = ref(
   games.findIndex(({ name }) => name === gameConsole.currentGame.value) ?? 0,
@@ -166,6 +174,7 @@ const currentIndex = ref(
 const selectedGame = computed(() => games[currentIndex.value]);
 const prevGame = throttle(
   () => {
+    audio.play('click');
     currentIndex.value--;
     if (currentIndex.value < 0) {
       currentIndex.value += games.length;
@@ -179,6 +188,7 @@ const prevGame = throttle(
 );
 const nextGame = throttle(
   () => {
+    audio.play('click');
     currentIndex.value++;
     currentIndex.value %= games.length;
   },
@@ -246,23 +256,49 @@ function checkGameCondition(condition: GameInfo['condition'], players: Player[])
     if (player.isCpu) continue;
 
     for (const name of requiredPermissions) {
-      if (player.permission?.[name] === 'granted') continue;
+      const state = player.permission?.[name];
+      if (state === 'granted') continue;
 
       const codeName = gameConsole.getPlayerCodeName(player.clientId);
       const permissionLabel = permissionInfoMap[name].label;
-      return `${codeName} 玩家缺少「${permissionLabel}」權限，請點擊搖桿畫面右上角按鈕確認權限狀態。`;
+      return getPermissionErrorMessage(codeName, permissionLabel, state);
     }
   }
 
   return undefined;
 }
 
+/** 依玩家權限狀態給出對應提示。
+ *  not-support 點按鈕也無濟於事，需與 prompt／denied 區分，避免誤導玩家。 */
+function getPermissionErrorMessage(
+  codeName: string,
+  permissionLabel: string,
+  state: PlayerPermissionState | undefined,
+) {
+  if (state === 'denied') {
+    return `${codeName} 玩家的「${permissionLabel}」權限被拒絕，請至手機瀏覽器設定開啟後重試。`;
+  }
+
+  if (state === 'not-support') {
+    return `${codeName} 玩家的裝置或瀏覽器不支援「${permissionLabel}」，請改用 Chrome／Safari 直接開啟（勿從 LINE、FB 等 App 內開啟），或換一台支援體感的手機。`;
+  }
+
+  // prompt 或尚未取得權限資料：玩家可自行授權
+  return `${codeName} 玩家尚未開啟「${permissionLabel}」權限，請點擊搖桿畫面右上角按鈕完成授權。`;
+}
+
 const startGame = debounce(
   async () => {
     const game = selectedGame.value;
 
-    // 真實玩家不足 minPlayers 時自動補 CPU（三款遊戲皆適用）
+    // 至少要有一名真實玩家才能開始，避免全是 CPU 的空房開局
     const realPlayerList = gameConsole.players.value.filter(({ isCpu }) => !isCpu);
+    if (realPlayerList.length === 0) {
+      emit('error', '還沒有玩家加入，快掃描 QR Code 一起玩吧！');
+      return;
+    }
+
+    // 真實玩家不足 minPlayers 時自動補 CPU（三款遊戲皆適用）
     const cpuPlayerList = cpuPlayer.createCpuPlayerList(
       realPlayerList.length,
       game.condition.minPlayers,

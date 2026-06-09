@@ -20,15 +20,16 @@
 
     <UModal v-model:open="permissionCardVisible" class="bg-transparent shadow-none ring-0">
       <template #content>
-        <permission-card @update="handlePermission" />
+        <permission-card />
       </template>
     </UModal>
   </player-gamepad-container>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { isEqual } from 'lodash-es';
+import { useVibrate } from '@vueuse/core';
 import { KeyName, PlayerPermission } from '../../types';
 
 import PlayerGamepadContainer from '../../components/player-gamepad-container.vue';
@@ -39,6 +40,7 @@ import PermissionCard from '../../components/permission-card.vue';
 import { useLoading } from '../../composables/use-loading';
 import { useClientPlayer } from '../../composables/use-client-player';
 import { useMotionPermission } from '../../composables/use-motion-permission';
+import { useRemoteLog } from '../../composables/use-remote-log';
 import { useMainStore } from '../../stores/main.store';
 import { useGameConsoleStore } from '../../stores/game-console.store';
 
@@ -61,44 +63,78 @@ function openPermissionCard() {
   permissionCardVisible.value = true;
 }
 
+const motionPermission = useMotionPermission();
+const { isSupported: vibrateSupported } = useVibrate();
+const remoteLog = useRemoteLog('[ lobby ]');
+
+/** 本機完整權限狀態（體感 + 震動）。
+ *  直接由權限來源計算，不依賴權限卡是否掛載，
+ *  確保非 iOS（體感預設 granted、權限卡不會自動開啟）也能可靠回報 host。 */
+const playerPermission = computed<PlayerPermission>(() => ({
+  gyroscope: motionPermission.state.value,
+  vibrate: vibrateSupported.value ? 'granted' : 'not-support',
+}));
+
 /** 是否缺少權限：體感支援但尚未授權（prompt）或被拒（denied）。
  *  granted／not-support 不算缺少；震動權限無需顯式授權，故不納入判斷。 */
-const motionPermission = useMotionPermission();
 const permissionMissing = computed(() =>
   ['prompt', 'denied'].includes(motionPermission.state.value),
 );
 
-/** 最新權限狀態。權限卡掛載時即回報，但此時連線可能尚未 open。 */
-const latestPermission = ref<PlayerPermission>();
+/** profile 重送間隔與最長重試時間（毫秒） */
+const PROFILE_RETRY_INTERVAL = 600;
+const PROFILE_RETRY_DURATION = 8000;
 
-function handlePermission(permission: PlayerPermission) {
-  latestPermission.value = permission;
-}
+let profileRetryTimer: ReturnType<typeof setTimeout> | undefined;
+let profileRetryUntil = 0;
 
-/** 嘗試送出 profile：權限已知，且 host 端尚未有相同權限時才送。
- *  以 host 廣播的玩家清單作為「是否已送達」依據，避免廣播回流造成無限重送。 */
-function trySendProfile() {
-  const permission = latestPermission.value;
-  if (!permission) return;
-
-  /** host 已記錄我目前的權限，視為已送達，不再重送 */
+/** host 廣播的玩家清單已含我目前權限，視為已送達 */
+function profileDelivered() {
   const me = gameConsoleStore.players.find((player) => player.clientId === mainStore.clientId);
-  if (me?.permission && isEqual(me.permission, permission)) return;
-
-  emitProfile({ permission }).catch(() => undefined);
+  return !!me?.permission && isEqual(me.permission, playerPermission.value);
 }
 
-/** 多重來源驅動送出，確保 profile 可靠送達 host：
- *  - clientConnected：連線真正 open 時
- *  - latestPermission：取得或變更權限時
- *  - players：收到 host 廣播的玩家清單（代表連線確實可用）時
- *  收到玩家清單即可證明連線通暢，是最可靠的補送時機；
- *  搭配 trySendProfile 內的去重判斷，host 一旦收到就會停止重送。 */
+function stopProfileRetry() {
+  if (!profileRetryTimer) return;
+  clearTimeout(profileRetryTimer);
+  profileRetryTimer = undefined;
+}
+
+/** 持續送出 profile 直到 host 回傳的玩家清單確認收到。
+ *  data channel 剛 open 時單次送出可能遺失（過去靠除錯 log 的同步延遲意外閃避），
+ *  改以「重送至確認」確保權限可靠送達，host 收到後會回流玩家清單而自動停止。 */
+function pumpProfile() {
+  stopProfileRetry();
+
+  if (!mainStore.clientConnected) {
+    remoteLog.log('pumpProfile：尚未連線，等待 open');
+    return; // 等連線 open，clientConnected 變動會再觸發
+  }
+  if (profileDelivered()) {
+    remoteLog.log('pumpProfile：host 已確認收到，停止重送', playerPermission.value);
+    return; // host 已確認收到
+  }
+  if (Date.now() > profileRetryUntil) {
+    remoteLog.warn('pumpProfile：逾時放棄', playerPermission.value);
+    return; // 超過時限放棄，避免極端情況無限重送
+  }
+
+  remoteLog.log('pumpProfile：送出 profile', playerPermission.value);
+  emitProfile({ permission: playerPermission.value }).catch(() => undefined);
+  profileRetryTimer = setTimeout(pumpProfile, PROFILE_RETRY_INTERVAL);
+}
+
+/** 連線狀態、權限或玩家清單變動時重置重試時限並嘗試送達 */
 watch(
-  () => [mainStore.clientConnected, latestPermission.value, gameConsoleStore.players] as const,
-  () => trySendProfile(),
+  () => [mainStore.clientConnected, playerPermission.value, gameConsoleStore.players] as const,
+  () => {
+    profileRetryUntil = Date.now() + PROFILE_RETRY_DURATION;
+    pumpProfile();
+  },
   { immediate: true },
 );
+
+onBeforeUnmount(stopProfileRetry);
 
 onMounted(() => {
   loading.hide();

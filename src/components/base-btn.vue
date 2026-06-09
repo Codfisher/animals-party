@@ -28,6 +28,7 @@ export interface State {
 import { computed, ref } from 'vue';
 import { ControllableElement } from '../composables/use-gamepad-navigator';
 import { promiseTimeout, useWindowSize } from '@vueuse/core';
+import { useAudio } from '../composables/use-audio';
 
 interface Props {
   label?: string;
@@ -80,7 +81,10 @@ const labelStyle = computed(() => {
   };
 });
 
+const audio = useAudio();
+
 function handleClick(showEffect = false) {
+  audio.play('click');
   emit('click');
 
   if (showEffect) {

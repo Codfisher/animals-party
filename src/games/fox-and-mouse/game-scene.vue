@@ -47,6 +47,7 @@ import { promiseTimeout } from '@vueuse/core';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { useCpuPlayer } from '../../composables/use-cpu-player';
 import { useEffects } from '../../composables/use-effects';
+import { useAudio } from '../../composables/use-audio';
 
 interface Props {
   mode?: `${GameSceneMode}`;
@@ -67,9 +68,13 @@ const cpuPlayer = useCpuPlayer();
 const isGameOver = ref(false);
 
 const effects = useEffects();
-/** 遊戲結束時兩側噴發慶祝彩帶 */
+const audio = useAudio();
+/** 遊戲結束時兩側噴發慶祝彩帶並播放勝利音效 */
 watch(isGameOver, (value) => {
-  if (value) effects.fireConfetti();
+  if (value) {
+    effects.fireConfetti();
+    audio.play('win');
+  }
 });
 /** 遊戲場景邊界 */
 const sceneBoundary = {
@@ -290,6 +295,7 @@ function detectCollideEvent(foxes: Fox[], mice: Mouse[]) {
       if (foxState === 'pounce' && isIntersects) {
         mouse.caught();
         fox.setMouseSize(mouse.params.size);
+        audio.play('fox-and-mouse/catch');
       }
 
       if (isIntersects) {
@@ -354,6 +360,10 @@ function ctrlFox(fox: Fox, data: GamepadData) {
   if (aData) {
     if (props.mode === 'showcase') {
       return;
+    }
+    /** 僅在非撲擊／落地狀態才發聲，避免連按重複 */
+    if (!['pounce', 'dive'].includes(fox.getState())) {
+      audio.play('fox-and-mouse/pounce');
     }
     fox.pounce();
     return;

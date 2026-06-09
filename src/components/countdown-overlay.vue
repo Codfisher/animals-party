@@ -19,6 +19,7 @@ import { sample } from 'lodash-es';
 import { computed, ref, watch } from 'vue';
 
 import { useIntervalFn } from '@vueuse/core';
+import { useAudio } from '../composables/use-audio';
 
 interface Props {
   /** 預設從 3 開始倒數 */
@@ -39,6 +40,8 @@ const emit = defineEmits<{
   (e: 'done'): void;
 }>();
 
+const audio = useAudio();
+
 const counter = ref(props.startValue);
 watch(counter, (value) => {
   if (value <= -1) {
@@ -46,6 +49,9 @@ watch(counter, (value) => {
     emit('done');
     return;
   }
+
+  /** 0 為開始號角，其餘為倒數提示音 */
+  audio.play(value === 0 ? 'start' : 'countdown');
 
   emit('count', value);
 });

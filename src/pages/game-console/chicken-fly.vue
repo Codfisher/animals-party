@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { GameSceneMode } from '../../types';
 
 import GameScene from '../../games/chicken-fly/game-scene.vue';
@@ -68,11 +68,16 @@ import CountdownOverlay from '../../components/countdown-overlay.vue';
 import { useLoading } from '../../composables/use-loading';
 import { useRouter } from 'vue-router';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
+import { useAudio } from '../../composables/use-audio';
 import { whenever } from '@vueuse/core';
 
 const gameConsole = useClientGameConsole();
 const loading = useLoading();
 const router = useRouter();
+const audio = useAudio();
+
+/** 進入遊戲播放本遊戲背景音樂 */
+onMounted(() => audio.playBgm('chicken-fly'));
 
 const sceneMode = ref<`${GameSceneMode}`>('training');
 

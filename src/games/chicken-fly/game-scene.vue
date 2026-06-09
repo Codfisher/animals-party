@@ -37,7 +37,7 @@ import {
   Vector3,
 } from '@babylonjs/core';
 import { SkyMaterial } from '@babylonjs/materials';
-import { cloneDeep, curry, flow, range } from 'lodash-es';
+import { cloneDeep, curry, flow, range, throttle } from 'lodash-es';
 import { ref, watch } from 'vue';
 import { getPlayerColorRgb } from '../../common/color';
 import { getSquareMatrixPositions } from '../../common/utils';
@@ -52,6 +52,7 @@ import { useClientGameConsole } from '../../composables/use-client-game-console'
 import { useCpuPlayer } from '../../composables/use-cpu-player';
 import { useBabylonScene, type BabylonEngine } from '../../composables/use-babylon-scene';
 import { useEffects } from '../../composables/use-effects';
+import { useAudio } from '../../composables/use-audio';
 import { useInterval, whenever } from '@vueuse/core';
 
 interface Props {
@@ -94,10 +95,17 @@ const cpuPlayer = useCpuPlayer();
 const isGameOver = ref(false);
 
 const effects = useEffects();
-/** 遊戲結束時兩側噴發慶祝彩帶 */
+const audio = useAudio();
+/** 遊戲結束時兩側噴發慶祝彩帶並播放勝利音效 */
 watch(isGameOver, (value) => {
-  if (value) effects.fireConfetti();
+  if (value) {
+    effects.fireConfetti();
+    audio.play('win');
+  }
 });
+
+/** 撞擊每幀都可能觸發，節流避免音效疊放 */
+const playCollide = throttle(() => audio.play('chicken-fly/collide'), 300, { trailing: false });
 
 /** 遊戲場景邊界 */
 const sceneBoundary = {
@@ -173,6 +181,7 @@ const { canvas } = useBabylonScene({
       detectCollideEvents(chickens, badChickens);
       detectGameOver(chickens, engine);
       detectOutOfBounds(chickens);
+      detectDeaths(chickens);
 
       if (cpuChickenList.length > 0 && props.mode === 'normal') {
         cpuFrameCount++;
@@ -420,6 +429,7 @@ function detectCollideEvents(chickens: Chicken[], badChickens: BadChicken[]) {
 
       if (badChickenMesh.intersectsMesh(chicken.mesh)) {
         chicken.attacked();
+        playCollide();
       }
     });
   });
@@ -433,6 +443,16 @@ function detectGameOver(chickens: Chicken[], engine: BabylonEngine) {
 
   engine.stopRenderLoop();
   isGameOver.value = true;
+}
+/** 偵測小雞淘汰，於剛被淘汰時播放墜落音效（每隻僅一次） */
+const deadChickenSet = new Set<string>();
+function detectDeaths(chickens: Chicken[]) {
+  chickens.forEach((chicken) => {
+    if (chicken.diedAt > 0 && !deadChickenSet.has(chicken.name)) {
+      deadChickenSet.add(chicken.name);
+      audio.play('chicken-fly/dead');
+    }
+  });
 }
 /** 救回出界的小雞 */
 function detectOutOfBounds(chickens: Chicken[]) {

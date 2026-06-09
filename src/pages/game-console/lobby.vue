@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import GameMenu from '../../components/game-menu.vue';
 import PlayerList from '../../components/player-list.vue';
@@ -18,12 +18,25 @@ import PlayerList from '../../components/player-list.vue';
 import { useLoading } from '../../composables/use-loading';
 import { useClientGameConsole } from '../../composables/use-client-game-console';
 import { useGameConsoleStore } from '../../stores/game-console.store';
+import { useAudio } from '../../composables/use-audio';
 import { KeyName } from '../../types';
 
 const loading = useLoading();
 const toast = useToast();
 const gameConsole = useClientGameConsole();
 const gameConsoleStore = useGameConsoleStore();
+const audio = useAudio();
+
+/** 進入大廳播放大廳背景音樂 */
+onMounted(() => audio.playBgm('lobby'));
+
+/** 有新玩家加入時播放確認音效 */
+watch(
+  () => gameConsole.players.value.length,
+  (next, prev) => {
+    if (next > prev) audio.play('confirm');
+  },
+);
 
 function handleCompleted() {
   init();

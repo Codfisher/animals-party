@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { GameSceneMode } from '../../types';
 import { nanoid } from 'nanoid';
 
@@ -40,9 +40,14 @@ import CountdownOverlay from '../../components/countdown-overlay.vue';
 
 import { useLoading } from '../../composables/use-loading';
 import { useRouter } from 'vue-router';
+import { useAudio } from '../../composables/use-audio';
 
 const loading = useLoading();
 const router = useRouter();
+const audio = useAudio();
+
+/** 進入遊戲播放本遊戲背景音樂 */
+onMounted(() => audio.playBgm('the-first-penguin'));
 
 const sceneMode = ref<`${GameSceneMode}`>('training');
 

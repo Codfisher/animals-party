@@ -59,12 +59,12 @@ export const useGameConsoleStore = defineStore('game-console', () => {
 
     /** 不存在，新增 */
     if (index < 0) {
-      players.value.push(data);
+      players.value = [...players.value, data];
       return;
     }
 
-    /** 更新資料 */
-    players.value[index] = data;
+    /** 更新資料：重建陣列而非原地寫入，確保 computed(() => players) 等依賴可靠更新 */
+    players.value = players.value.map((player, i) => (i === index ? data : player));
   }
 
   function addCpuPlayerList(cpuList: Player[]) {

@@ -9,9 +9,18 @@
 </template>
 
 <script setup lang="ts">
+import { useEventListener } from '@vueuse/core';
 import LoadingOverlay from './components/loading-overlay.vue';
 import EffectsOverlay from './components/effects-overlay.vue';
+import { useAudio } from './composables/use-audio';
 import { version } from './../package.json';
+
+/** 首次使用者手勢時解鎖音訊（瀏覽器要求手勢才能播放） */
+const audio = useAudio();
+useEventListener(window, ['pointerdown', 'keydown', 'touchstart'], () => audio.unlock(), {
+  once: true,
+  passive: true,
+});
 </script>
 
 <style lang="sass">

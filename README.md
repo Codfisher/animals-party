@@ -138,6 +138,15 @@ pnpm test:ui
 
 > WebRTC 需透過 HTTPS 或 localhost 才能存取相機與感測器。`pnpm dev` 已帶 `--host`，手機可直接連入區網位址測試。
 
+### 遠端除錯（手機端 log）
+
+手機端（player）沒有 console 可看，可開啟遠端 log，將手機 log 透過 peer 資料通道轉送至主機，於主機（桌機）DevTools 檢視，與主機自身 log 對齊同一時間軸。
+
+- **開啟**：dev 模式（`pnpm dev`）固定開啟，免設定。正式環境如需除錯，於 console 執行 `localStorage.setItem('animals-party:remote-log', '1')`。
+- **關閉**：正式環境清除 `animals-party:remote-log` localStorage 鍵即關閉（dev 模式恆開）。
+- **檢視**：手機端 log 會出現在主機 DevTools，前綴為 `[ player-log ][1P]`（含玩家代號）。
+- **使用**：程式中以 `useRemoteLog('[ 範圍 ]')` 取得 `log`／`warn`／`error`，用法同 `console`；本機仍照常輸出，僅在啟用時額外轉送。
+
 ## 🔗 相關連結
 
 - [鱈魚的魚缸](https://codlin.me/)

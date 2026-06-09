@@ -13,11 +13,24 @@ export interface PeerConnectionMetadata {
   clientId: string;
 }
 
+/** 遠端 log 等級 */
+export type RemoteLogLevel = 'log' | 'warn' | 'error';
+
+/** 玩家端轉送至主機的 log 內容 */
+export interface RemoteLogPayload {
+  clientId: string;
+  level: RemoteLogLevel;
+  /** 已序列化的 log 參數，避免無法結構化複製的物件導致傳輸失敗 */
+  parts: string[];
+}
+
 /** 玩家透過 PeerClient 送往 host 的事件 */
 export type ClientEmitEventMap = {
   'player:gamepad-data': GamepadData;
   'player:profile': Player;
   'player:request-game-console-state': void;
+  /** 手機端無 console，將 log 轉送至主機檢視（由 remoteLogEnabled 控制是否啟用） */
+  'player:log': RemoteLogPayload;
 };
 
 /** 玩家透過 PeerClient 監聽、由 host 廣播的事件 */
