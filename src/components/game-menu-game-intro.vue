@@ -41,14 +41,14 @@
 
     <div
       v-auto-animate
-      class="relative z-0 flex flex-col gap-2"
+      class="relative z-0 flex flex-col gap-2 p-2"
     >
       <p class="text-center text-base font-bold tracking-widest opacity-80">遊戲簡介</p>
 
       <p
         v-auto-animate
         :key="name"
-        class="text-2xl leading-relaxed opacity-90"
+        class="text-lg leading-relaxed opacity-90"
         v-html="intro.description"
       />
     </div>
@@ -75,10 +75,10 @@ const introMap: Record<`${GameName}`, GameIntro> = {
     description: '阿德利企鵝會把最前頭的同伴踢下水，努力別被擠下去，撐到最後吧！<span>◝( •ω• )◟</span>',
   },
   [GameName.CHICKEN_FLY]: {
-    description: '一群農場的雞用大砲逃出農場了！先別管大砲哪來的，利用手機<b>陀螺儀</b>控制小雞的飛行姿態，閃過空中障礙物，帶小雞逃出農場魔掌吧！<p>─=≡Σ(( つ•̀ω•́)つ</p>',
+    description: '一群農場的雞用大砲逃出農場了！先別管大砲哪來的，利用手機<b>陀螺儀</b>控制小雞的飛行姿態，閃過空中障礙物，帶小雞逃出農場魔掌吧！<span>─=≡Σ((つ•̀ω•́)つ</span>',
   },
   [GameName.FOX_AND_MOUSE]: {
-    description: '赤狐會在雪上聆聽積雪下小老鼠竄動的聲音，抓準時機跳起、插入雪中抓老鼠。仔細感受手機<b>震動時長</b>，抓到最大隻的老鼠吧！ԅ(´∀` ԅ)',
+    description: '赤狐會在雪上聆聽積雪下小老鼠竄動的聲音，抓準時機跳起、插入雪中抓老鼠。仔細感受手機<b>震動時長</b>，抓到最大隻的老鼠吧！<span>ԅ(´∀` ԅ)</span>',
   },
 };
 

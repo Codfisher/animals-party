@@ -1,5 +1,8 @@
 <template>
-  <div class="flex flex-center overflow-hidden" :style="backgroundStyle">
+  <div
+    class="flex flex-center overflow-hidden"
+    :style="backgroundStyle"
+  >
     <div class="flex gap-8 md:gap-20">
       <div
         v-for="(poly, i) in polygons"
@@ -43,10 +46,10 @@ const props = withDefaults(defineProps<Props>(), {
 
 const backgroundStyle = computed(() => {
   // 變亮
-  const lightenColor = colord(props.backgroundColor).lighten(0.2).toHex();
+  const lightenColor = colord(props.backgroundColor).lighten(0.1).toHex();
 
   // 變暗並偏移色相
-  const offsetColor = colord(props.backgroundColor).darken(0.14).rotate(-15).toHex();
+  const offsetColor = colord(props.backgroundColor).darken(0.1).rotate(-15).toHex();
 
   return {
     background: `linear-gradient(-30deg, ${offsetColor}, ${props.backgroundColor}, ${lightenColor}, ${props.backgroundColor}, ${offsetColor})`,
