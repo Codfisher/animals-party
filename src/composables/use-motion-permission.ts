@@ -13,6 +13,36 @@ const motionEvent =
 /** iOS 13+ 需以使用者手勢呼叫 requestPermission 才能取得體感權限 */
 const needsRequest = typeof motionEvent?.requestPermission === 'function';
 
+/** 體感權限狀態（模組單例）。
+ *  lobby、權限卡、體感控制盤共用同一份，任一處授權其餘即時同步，
+ *  避免各自持有 ref 導致權限回報與顯示不一致。 */
+const state = ref<PlayerPermissionState>(
+  !motionEvent ? 'not-support' : needsRequest ? 'prompt' : 'granted',
+);
+
+/** 請求體感權限，必須由使用者手勢（點擊）觸發 */
+async function request(): Promise<PlayerPermissionState> {
+  if (!motionEvent) {
+    state.value = 'not-support';
+    return state.value;
+  }
+
+  if (!needsRequest) {
+    state.value = 'granted';
+    return state.value;
+  }
+
+  try {
+    const result = await motionEvent.requestPermission?.();
+    state.value = result === 'granted' ? 'granted' : 'denied';
+  } catch (error) {
+    console.error('[ useMotionPermission ] 請求體感權限失敗 : ', error);
+    state.value = 'denied';
+  }
+
+  return state.value;
+}
+
 /** 體感（DeviceMotion）權限
  *
  * 取代 Permissions API（其不支援 iOS 的體感權限機制）。
@@ -21,33 +51,6 @@ const needsRequest = typeof motionEvent?.requestPermission === 'function';
  * - 其他瀏覽器：DeviceMotion 不需顯式授權，視為 granted
  */
 export function useMotionPermission() {
-  const state = ref<PlayerPermissionState>(
-    !motionEvent ? 'not-support' : needsRequest ? 'prompt' : 'granted',
-  );
-
-  /** 請求體感權限，必須由使用者手勢（點擊）觸發 */
-  async function request(): Promise<PlayerPermissionState> {
-    if (!motionEvent) {
-      state.value = 'not-support';
-      return state.value;
-    }
-
-    if (!needsRequest) {
-      state.value = 'granted';
-      return state.value;
-    }
-
-    try {
-      const result = await motionEvent.requestPermission?.();
-      state.value = result === 'granted' ? 'granted' : 'denied';
-    } catch (error) {
-      console.error('[ useMotionPermission ] 請求體感權限失敗 : ', error);
-      state.value = 'denied';
-    }
-
-    return state.value;
-  }
-
   return {
     state,
     request,

@@ -63,15 +63,11 @@
 
 <script setup lang="ts">
 import { useVibrate } from '@vueuse/core';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { PlayerPermission, PlayerPermissionState } from '../types';
 import { useMotionPermission } from '../composables/use-motion-permission';
 
 import BasePolygon from './base-polygon.vue';
-
-const emit = defineEmits<{
-  (e: 'update', data: PlayerPermission): void;
-}>();
 
 const motionPermission = useMotionPermission();
 
@@ -145,22 +141,4 @@ const permissions = computed<
     onClick: () => vibrate([100, 10, 50]),
   },
 ]);
-
-watch(
-  permissions,
-  (data) => {
-    const result = data.reduce((acc, item) => {
-      acc[item.key] = item.state;
-      return acc;
-    }, {} as PlayerPermission);
-
-    emit('update', result);
-  },
-  {
-    deep: true,
-    /** 掛載時即回報當前權限：非 iOS 裝置體感預設為 granted 且永不變動，
-     *  若不立即送出，host 將永遠收不到權限而誤判玩家未授權 */
-    immediate: true,
-  },
-);
 </script>
