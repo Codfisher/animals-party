@@ -16,7 +16,40 @@
     </div>
 
     <div class="w-1/2 h-full flex flex-col items-center justify-center gap-12 pr-24 pb-10 z-0">
-      <room-qr-code class="menu-item" />
+      <div class="relative menu-item">
+        <room-qr-code />
+
+        <transition name="join-hint">
+          <div
+            v-if="noPlayerJoined"
+            class="join-hint absolute bottom-full left-1/2 z-10 mb-4"
+          >
+            <div
+              class="join-hint-body relative overflow-hidden rounded-full bg-[#FF744F] px-6 py-3 text-lg font-bold whitespace-nowrap text-white shadow-lg"
+            >
+              <base-polygon
+                class="absolute -top-7 -left-5"
+                size="5rem"
+                shape="round"
+                fill="spot"
+                color="white"
+                opacity="0.25"
+                rotate="20deg"
+              />
+              <base-polygon
+                class="absolute -right-4 -bottom-8"
+                size="5rem"
+                shape="pentagon"
+                fill="fence"
+                color="white"
+                opacity="0.2"
+                rotate="-15deg"
+              />
+              <span class="relative z-0">還沒有人加入，手機掃描加入派對！੭ ˙ᗜ˙ )੭ </span>
+            </div>
+          </div>
+        </transition>
+      </div>
 
       <base-btn
         :ref="mountButton"
@@ -29,7 +62,10 @@
         @click="startGame()"
       >
         <transition name="opacity">
-          <div v-if="hover" class="btn-content absolute inset-0">
+          <div
+            v-if="hover"
+            class="btn-content absolute inset-0"
+          >
             <div class="polygon-lt">
               <base-polygon
                 size="13rem"
@@ -64,7 +100,10 @@
         @click="endParty()"
       >
         <transition name="opacity">
-          <div v-if="hover" class="btn-content absolute inset-0">
+          <div
+            v-if="hover"
+            class="btn-content absolute inset-0"
+          >
             <div class="polygon-lt">
               <base-polygon
                 size="13.4rem"
@@ -177,6 +216,11 @@ const currentIndex = ref(
   games.findIndex(({ name }) => name === gameConsole.currentGame.value) ?? 0,
 );
 const selectedGame = computed(() => games[currentIndex.value]);
+
+/** 大廳尚無真實玩家加入時，於 QR 下方淡入引導氣泡（CPU 不算數） */
+const noPlayerJoined = computed(
+  () => gameConsole.players.value.filter(({ isCpu }) => !isCpu).length === 0,
+);
 const prevGame = throttle(
   () => {
     audio.play('click');
@@ -411,4 +455,31 @@ defineExpose({
     animation-timing-function: cubic-bezier(0.870, 0.000, 0.260, 1.375)
   100%
     transform: scale(1)
+
+// 空房引導氣泡：向下指向 QR 的小箭頭＋緩慢上下浮動
+.join-hint
+  animation: join-hint-bob 1.6s ease-in-out infinite
+
+// 箭頭掛在外層（內層 pill 為 overflow-hidden，會裁掉 ::before）
+.join-hint::before
+  content: ''
+  position: absolute
+  left: 50%
+  bottom: -0.5rem
+  margin-left: -0.6rem
+  border-left: 0.6rem solid transparent
+  border-right: 0.6rem solid transparent
+  border-top: 0.6rem solid #FF744F
+
+@keyframes join-hint-bob
+  0%, 100%
+    transform: translate(-50%, 0)
+  50%
+    transform: translate(-50%, -0.4rem)
+
+// 僅淡入淡出，transform 交給 bob 動畫避免衝突
+.join-hint-enter-active, .join-hint-leave-active
+  transition: opacity 0.4s ease
+.join-hint-enter-from, .join-hint-leave-to
+  opacity: 0
 </style>
