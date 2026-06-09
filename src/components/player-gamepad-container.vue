@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-screen h-screen flex text-white select-none overflow-hidden"
+    class="absolute inset-0 flex text-white select-none overflow-hidden"
     :style="{ backgroundColor: bgColor }"
     @touchmove="(e) => e.preventDefault()"
   >
