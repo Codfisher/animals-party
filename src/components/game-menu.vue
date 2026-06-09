@@ -11,6 +11,10 @@
       <game-menu-control-hint />
     </div>
 
+    <div class="menu-item absolute bottom-8 right-8 z-10">
+      <game-menu-game-intro :name="selectedGame.name" />
+    </div>
+
     <div class="w-1/2 h-full flex flex-col items-center justify-center gap-12 pr-24 pb-10 z-0">
       <room-qr-code class="menu-item" />
 
@@ -104,6 +108,7 @@ import BasePolygon from './base-polygon.vue';
 import RoomQrCode from './room-qr-code.vue';
 import GameMenuBackground from './game-menu-background.vue';
 import GameMenuControlHint from './game-menu-control-hint.vue';
+import GameMenuGameIntro from './game-menu-game-intro.vue';
 
 import { useGamepadNavigator } from '../composables/use-gamepad-navigator';
 import { useClientGameConsole } from '../composables/use-client-game-console';
