@@ -89,7 +89,13 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import gsap from 'gsap';
-import { GameName, permissionInfoMap, Player, PlayerPermission } from '../types';
+import {
+  GameName,
+  permissionInfoMap,
+  Player,
+  PlayerPermission,
+  PlayerPermissionState,
+} from '../types';
 import type { RouteNamedMap } from 'vue-router/auto-routes';
 import { debounce, throttle } from 'lodash-es';
 
@@ -250,15 +256,35 @@ function checkGameCondition(condition: GameInfo['condition'], players: Player[])
     if (player.isCpu) continue;
 
     for (const name of requiredPermissions) {
-      if (player.permission?.[name] === 'granted') continue;
+      const state = player.permission?.[name];
+      if (state === 'granted') continue;
 
       const codeName = gameConsole.getPlayerCodeName(player.clientId);
       const permissionLabel = permissionInfoMap[name].label;
-      return `${codeName} 玩家缺少「${permissionLabel}」權限，請點擊搖桿畫面右上角按鈕確認權限狀態。`;
+      return getPermissionErrorMessage(codeName, permissionLabel, state);
     }
   }
 
   return undefined;
+}
+
+/** 依玩家權限狀態給出對應提示。
+ *  not-support 點按鈕也無濟於事，需與 prompt／denied 區分，避免誤導玩家。 */
+function getPermissionErrorMessage(
+  codeName: string,
+  permissionLabel: string,
+  state: PlayerPermissionState | undefined,
+) {
+  if (state === 'denied') {
+    return `${codeName} 玩家的「${permissionLabel}」權限被拒絕，請至手機瀏覽器設定開啟後重試。`;
+  }
+
+  if (state === 'not-support') {
+    return `${codeName} 玩家的裝置或瀏覽器不支援「${permissionLabel}」，請改用 Chrome／Safari 直接開啟（勿從 LINE、FB 等 App 內開啟），或換一台支援體感的手機。`;
+  }
+
+  // prompt 或尚未取得權限資料：玩家可自行授權
+  return `${codeName} 玩家尚未開啟「${permissionLabel}」權限，請點擊搖桿畫面右上角按鈕完成授權。`;
 }
 
 const startGame = debounce(
