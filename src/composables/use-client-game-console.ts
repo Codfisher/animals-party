@@ -56,6 +56,10 @@ export function useClientGameConsole() {
       return 'unknown ';
     }
 
+    if (gameConsoleStore.players[index].isCpu) {
+      return 'CPU';
+    }
+
     return `${index + 1}P`;
   }
 
