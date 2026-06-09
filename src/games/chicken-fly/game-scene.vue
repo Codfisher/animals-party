@@ -166,7 +166,7 @@ const { canvas } = useBabylonScene({
     initGamepadEvent(chickens);
     playerChickens.push(...chickens);
 
-    const badChickens = await createBadChickens(scene);
+    const badChickens = await createBadChickens(scene, chickens);
 
     /** 找出 CPU 小雞 */
     const cpuChickenList = chickens.filter((chicken) => {
@@ -381,14 +381,23 @@ function createSpeedLines(scene: Scene) {
   return lines;
 }
 
-async function createBadChickens(scene: Scene) {
+async function createBadChickens(scene: Scene, playerChickenList: Chicken[]) {
   /** 小雞間距 */
   const gap = 50;
+
+  /** 取得存活玩家位置，供壞雞鎖定追擊 */
+  const getTargetList = () =>
+    playerChickenList
+      .filter((chicken) => chicken.mesh && !chicken.mesh.isDisposed() && chicken.diedAt === 0)
+      .map((chicken) => chicken.mesh!.position);
+
   const tasks = range(3).map((value) =>
     new BadChicken(`bad-chicken-${value}`, scene, {
       position: new Vector3(0, 0, (value + 1) * -gap),
       recyclePosition: gap,
       recycleStartPosition: gap * -2,
+      sceneBoundary,
+      getTargetList,
     }).init(),
   );
   const chickens = await Promise.all(tasks);
@@ -400,9 +409,18 @@ async function createBadChickens(scene: Scene) {
       if (props.mode === 'showcase') return;
 
       const speed = 0.1 + value * 0.01;
+      /** 追擊強度隨時間提升，後期咬得更緊，上限避免瞬間貼臉 */
+      const steerFactor = Math.min(0.02 + value * 0.001, 0.15);
+      /** 晃動幅度隨時間收斂，後期瞄得更準、留點隨機避免完全鎖死 */
+      const wanderAmplitude = {
+        x: Math.max(1.5 - value * 0.006, 0.6),
+        y: Math.max(1 - value * 0.004, 0.4),
+      };
 
       chickens.forEach((chicken) => {
         chicken.setSpeed(speed);
+        chicken.setSteerFactor(steerFactor);
+        chicken.setWanderAmplitude(wanderAmplitude);
       });
     },
     { immediate: true },

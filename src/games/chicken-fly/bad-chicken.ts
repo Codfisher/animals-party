@@ -29,6 +29,9 @@ export interface Params {
     x: number;
     y: number;
   };
+
+  /** 取得可追蹤的玩家位置，用於鎖定最近玩家 */
+  getTargetList?: () => Vector3[];
 }
 
 export class BadChicken {
@@ -43,6 +46,7 @@ export class BadChicken {
       x: 5,
       y: 2,
     },
+    getTargetList: () => [],
   };
 
   /** 速度基準值 */
@@ -57,6 +61,13 @@ export class BadChicken {
     x: Scalar.RandomRange(-Math.PI / 100, Math.PI / 100),
     y: Scalar.RandomRange(-Math.PI / 100, Math.PI / 100),
   };
+
+  /** 追蹤中心，每幀平滑朝最近玩家逼近 */
+  private aimCenter = { x: 0, y: 0 };
+  /** 朝目標逼近的平滑係數，越大追擊越兇；開場給最低值，隨時間提升 */
+  private steerFactor = 0.02;
+  /** 隨機晃動幅度，讓追蹤帶點隨機、不會百發百中；開場給最大值，隨時間收斂 */
+  private wanderAmplitude = { x: 1.5, y: 1 };
 
   constructor(name: string, scene: Scene, params?: Params) {
     this.name = name;
@@ -89,6 +100,18 @@ export class BadChicken {
     this.mesh.position.z = this.params.recycleStartPosition;
   }
 
+  /** 取得 xy 平面上最近的玩家位置，無玩家時回傳 undefined */
+  private getNearestTarget(position: Vector3) {
+    const targetList = this.params.getTargetList();
+    if (targetList.length === 0) return undefined;
+
+    return targetList.reduce((nearest, candidate) => {
+      const nearestDistance = Math.hypot(position.x - nearest.x, position.y - nearest.y);
+      const candidateDistance = Math.hypot(position.x - candidate.x, position.y - candidate.y);
+      return candidateDistance < nearestDistance ? candidate : nearest;
+    });
+  }
+
   async init() {
     const result = await SceneLoader.ImportMeshAsync(
       '',
@@ -99,6 +122,9 @@ export class BadChicken {
 
     const hitBox = this.createHitBox();
     this.mesh = hitBox;
+
+    /** 追蹤中心以起始位置為準 */
+    this.aimCenter = { x: hitBox.position.x, y: hitBox.position.y };
 
     const bodyMesh = result.meshes.find(({ name }) => name === 'body');
     if (bodyMesh?.material instanceof PBRMaterial) {
@@ -120,9 +146,20 @@ export class BadChicken {
         circularFrequency: { x: xCircularFrequency, y: yCircularFrequency },
       } = this;
 
-      /** 計算位移 */
-      const x = xMax * Math.cos(xPhase);
-      const y = yMax * Math.cos(yPhase);
+      /** 追蹤中心平滑朝最近玩家逼近，無玩家時回到場景中央 */
+      const target = this.getNearestTarget(hitBox.position);
+      this.aimCenter = {
+        x: Scalar.Lerp(this.aimCenter.x, target?.x ?? 0, this.steerFactor),
+        y: Scalar.Lerp(this.aimCenter.y, target?.y ?? 0, this.steerFactor),
+      };
+
+      /** 疊加隨機晃動，讓追擊不會完全精準 */
+      const wanderX = this.wanderAmplitude.x * Math.cos(xPhase);
+      const wanderY = this.wanderAmplitude.y * Math.cos(yPhase);
+
+      /** 計算位移，並限制在場景邊界內 */
+      const x = clamp(this.aimCenter.x + wanderX, -xMax, xMax);
+      const y = clamp(this.aimCenter.y + wanderY, -yMax, yMax);
       const z = hitBox.position.z + this.speed;
 
       hitBox.position = new Vector3(x, y, z);
@@ -145,5 +182,15 @@ export class BadChicken {
   /** 設定速度基準值 */
   setSpeed(speed: number) {
     this.speed = speed;
+  }
+
+  /** 設定追擊強度，越大追蹤越兇 */
+  setSteerFactor(steerFactor: number) {
+    this.steerFactor = steerFactor;
+  }
+
+  /** 設定隨機晃動幅度，越小追擊越精準 */
+  setWanderAmplitude(wanderAmplitude: { x: number; y: number }) {
+    this.wanderAmplitude = wanderAmplitude;
   }
 }
