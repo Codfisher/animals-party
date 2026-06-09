@@ -105,6 +105,7 @@ import { useCpuPlayer } from '../composables/use-cpu-player';
 import { useGameConsoleStore } from '../stores/game-console.store';
 import { useRouter } from 'vue-router';
 import { useLoading } from '../composables/use-loading';
+import { useAudio } from '../composables/use-audio';
 
 interface GameInfo {
   name: `${GameName}`;
@@ -159,6 +160,7 @@ const gameConsoleStore = useGameConsoleStore();
 const cpuPlayer = useCpuPlayer();
 const router = useRouter();
 const loading = useLoading();
+const audio = useAudio();
 
 const currentIndex = ref(
   games.findIndex(({ name }) => name === gameConsole.currentGame.value) ?? 0,
@@ -166,6 +168,7 @@ const currentIndex = ref(
 const selectedGame = computed(() => games[currentIndex.value]);
 const prevGame = throttle(
   () => {
+    audio.play('click');
     currentIndex.value--;
     if (currentIndex.value < 0) {
       currentIndex.value += games.length;
@@ -179,6 +182,7 @@ const prevGame = throttle(
 );
 const nextGame = throttle(
   () => {
+    audio.play('click');
     currentIndex.value++;
     currentIndex.value %= games.length;
   },

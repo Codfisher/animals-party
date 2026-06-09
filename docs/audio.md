@@ -31,7 +31,7 @@ audio.toggleMute();          // 靜音切換
 
 | 音效 | 觸發位置 |
 | --- | --- |
-| `click` | [`base-btn.vue`](../src/components/base-btn.vue) 點擊 |
+| `click` | [`base-btn.vue`](../src/components/base-btn.vue) 點擊；大廳左右切換遊戲（[`game-menu.vue`](../src/components/game-menu.vue) 的 `prevGame`／`nextGame`） |
 | `confirm` | 大廳有新玩家加入 |
 | `countdown` / `start` | [`countdown-overlay.vue`](../src/components/countdown-overlay.vue) 倒數 |
 | `win` | 各遊戲 `isGameOver`（與彩帶同步） |
