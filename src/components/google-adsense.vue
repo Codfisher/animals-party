@@ -2,16 +2,16 @@
   <ins
     ref="insRef"
     class="adsbygoogle block w-full"
-    :style="{ minHeight: `${minHeight}px` }"
+    :style="insStyle"
     :data-ad-client="client"
     :data-ad-slot="slot"
-    :data-ad-format="format"
-    :data-full-width-responsive="fullWidthResponsive"
+    :data-ad-format="height ? undefined : format"
+    :data-full-width-responsive="height ? undefined : fullWidthResponsive"
   />
 </template>
 
 <script setup lang="ts">
-import { onMounted, useTemplateRef } from 'vue';
+import { computed, onMounted, useTemplateRef } from 'vue';
 
 declare global {
   interface Window {
@@ -30,12 +30,24 @@ interface Props {
   fullWidthResponsive?: boolean;
   /** 最小高度（px），避免未填充時版面塌陷 */
   minHeight?: number;
+  /** 固定高度（px）。設定後採固定高度模式：滿寬、固定高，
+   *  且不帶 data-ad-format／data-full-width-responsive，
+   *  AdSense 不會沿祖先鏈清除高度限制，可控制版位高度不超框 */
+  height?: number;
 }
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   format: 'auto',
   fullWidthResponsive: true,
   minHeight: 100,
+  height: undefined,
 });
+
+/** 固定高度模式給定高、滿寬；否則用 minHeight 佔位避免塌陷 */
+const insStyle = computed(() =>
+  props.height
+    ? { display: 'block', width: '100%', height: `${props.height}px` }
+    : { minHeight: `${props.minHeight}px` },
+);
 
 const insRef = useTemplateRef<HTMLElement>('insRef');
 

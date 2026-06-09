@@ -64,15 +64,24 @@ player-gamepad.vue
 
 ### 廣告元件
 
-沿用既有 [google-adsense.vue](../../src/components/google-adsense.vue)：
+沿用既有 [google-adsense.vue](../../src/components/google-adsense.vue)，沿用首頁 slot `9242930193`。
 
-- 新增一個 AdSense 後台**手機橫幅 ad unit**，取得新的 `slot` ID（與首頁 9242930193 區隔，數據獨立）。
-  - 過渡期可先沿用首頁 slot，待新版位建立後替換。
-- `client="ca-pub-6608581811170481"`、`format="horizontal"`、固定高度配合廣告帶（約 50–56px，對應 320x50 行動橫幅）。
+### 廣告格式與帶高：horizontal＋responsive，min-h 作底、max-h 作頂
 
-### 廣告帶高度：固定 px，非 vh
+**關鍵發現：responsive 廣告會清除祖先所有高度限制。**
 
-AdSense 橫幅素材為固定像素尺寸（320x50、320x100），不隨容器縮放。若廣告帶用 `vh`，在小／中尺寸手機上 `5vh`（約 32–45px）會小於 50px 素材，`overflow-hidden` 將裁切廣告、違反「完整顯示」規範。故廣告帶高度以固定 px 貼合素材：`h-14`（56px）= 50px 素材 + 6px 分隔呼吸空間。
+DevTools 確認，`data-full-width-responsive="true"`／`format="auto"` 的 responsive 廣告，AdSense 會沿 ins 的**整條祖先鏈**注入 `height: auto !important`、`max-height: none !important`、`min-height: 0 !important`，好讓廣告自由縮放。因此**任何祖先的 `min-h`／`max-h`／`h` 都壓不住它**（實測 ins 被撐成 375×375 方形、帶子半屏高）。
+
+收斂過程：
+
+- `format="horizontal"`＋`responsive=false`：固定 horizontal 只給桌機尺寸，手機塞不下而不放送。
+- `format="auto"`／`responsive=true`：手機會放送，但清除祖先高度限制 → 撐爆版位，`max-h` 無效。
+
+**最終解：固定高度模式**（[google-adsense.vue](../../src/components/google-adsense.vue) 新增 `height` prop）。設定 `:height="100"` 時，ins 採 `width:100%; height:100px`，且**不帶** `data-ad-format`／`data-full-width-responsive`。AdSense 視為固定尺寸版位，不沿祖先鏈清除高度，版位穩定 100px、滿寬、不超框。localhost 未填充的 placeholder 亦為 100px 而非 375 方塊。
+
+高度取 100px 對應 320×100「大型行動橫幅」IAB 標準尺寸，小高度裡手機填充率最佳；50px（320×50）填充更高但偏扁，90px 對不到手機標準尺寸故避用。
+
+廣告帶 `min-h-14`／`max-h-28` 作為 fallback 與安全上限保留（固定高度模式下不被覆蓋而生效）。
 
 ### 視覺
 
