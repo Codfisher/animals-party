@@ -28,7 +28,6 @@ import {
   Color4,
   GlowLayer,
   MeshBuilder,
-  PhysicsImpostor,
   Scalar,
   Scene,
   SolidParticleSystem,
@@ -158,7 +157,6 @@ const { canvas } = useBabylonScene({
     });
 
     createSky(scene);
-    createBoundary(scene);
     createClouds(scene);
     createSpeedLines(scene);
 
@@ -180,7 +178,7 @@ const { canvas } = useBabylonScene({
     scene.registerBeforeRender(() => {
       detectCollideEvents(chickens, badChickens);
       detectGameOver(chickens, engine);
-      detectOutOfBounds(chickens);
+      keepChickensInBounds(chickens);
       detectDeaths(chickens);
 
       if (cpuChickenList.length > 0 && props.mode === 'normal') {
@@ -211,43 +209,6 @@ function createSky(scene: Scene) {
   skybox.material = skyMaterial;
 
   return skybox;
-}
-
-function createBoundary(scene: Scene) {
-  const list = [
-    {
-      name: 'boundary-top',
-      option: { height: 0.5, width: 10, depth: 0.5 },
-      position: new Vector3(0, sceneBoundary.y, 0),
-    },
-    {
-      name: 'boundary-bottom',
-      option: { height: 0.5, width: 10, depth: 0.5 },
-      position: new Vector3(0, -sceneBoundary.y, 0),
-    },
-    {
-      name: 'boundary-left',
-      option: { height: 10, width: 0.5, depth: 0.5 },
-      position: new Vector3(-sceneBoundary.x, 0, 0),
-    },
-    {
-      name: 'boundary-right',
-      option: { height: 10, width: 0.5, depth: 0.5 },
-      position: new Vector3(sceneBoundary.x, 0, 0),
-    },
-  ];
-
-  list.forEach(({ name, option, position }) => {
-    const wall = MeshBuilder.CreateBox(name, option, scene);
-    wall.position = position;
-    wall.physicsImpostor = new PhysicsImpostor(
-      wall,
-      PhysicsImpostor.BoxImpostor,
-      { mass: 0, friction: 0, restitution: 0 },
-      scene,
-    );
-    wall.isVisible = false;
-  });
 }
 
 function createClouds(scene: Scene) {
@@ -472,18 +433,81 @@ function detectDeaths(chickens: Chicken[]) {
     }
   });
 }
-/** 救回出界的小雞 */
-function detectOutOfBounds(chickens: Chicken[]) {
+/** 將小雞約束在場景邊界內：
+ *
+ * 接近邊界時施加柔性回推力讓小雞自然減速、被推回，
+ * 再以硬夾限鎖死位置兜底，確保永遠不會飄出去。
+ */
+function keepChickensInBounds(chickens: Chicken[]) {
+  /** 緩衝帶寬度，進入後開始回推 */
+  const softZone = 0.8;
+  /** 回推力強度，越深入緩衝帶力道越大 */
+  const pushStrength = 25;
+  /** 阻尼，抑制向外速度避免撞邊回彈 */
+  const damping = 6;
+  /** 預留小雞半身，避免模型一半穿出邊界 */
+  const margin = 0.3;
+  const maxX = sceneBoundary.x - margin;
+  const maxY = sceneBoundary.y - margin;
+
   chickens.forEach((chicken) => {
     if (!chicken.mesh || chicken.diedAt > 0) return;
 
-    const { x, y } = chicken.mesh.position;
+    const { physicsImpostor } = chicken.mesh;
+    if (!physicsImpostor) return;
 
-    if (Math.abs(x) > sceneBoundary.x || Math.abs(y) > sceneBoundary.y) {
-      chicken.mesh.position = new Vector3(0, 0, 0);
+    const { position } = chicken.mesh;
+    const velocity = physicsImpostor.getLinearVelocity() ?? new Vector3(0, 0, 0);
 
-      chicken.mesh.physicsImpostor?.setLinearVelocity(new Vector3(0, 0, 0));
+    /** 柔性回推：力道隨深度遞增，並抵銷向外速度 */
+    const push = new Vector3(0, 0, 0);
+    if (position.x > maxX - softZone) {
+      push.x -= (position.x - (maxX - softZone)) * pushStrength;
+      if (velocity.x > 0) push.x -= velocity.x * damping;
+    } else if (position.x < -maxX + softZone) {
+      push.x -= (position.x - (-maxX + softZone)) * pushStrength;
+      if (velocity.x < 0) push.x -= velocity.x * damping;
     }
+    if (position.y > maxY - softZone) {
+      push.y -= (position.y - (maxY - softZone)) * pushStrength;
+      if (velocity.y > 0) push.y -= velocity.y * damping;
+    } else if (position.y < -maxY + softZone) {
+      push.y -= (position.y - (-maxY + softZone)) * pushStrength;
+      if (velocity.y < 0) push.y -= velocity.y * damping;
+    }
+    if (push.x !== 0 || push.y !== 0) {
+      physicsImpostor.applyForce(push, chicken.mesh.getAbsolutePosition());
+    }
+
+    /** 硬夾限兜底：鎖住位置並歸零向外速度 */
+    let isClamped = false;
+    if (position.x > maxX) {
+      position.x = maxX;
+      if (velocity.x > 0) {
+        velocity.x = 0;
+        isClamped = true;
+      }
+    } else if (position.x < -maxX) {
+      position.x = -maxX;
+      if (velocity.x < 0) {
+        velocity.x = 0;
+        isClamped = true;
+      }
+    }
+    if (position.y > maxY) {
+      position.y = maxY;
+      if (velocity.y > 0) {
+        velocity.y = 0;
+        isClamped = true;
+      }
+    } else if (position.y < -maxY) {
+      position.y = -maxY;
+      if (velocity.y < 0) {
+        velocity.y = 0;
+        isClamped = true;
+      }
+    }
+    if (isClamped) physicsImpostor.setLinearVelocity(velocity);
   });
 }
 
