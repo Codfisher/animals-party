@@ -49,6 +49,9 @@
           <UInput
             v-model="targetRoomId"
             size="xl"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            maxlength="6"
             placeholder="直接掃描或手動輸入房號 (｢･ω･)｢"
             :ui="{ base: 'rounded-full text-center focus-visible:ring-[#FF744F]!' }"
             @keyup.enter="handleSubmit"
